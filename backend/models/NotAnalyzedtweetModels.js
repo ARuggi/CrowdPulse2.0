@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const AnalyzedTweetTemplate = new mongoose.Schema({
+const NotAnalyzedTweetTemplate = new mongoose.Schema({
     raw_text:{
         type:String
     },
@@ -37,15 +37,7 @@ const AnalyzedTweetTemplate = new mongoose.Schema({
     processed:{
         type:Boolean
     },
-    sentiment:{
-        type:Object
-    },
-    tags:{
-        type:Object
-    },
-    spacy:{
-        type:Object
-    },
 })
 
-module.exports = mongoose.model('Atweets',AnalyzedTweetTemplate)
+module.exports = mongoose.model('NAtweets',NotAnalyzedTweetTemplate)
+
