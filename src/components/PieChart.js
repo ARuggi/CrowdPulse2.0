@@ -1,15 +1,23 @@
 import React from "react";
 import {Pie} from 'react-chartjs-2';
 
-const data = {
+
+const PieChart = (props) =>{
+  var negative = props.negative
+  var positive = props.positive
+  var neutral = props.neutral
+    return(
+        <div>
+            <Pie
+	 data = {{
     labels: [
-      'Red',
-      'Blue',
-      'Yellow'
+      'Negative',
+      'Neutral',
+      'Positive'
     ],
     datasets: [{
-      label: 'My First Dataset',
-      data: [300, 50, 100],
+      label: 'Sentiment',
+      data: [negative, neutral, positive],
       backgroundColor: [
         'rgb(255, 99, 132)',
         'rgb(54, 162, 235)',
@@ -17,13 +25,7 @@ const data = {
       ],
       hoverOffset: 4
     }]
-  };
-
-const PieChart = () =>{
-    return(
-        <div>
-            <Pie
-	 data= {data}
+  }}
 	width={100}
 	height={400}
 	options={{ maintainAspectRatio: false }}
