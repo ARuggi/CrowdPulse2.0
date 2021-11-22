@@ -17,7 +17,7 @@ router.post('/analyzed',function(request, response) {
 
 })
 
-router.get('/search', (req, res) => {
+router.get('/getAnalyzedData', (req, res) => {
 
     AnalyzedTweetTemplateCopy.find({  })
         .then((data) => {
@@ -62,29 +62,37 @@ router.get('/getAnalyzedSentiment', (req, res) => {
         });
 });
 
-/*
-router.get('/getAnalyzedSentimentTimelines', (req, res) => {
+router.get('/getAnalyzedSentimentDates', (req, res) => {
 
     AnalyzedTweetTemplateCopy.find({  })
         .then((data) => {
-            var date = new Array()
-            var counterPos = new Array()
-            var counterNeg = new Array()
-            var counterNeu = new Array()
+            negative = 0
+            positive = 0
+            neutral = 0
             i=0
             while(i<data.length){
-              
-                date = data[i].created_at
-                tweet[i].sentiment = ata[i].sentiment['sent-it'].sentiment
+                if (data[i].sentiment['sent-it'].sentiment=='negative')
+                    negative++
+                else if (data[i].sentiment['sent-it'].sentiment=='positive')
+                    positive ++
+                else
+                    neutral ++
+
                 i++
             }
 
-            console.log('sent: ', tweet);
-            res.json(tweet);
+            var sentCounter = {
+                positive: positive,
+                negative: negative,
+                neutral: neutral,
+             }
+
+            console.log('sent: ', sentCounter);
+            res.json(sentCounter);
         })
         .catch((error) => {
             console.log('error: ', error);
         });
 });
-*/
+
 module.exports = router

@@ -9,6 +9,9 @@ import BarChart from './components/BarChart';
 import LineChart from './components/LineChart';
 import PieChart from './components/PieChart';
 import RadarChart from './components/RadarChart';
+import SearchBar from './components/SearchFilters';
+
+import BookData from "./Data.json";
 
 import React from 'react';
 
@@ -18,53 +21,168 @@ class App extends React.Component {
   
 
   state = {
-    setCounter: []
+    setCounter: [],
+    data: [],
+    fromDate: null,
+    toDate : null,
   };
 
   getSentimentData = () => {
-    axios.get('/tweet/getAnalyzedSentiment')
+    axios.get('/tweet/getAnalyzedData')
     .then((response) => {
       const data = response.data;
-      this.setState({ setCounter: data });
-      alert("Dati ricevuti correttamente " )
-      
+      var negative = 0
+      var positive = 0
+      var neutral = 0
+      var i=0
+      while(i<data.length){
+          if (data[i].sentiment['sent-it'].sentiment=='negative')
+              negative++
+          else if (data[i].sentiment['sent-it'].sentiment=='positive')
+              positive ++
+          else
+              neutral ++
 
-    })
-    .catch(error => {
-     
-      alert(error)
-    });
+          i++
+      }
+
+      var sentCounter = {
+          positive: positive,
+          negative: negative,
+          neutral: neutral,
+       }
+
+      console.log('sent: ', sentCounter)
+      this.setState({ setCounter: sentCounter })
+      this.setState({data : data})
+  })
+  .catch((error) => {
+      console.log('error: ', error)
+  });
+
   }
 
   
-  getSentimentDataTimelines = () => {
-    axios.get('/tweet/getAnalyzedSentimentTimelines')
-    .then((response) => {
-      const data = response.data;
-      this.setState({ setCounter: data });
-      alert("Dati ricevuti correttamente " )
-      
+  handleFromDatesChanges = (event) => {
+    if(event.target.value!=""){
+      this.state.fromDate = event.target.value
+      this.filterDataByDates()
+    }
+  }
 
-    })
-    .catch(error => {
-     
-      alert(error)
-    });
+  handleToDatesChanges = (event) => {
+    if(event.target.value!=""){
+      this.state.toDate = event.target.value
+      this.filterDataByDates()
+    }
+
   }
 
 
-  getData = () => {
-    axios.get('/tweet/search')
-      .then((response) => {
-        const data = response.data;
-        this.setState({ tweet: data });
-        alert("Dati ricevuti correttamente")
-      })
-      .catch(error => {
-        console.log(error.response.data.error)
-        alert(error)
-      });
+  filterDataByDates = () => {
+   
+      var negative = 0
+      var positive = 0
+      var neutral = 0
+      var i=0
+
+      if(this.state.fromDate==null){
+       //fromdate Null
+
+
+       while(i<this.state.data.length){
+        if (this.state.data[i].sentiment['sent-it'].sentiment=='negative'
+        && this.state.data[i].created_at<this.state.toDate)
+            negative++
+        else if (this.state.data[i].sentiment['sent-it'].sentiment=='positive'
+        && this.state.data[i].created_at<this.state.toDate)
+            positive ++
+        else if (this.state.data[i].sentiment['sent-it'].sentiment=='neutral'
+            && this.state.data[i].created_at<this.state.toDate )
+            neutral ++
+
+        i++
+    }
+    var sentCounter = {
+        positive: positive,
+        negative: negative,
+        neutral: neutral,
+     }
+
+    console.log('sent: ', sentCounter)
+    this.setState({ setCounter: sentCounter })
+    //this.setState({data : data}) settare i nuovi dati
+
+      }else if(this.state.toDate==null){
+        //todate Null
+                        
+        
+                      
+       while(i<this.state.data.length){
+        if (this.state.data[i].sentiment['sent-it'].sentiment=='negative'
+        && this.state.data[i].created_at>this.state.fromDate)
+            negative++
+        else if (this.state.data[i].sentiment['sent-it'].sentiment=='positive'
+        && this.state.data[i].created_at>this.state.fromDate)
+            positive ++
+        else if (this.state.data[i].sentiment['sent-it'].sentiment=='neutral'
+            && this.state.data[i].created_at>this.state.fromDate )
+            neutral ++
+
+        i++
+    }
+
+
+    var sentCounter = {
+        positive: positive,
+        negative: negative,
+        neutral: neutral,
+     }
+
+    console.log('sent: ', sentCounter)
+    this.setState({ setCounter: sentCounter })
+    //this.setState({data : data}) settare i nuovi dati
+
+      }else if(this.state.fromDate!=null && this.state.fromDate!=null){
+               
+        while(i<this.state.data.length){
+          if (this.state.data[i].sentiment['sent-it'].sentiment=='negative'
+          && this.state.data[i].created_at>this.state.fromDate
+          && this.state.data[i].created_at<this.state.toDate)
+              negative++
+          else if (this.state.data[i].sentiment['sent-it'].sentiment=='positive'
+          && this.state.data[i].created_at>this.state.fromDate
+          && this.state.data[i].created_at<this.state.toDate)
+              positive ++
+          else if (this.state.data[i].sentiment['sent-it'].sentiment=='neutral'
+              && this.state.data[i].created_at>this.state.fromDate
+              && this.state.data[i].created_at<this.state.toDate)
+              neutral ++
+
+          i++
+      }
+
+      var sentCounter = {
+          positive: positive,
+          negative: negative,
+          neutral: neutral,
+       }
+
+      console.log('sent: ', sentCounter)
+      this.setState({ setCounter: sentCounter })
+      //this.setState({data : data}) settare i nuovi dati
+
+      }
+
+
   }
+
+  prova = () => {
+    alert(this.state.toDate<this.state.data[0].created_at)
+  }
+
+
+
   render() {
     return (
       <div>
@@ -96,6 +214,46 @@ class App extends React.Component {
                   <li>
                     <a href="#export"><span className="icon edit" aria-hidden="true" />Export</a>
                   </li>
+                  <li>
+                    <a class="show-cat-btn" href="##">
+                        <span class="icon document" aria-hidden="true"></span>Data Visualization
+                        <span class="category__btn transparent-btn" title="Open list">
+                            <span class="sr-only">Open list</span>
+                            <span class="icon arrow-down" aria-hidden="true"></span>
+                        </span>
+                    </a>
+                    <ul class="cat-sub-menu">
+                        <li>
+                            <a href="#">Sentiment</a>
+                        </li>
+                        <li>
+                            <a href="##">Word</a>
+                        </li>
+                        <li>
+                            <a href="##">Timelines</a>
+                        </li>
+                    </ul>
+                </li>
+
+
+                <li>
+                    <a class="show-cat-btn" href="##">
+                        <span class="icon folder" aria-hidden="true"></span>Database
+                        <span class="category__btn transparent-btn" title="Open list">
+                            <span class="sr-only">Open list</span>
+                            <span class="icon arrow-down" aria-hidden="true"></span>
+                        </span>
+                    </a>
+                    <ul class="cat-sub-menu">
+                        <li>
+                            <a href="#">Db1</a>
+                        </li>
+                        <li>
+                            <a href="##">Db2</a>
+                        </li>
+                    </ul>
+                </li>
+                  
                 </ul>
               </div>
             </div>
@@ -122,7 +280,7 @@ class App extends React.Component {
                 <h1>CrowdPulse</h1>
                 <br />
                 <div className="row stat-cards">
-                  <div className="col-md-6 col-xl-3">
+                  <div className="col-md-6 col-xl-4">
                     <article className="stat-cards-item">
                       <div className="row">
                         <div className="col-md-3">
@@ -132,17 +290,20 @@ class App extends React.Component {
                         </div>
                         <div className="col-md-9">
                           <div className="stat-cards-info">
-                            <center><h4>Data Visualization</h4><br />
+                            <center><h4>Category</h4><br />
                               <select id="sel1" >
-                                <option>Sentiment</option>
-                                <option>Word</option>
-                                <option>Timelines</option>
+                                <option>All</option>
+                                <option>Sent-it</option>
+                                <option>Feel-it</option>
 
                               </select>
 
                             </center>
                             <br/>
-                            <button onClick={this.getSentimentData}>Grafici</button>
+                             <button onClick={this.getSentimentData}>Grafici</button>
+
+                             <br/>
+                             <button onClick={this.prova}>Prova</button>
                           </div>
                         </div>
 
@@ -151,42 +312,18 @@ class App extends React.Component {
 
                     </article>
                   </div>
-                  <div className="col-md-6 col-xl-3">
+
+                  <div className="col-md-6 col-xl-4">
                     <article className="stat-cards-item">
                       <div className="row">
-                        <div className="col-md-3">
-                        <img src="https://img.icons8.com/ios/100/000000/big-data.png"/>
-                        </div>
-                        <div className="col-md-9">
-                          <div className="stat-cards-info">
-                            <center><h4>Database</h4><br />
-                              <select id="sel1">
-                                <option>db1</option>
-                                <option>db2</option>
-                                <option>db3</option>
-                                <option>db4</option>
-                              </select>
-
-                            </center>
-                          </div>
-                        </div>
-
-
-                      </div>
-
-                    </article>
-                  </div>
-                  <div className="col-md-6 col-xl-3">
-                    <article className="stat-cards-item">
-                      <div className="row">
-                        <div className="col-md-3">
+                        <div className="col-md-2 col-xl-2">
                         <img src="https://img.icons8.com/ios/100/000000/tags--v1.png"/>
                         </div>
-                        <div className="col-md-9">
+                        <div className="col-md-10 col-xl-10">
                           <div className="stat-cards-info">
                             <center><h4>Tags</h4><br />
-                              <input />
-
+                            <SearchBar placeholder="Enter Tags" data={BookData} />
+                              
                             </center>
                           </div>
                         </div>
@@ -196,30 +333,33 @@ class App extends React.Component {
 
                     </article>
                   </div>
-                  <div className="col-md-6 col-xl-3">
+                  <div className="col-md-6 col-xl-4">
                     <article className="stat-cards-item">
                       <div className="row">
                         <div className="col-md-6">
                           <div className="stat-cards-info">
                             <center><h4>From </h4><br />
-                              <input type="date" />
+                              <input type="date" 
+                              name="startDate"
+                              onBlur={this.handleFromDatesChanges}/>
                             </center>
                           </div>
                         </div>
                         <div className="col-md-6">
                           <div className="stat-cards-info">
                             <center><h4>To </h4><br />
-                              <input type="date" />
+                              <input type="date"
+                              id="toDate"
+                              onBlur={this.handleToDatesChanges} />
                             </center>
                           </div>
-                        </div>
-
-                        <button onClick={this.getSentimentDataTimelines}>Grafici</button>
+                        </div>                     
                       </div>
 
                     </article>
                   </div>
                 </div>
+                <br/>
                 <div className="row">
                   <div className="col-lg-9">
                     <div className="chart">

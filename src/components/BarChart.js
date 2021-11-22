@@ -13,7 +13,7 @@ const BarChart = (props) =>{
 data= {{
     labels: ['Negative','Neutral', 'Positive'],
     datasets: [{
-        label: 'Sentimets',
+        label: 'Sentiments',
         data: [negative, neutral, positive],
         backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
