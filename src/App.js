@@ -9,9 +9,9 @@ import BarChart from './components/BarChart';
 import LineChart from './components/LineChart';
 import PieChart from './components/PieChart';
 import RadarChart from './components/RadarChart';
-import SearchBar from './components/SearchFilters';
+import SearchFilters from './components/SearchFilters';
 
-import BookData from "./Data.json";
+
 
 import React from 'react';
 
@@ -21,7 +21,8 @@ class App extends React.Component {
   
 
   state = {
-    setCounter: [],
+    flagType: 0,
+    counter : [],
     data: [],
     fromDate: null,
     toDate : null,
@@ -45,15 +46,26 @@ class App extends React.Component {
 
           i++
       }
+      i=0
+      while(i<data.length){
+        if (data[i].sentiment['feel-it'].sentiment=='negative')
+            negative++
+        else if (data[i].sentiment['feel-it'].sentiment=='positive')
+            positive ++
+        else
+            neutral ++
 
-      var sentCounter = {
+        i++
+    }
+
+      var tempCounter = {
           positive: positive,
           negative: negative,
           neutral: neutral,
        }
 
-      console.log('sent: ', sentCounter)
-      this.setState({ setCounter: sentCounter })
+
+      this.setState({ counter: tempCounter })
       this.setState({data : data})
   })
   .catch((error) => {
@@ -103,14 +115,14 @@ class App extends React.Component {
 
         i++
     }
-    var sentCounter = {
+    var tempCounter = {
         positive: positive,
         negative: negative,
         neutral: neutral,
      }
 
-    console.log('sent: ', sentCounter)
-    this.setState({ setCounter: sentCounter })
+    console.log('sent: ', tempCounter)
+    this.setState({ counter: tempCounter })
     //this.setState({data : data}) settare i nuovi dati
 
       }else if(this.state.toDate==null){
@@ -133,14 +145,14 @@ class App extends React.Component {
     }
 
 
-    var sentCounter = {
+    var tempCounter = {
         positive: positive,
         negative: negative,
         neutral: neutral,
      }
 
-    console.log('sent: ', sentCounter)
-    this.setState({ setCounter: sentCounter })
+    console.log('sent: ', tempCounter)
+    this.setState({ counter: tempCounter })
     //this.setState({data : data}) settare i nuovi dati
 
       }else if(this.state.fromDate!=null && this.state.fromDate!=null){
@@ -162,14 +174,14 @@ class App extends React.Component {
           i++
       }
 
-      var sentCounter = {
+      var tempCounter = {
           positive: positive,
           negative: negative,
           neutral: neutral,
        }
 
-      console.log('sent: ', sentCounter)
-      this.setState({ setCounter: sentCounter })
+      console.log('sent: ', tempCounter)
+      this.setState({ counter: tempCounter })
       //this.setState({data : data}) settare i nuovi dati
 
       }
@@ -177,8 +189,96 @@ class App extends React.Component {
 
   }
 
-  prova = () => {
-    alert(this.state.toDate<this.state.data[0].created_at)
+  handleCategory = (event) => {
+    this.state.flagType = event.target.value
+    this.query()
+  }
+
+  query = () => {
+   
+    var negative = 0
+    var positive = 0
+    var neutral = 0
+    var i=0
+    var tempCounter
+
+    switch(this.state.flagType){
+      case'0':
+     
+      while(i<this.state.data.length){
+        if (this.state.data[i].sentiment['sent-it'].sentiment=='negative')
+          negative++
+        else if (this.state.data[i].sentiment['sent-it'].sentiment=='positive')
+          positive ++
+        else
+          neutral ++
+        i++
+      }
+      i=0
+      while(i<this.state.data.length){
+        if (this.state.data[i].sentiment['feel-it'].sentiment=='negative')
+          negative++
+        else if (this.state.data[i].sentiment['feel-it'].sentiment=='positive')
+          positive ++
+        else
+          neutral ++
+        i++
+      }
+
+      tempCounter = {
+        positive: positive,
+        negative: negative,
+        neutral: neutral,
+     }
+      break;
+
+      case'1':
+          
+        while(i<this.state.data.length){
+          if (this.state.data[i].sentiment['sent-it'].sentiment=='negative')
+            negative++
+          else if (this.state.data[i].sentiment['sent-it'].sentiment=='positive')
+            positive ++
+          else
+            neutral ++
+          i++
+        }
+        tempCounter = {
+          positive: positive,
+          negative: negative,
+          neutral: neutral,
+       }
+        break;
+
+
+      case'2':
+
+      while(i<this.state.data.length){
+        if (this.state.data[i].sentiment['feel-it'].sentiment=='negative')
+          negative++
+        else if (this.state.data[i].sentiment['feel-it'].sentiment=='positive')
+          positive ++
+        else
+          neutral ++
+        i++
+      }
+      tempCounter = {
+        positive: positive,
+        negative: negative,
+        neutral: neutral,
+     }
+      break;
+
+    }
+    
+    
+    console.log('sent: ', tempCounter)
+    this.setState({ counter: tempCounter })
+    //this.setState({data : data})
+  }
+
+  prova = (event) => {
+    
   }
 
 
@@ -291,10 +391,10 @@ class App extends React.Component {
                         <div className="col-md-9">
                           <div className="stat-cards-info">
                             <center><h4>Category</h4><br />
-                              <select id="sel1" >
-                                <option>All</option>
-                                <option>Sent-it</option>
-                                <option>Feel-it</option>
+                              <select id="sel1" onChange={this.handleCategory} >
+                                <option value="0">All</option>
+                                <option value="1">Sent-it</option>
+                                <option value="2">Feel-it</option>
 
                               </select>
 
@@ -322,7 +422,7 @@ class App extends React.Component {
                         <div className="col-md-10 col-xl-10">
                           <div className="stat-cards-info">
                             <center><h4>Tags</h4><br />
-                            <SearchBar placeholder="Enter Tags" data={BookData} />
+                            <SearchFilters/>
                               
                             </center>
                           </div>
@@ -363,17 +463,17 @@ class App extends React.Component {
                 <div className="row">
                   <div className="col-lg-9">
                     <div className="chart">
-                      <BarChart  negative={this.state.setCounter.negative}
-                       neutral={this.state.setCounter.neutral}
-                       positive={this.state.setCounter.positive}/>
+                      <BarChart  negative={this.state.counter.negative}
+                       neutral={this.state.counter.neutral}
+                       positive={this.state.counter.positive}/>
                     </div>
                   </div>
                   <div className="col-lg-3">
                     <div className="chart">
                       <PieChart
-                      negative={this.state.setCounter.negative}
-                      neutral={this.state.setCounter.neutral}
-                      positive={this.state.setCounter.positive} />
+                      negative={this.state.counter.negative}
+                      neutral={this.state.counter.neutral}
+                      positive={this.state.counter.positive} />
                     </div>
                   </div>
                 </div>

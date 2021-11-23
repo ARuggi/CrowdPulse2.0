@@ -1,77 +1,54 @@
+import React from 'react'
+import ReactTags from 'react-tag-autocomplete'
 import '../searchbar.css';
 
-import React, { useState } from "react";
-import SearchIcon from "@material-ui/icons/Search";
-import CloseIcon from "@material-ui/icons/Close";
+//https://www.npmjs.com/package/react-tag-autocomplete
+class SearchFilters extends React.Component {
+  constructor (props) {
+    super(props)
 
-function SearchBar({ placeholder, data }) {
-
-    const [filteredData, setFilteredData] = useState([]);
-    const [wordEntered, setWordEntered] = useState("");
-
-    let filter = []
-
-    const insertTag = (value) => {
-      var newArray = filter.slice();    
-      newArray.push(value.title);   
-      filter = newArray
-      alert(filter)
+    this.state = {
+      tags: [
+        
+      ],
+      suggestions: [
+        { id: 3, name: "Covid" },
+        { id: 4, name: "Pandemia" },
+        { id: 5, name: "Covid19" },
+        { id: 6, name: "PAndemia" }
+      ]
     }
-  
-    const handleFilter = (event) => {
-      const searchWord = event.target.value;
-      setWordEntered(searchWord);
-      const newFilter = data.filter((value) => {
-        return value.title.toLowerCase().includes(searchWord.toLowerCase());
-      });
-  
-      if (searchWord === "") {
-        setFilteredData([]);
-      } else {
-        setFilteredData(newFilter);
-      }
-    };
-  
-    const clearInput = () => {
-      setFilteredData([]);
-      setWordEntered("");
-    };
 
-
-    return (
-      <div>
-      <div className="search">
-        <div className="searchInputs">
-          <input
-            type="text"
-            placeholder={placeholder}
-            value={wordEntered}
-            onChange={handleFilter}
-          />
-          <div className="searchIcon">
-            {filteredData.length === 0 ? (
-              <SearchIcon />
-            ) : (
-              <CloseIcon id="clearBtn" onClick={clearInput} />
-            )}
-          </div>
-
-        </div>
-        {filteredData.length != 0 && (
-          <div className="dataResult">
-            {filteredData.slice(0, 15).map((value, key) => {
-              return (
-                <a className="dataItem" onClick={insertTag}  target="_blank">
-                  <p>{value.title} </p>
-                </a>
-              );
-            })}
-          </div>
-        )}
-      </div>
-            {filter}
-      </div>
-    );
+    this.reactTags = React.createRef()
   }
-  
-  export default SearchBar;
+
+  onDelete (i) {
+    const tags = this.state.tags.slice(0)
+    tags.splice(i, 1)
+    this.setState({ tags })
+  }
+
+  onAddition (tag) {
+    const tags = [].concat(this.state.tags, tag)
+    this.setState({ tags })
+  }
+
+  render () {
+    return (
+     
+      <ReactTags
+        ref={this.reactTags}
+        tags={this.state.tags}
+        suggestions={this.state.suggestions}
+        onDelete={this.onDelete.bind(this)}
+        onAddition={this.onAddition.bind(this)} 
+        classNames="searh"
+        />
+     
+
+    )
+  }
+}
+
+
+export default SearchFilters
