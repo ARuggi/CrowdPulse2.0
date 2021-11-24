@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import SearchFilters from '../components/SearchFilters';
 import React from 'react';
-
+import DisplayTable from './TweetsTable';
 
 class TweetList extends React.Component {
     constructor (props) {
@@ -186,7 +186,7 @@ class TweetList extends React.Component {
             <div className="row">
               <div className="col-lg-12">
                 <div className="chart">
-                  
+                  <DisplayTable/>
                 </div>
               </div>
 
