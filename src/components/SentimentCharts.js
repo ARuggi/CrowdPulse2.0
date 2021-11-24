@@ -11,6 +11,7 @@ class SentimentCharts extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
+            totalTweets: 0,
             flagType: 0,
             counter : [],
             data: [],
@@ -27,6 +28,7 @@ class SentimentCharts extends React.Component {
           var positive = 0
           var neutral = 0
           var i=0
+          this.state.totalTweets = data.length
           while(i<data.length){
               if (data[i].sentiment['sent-it'].sentiment=='negative')
                   negative++
@@ -279,17 +281,14 @@ class SentimentCharts extends React.Component {
         <main className="main users chart-page" id="skip-target">
           <div className="container">
             <h1>CrowdPulse</h1>
-            <br />
+            <br/>
+            <h3>Sentiment - </h3>
+            <br/>
             <div className="row stat-cards">
-              <div className="col-md-6 col-xl-4">
+              <div className="col-md-3 col-xl-2">
                 <article className="stat-cards-item">
                   <div className="row">
-                    <div className="col-md-3">
-                      
-                      <img src="https://img.icons8.com/external-justicon-lineal-justicon/64/000000/external-data-marketing-and-growth-justicon-lineal-justicon.png"/>
-                      
-                    </div>
-                    <div className="col-md-9">
+                    <div className="col-md-12">
                       <div className="stat-cards-info">
                         <center><h4>Category</h4><br />
                           <select id="sel1" onChange={this.handleCategory} >
@@ -314,13 +313,11 @@ class SentimentCharts extends React.Component {
                 </article>
               </div>
 
-              <div className="col-md-6 col-xl-4">
+              <div className="col-md-3 col-xl-4">
                 <article className="stat-cards-item">
                   <div className="row">
-                    <div className="col-md-2 col-xl-2">
-                    <img src="https://img.icons8.com/ios/100/000000/tags--v1.png"/>
-                    </div>
-                    <div className="col-md-10 col-xl-10">
+
+                    <div className="col-md-12 col-xl-12">
                       <div className="stat-cards-info">
                         <center><h4>Tags</h4><br />
                         <SearchFilters/>
@@ -334,7 +331,7 @@ class SentimentCharts extends React.Component {
 
                 </article>
               </div>
-              <div className="col-md-6 col-xl-4">
+              <div className="col-md-3 col-xl-4">
                 <article className="stat-cards-item">
                   <div className="row">
                     <div className="col-md-6">
@@ -354,7 +351,25 @@ class SentimentCharts extends React.Component {
                           onBlur={this.handleToDatesChanges} />
                         </center>
                       </div>
-                    </div>                     
+                    </div> 
+                
+                  </div>
+
+                </article>
+              </div>
+              <div className="col-md-3 col-xl-2">
+                <article className="stat-cards-item">
+                  <div className="row">
+                    <div className="col-md-12 col-xl-12">
+                      <div className="stat-cards-info">
+                        <center><h4>Total Tweets</h4><br />
+                           <h1> {this.state.totalTweets} </h1>
+                          
+                        </center>
+                      </div>
+                    </div>
+
+
                   </div>
 
                 </article>
