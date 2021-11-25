@@ -7,6 +7,7 @@ import SearchFilters from '../components/SearchFilters';
 import React from 'react';
 
 
+
 class SentimentCharts extends React.Component {
     constructor (props) {
         super(props)
@@ -14,13 +15,19 @@ class SentimentCharts extends React.Component {
             totalTweets: 0,
             flagType: 0,
             counter : [],
+            oldData : [],
             data: [],
             fromDate: null,
             toDate : null,
+
         }
+
+        this.getSentimentData(props.db)
     }
 
-    getSentimentData = () => {
+    getSentimentData = (db) => {
+
+      //TODO selezione db
         axios.get('/tweet/getAnalyzedData')
         .then((response) => {
           const data = response.data;
@@ -60,6 +67,7 @@ class SentimentCharts extends React.Component {
     
           this.setState({ counter: tempCounter })
           this.setState({data : data})
+          this.setState({oldData : data})
       })
       .catch((error) => {
           console.log('error: ', error)
@@ -86,98 +94,80 @@ class SentimentCharts extends React.Component {
     
       filterDataByDates = () => {
        
-          var negative = 0
-          var positive = 0
-          var neutral = 0
+
+          var tempData = []
           var i=0
+          var j=0
+          this.setState({oldData: this.state.data}) //save last data state
     
           if(this.state.fromDate==null){
            //fromdate Null
     
     
            while(i<this.state.data.length){
-            if (this.state.data[i].sentiment['sent-it'].sentiment=='negative'
-            && this.state.data[i].created_at<this.state.toDate)
-                negative++
-            else if (this.state.data[i].sentiment['sent-it'].sentiment=='positive'
-            && this.state.data[i].created_at<this.state.toDate)
-                positive ++
-            else if (this.state.data[i].sentiment['sent-it'].sentiment=='neutral'
-                && this.state.data[i].created_at<this.state.toDate )
-                neutral ++
+            if (this.state.data[i].created_at<this.state.toDate){
+              tempData[j]= this.state.data[i]
+              j++
+            }else if (this.state.data[i].created_at<this.state.toDate){
+              tempData[j]= this.state.data[i]
+              j++
+            }else if (this.state.data[i].created_at<this.state.toDate ){
+              tempData[j]= this.state.data[i]
+              j++
+            }            
     
             i++
         }
-        var tempCounter = {
-            positive: positive,
-            negative: negative,
-            neutral: neutral,
-         }
-    
-        console.log('sent: ', tempCounter)
-        this.setState({ counter: tempCounter })
-        //this.setState({data : data}) settare i nuovi dati
+
+        this.state.data = tempData//set Data
     
           }else if(this.state.toDate==null){
-            //todate Null
-                            
-            
-                          
+            //todate Null                           
+                                      
            while(i<this.state.data.length){
-            if (this.state.data[i].sentiment['sent-it'].sentiment=='negative'
-            && this.state.data[i].created_at>this.state.fromDate)
-                negative++
-            else if (this.state.data[i].sentiment['sent-it'].sentiment=='positive'
-            && this.state.data[i].created_at>this.state.fromDate)
-                positive ++
-            else if (this.state.data[i].sentiment['sent-it'].sentiment=='neutral'
-                && this.state.data[i].created_at>this.state.fromDate )
-                neutral ++
-    
+            if (this.state.data[i].created_at>this.state.fromDate){
+                tempData[j]= this.state.data[i]
+                j++
+            }else if (this.state.data[i].created_at>this.state.fromDate){
+                tempData[j]= this.state.data[i]
+                j++
+            }else if (this.state.data[i].created_at>this.state.fromDate ){
+                tempData[j]= this.state.data[i]
+                j++
+            }
+                   
             i++
         }
     
     
-        var tempCounter = {
-            positive: positive,
-            negative: negative,
-            neutral: neutral,
-         }
-    
-        console.log('sent: ', tempCounter)
-        this.setState({ counter: tempCounter })
-        //this.setState({data : data}) settare i nuovi dati
+        this.state.data = tempData //save filtered datas
     
           }else if(this.state.fromDate!=null && this.state.fromDate!=null){
                    
             while(i<this.state.data.length){
-              if (this.state.data[i].sentiment['sent-it'].sentiment=='negative'
-              && this.state.data[i].created_at>this.state.fromDate
-              && this.state.data[i].created_at<this.state.toDate)
-                  negative++
-              else if (this.state.data[i].sentiment['sent-it'].sentiment=='positive'
-              && this.state.data[i].created_at>this.state.fromDate
-              && this.state.data[i].created_at<this.state.toDate)
-                  positive ++
-              else if (this.state.data[i].sentiment['sent-it'].sentiment=='neutral'
-                  && this.state.data[i].created_at>this.state.fromDate
-                  && this.state.data[i].created_at<this.state.toDate)
-                  neutral ++
+              if (this.state.data[i].created_at>this.state.fromDate
+              && this.state.data[i].created_at<this.state.toDate){
+                tempData[j]= this.state.data[i]
+                j++
+              }else if (this.state.data[i].created_at>this.state.fromDate
+              && this.state.data[i].created_at<this.state.toDate){
+                tempData[j]= this.state.data[i]
+                j++
+              }else if (this.state.data[i].created_at>this.state.fromDate
+                  && this.state.data[i].created_at<this.state.toDate){
+                    tempData[j]= this.state.data[i]
+                    j++
+                  }
+               
     
               i++
           }
     
-          var tempCounter = {
-              positive: positive,
-              negative: negative,
-              neutral: neutral,
-           }
-    
-          console.log('sent: ', tempCounter)
-          this.setState({ counter: tempCounter })
-          //this.setState({data : data}) settare i nuovi dati
+         this.state.data = tempData //set Data
     
           }
+
+          this.handleQuery()
     
     
       }
@@ -186,6 +176,25 @@ class SentimentCharts extends React.Component {
         this.state.flagType = event.target.value
         this.query()
       }
+
+      handleQuery = () => {
+        if(this.state.data==""){
+          
+          var tempCounter = {
+            positive:0,
+            negative:0,
+            neutral:0
+          }
+          this.state.totalTweets=0
+          this.setState({counter : tempCounter})//reset counters
+          
+          this.setState({data: this.state.oldData}) //save last data state
+          
+        }else{
+          this.state.totalTweets=this.state.data.length
+          this.query()
+        }
+      }
     
       query = () => {
        
@@ -193,25 +202,27 @@ class SentimentCharts extends React.Component {
         var positive = 0
         var neutral = 0
         var i=0
-        var tempCounter
+        var tempCounter 
     
+        
         switch(this.state.flagType){
-          case'0':
+          case 0 :
          
-          while(i<this.state.data.length){
-            if (this.state.data[i].sentiment['sent-it'].sentiment=='negative')
+          while(i<this.state.oldData.length){
+            
+            if (this.state.oldData[i].sentiment['sent-it'].sentiment=='negative')
               negative++
-            else if (this.state.data[i].sentiment['sent-it'].sentiment=='positive')
+            else if (this.state.oldData[i].sentiment['sent-it'].sentiment=='positive')
               positive ++
             else
               neutral ++
             i++
           }
           i=0
-          while(i<this.state.data.length){
-            if (this.state.data[i].sentiment['feel-it'].sentiment=='negative')
+          while(i<this.state.oldData.length){
+            if (this.state.oldData[i].sentiment['feel-it'].sentiment=='negative')
               negative++
-            else if (this.state.data[i].sentiment['feel-it'].sentiment=='positive')
+            else if (this.state.oldData[i].sentiment['feel-it'].sentiment=='positive')
               positive ++
             else
               neutral ++
@@ -225,12 +236,12 @@ class SentimentCharts extends React.Component {
          }
           break;
     
-          case'1':
+          case 1 :
               
-            while(i<this.state.data.length){
-              if (this.state.data[i].sentiment['sent-it'].sentiment=='negative')
+            while(i<this.state.oldData.length){
+              if (this.state.oldData[i].sentiment['sent-it'].sentiment=='negative')
                 negative++
-              else if (this.state.data[i].sentiment['sent-it'].sentiment=='positive')
+              else if (this.state.oldData[i].sentiment['sent-it'].sentiment=='positive')
                 positive ++
               else
                 neutral ++
@@ -244,12 +255,12 @@ class SentimentCharts extends React.Component {
             break;
     
     
-          case'2':
+          case 2 :
     
-          while(i<this.state.data.length){
-            if (this.state.data[i].sentiment['feel-it'].sentiment=='negative')
+          while(i<this.state.oldData.length){
+            if (this.state.oldData[i].sentiment['feel-it'].sentiment=='negative')
               negative++
-            else if (this.state.data[i].sentiment['feel-it'].sentiment=='positive')
+            else if (this.state.oldData[i].sentiment['feel-it'].sentiment=='positive')
               positive ++
             else
               neutral ++
@@ -262,16 +273,15 @@ class SentimentCharts extends React.Component {
          }
           break;
     
-        }
+        }      
+                
         
-        
-        console.log('sent: ', tempCounter)
-        this.setState({ counter: tempCounter })
-        //this.setState({data : data})
+        this.state.counter = tempCounter
+
       }
     
-      prova = (event) => {
-        
+      prova = () => {
+       this.query()
       }
     
       render () {
@@ -282,7 +292,7 @@ class SentimentCharts extends React.Component {
           <div className="container">
             <h1>CrowdPulse</h1>
             <br/>
-            <h3>Sentiment - </h3>
+            <h3>Sentiment - {this.props.db} </h3>
             <br/>
             <div className="row stat-cards">
               <div className="col-md-3 col-xl-2">
@@ -299,11 +309,6 @@ class SentimentCharts extends React.Component {
                           </select>
 
                         </center>
-                        <br/>
-                         <button onClick={this.getSentimentData}>Grafici</button>
-
-                         <br/>
-                         <button onClick={this.prova}>Prova</button>
                       </div>
                     </div>
 

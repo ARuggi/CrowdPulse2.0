@@ -14,8 +14,12 @@ class App extends React.Component {
   
 
   state = {
-    content:0
-  };
+    content:0,
+    db_selected:"db1"  };
+
+  handleDbChange = (db) => {
+    this.setState({db_selected:db})
+  }
 
   displaySentimentCharts = () => {
     this.setState({content:1})
@@ -40,7 +44,7 @@ class App extends React.Component {
     const renderContent = () => {
       switch(this.state.content){
         case(1): 
-          return <SentimentCharts/>;
+          return <SentimentCharts db={this.state.db_selected}/>;
         case(2): 
           return <WordCloud/>;
         case(3): 
@@ -115,7 +119,7 @@ class App extends React.Component {
                     </a>
                     <ul class="cat-sub-menu">
                         <li>
-                            <a href="#">Db1</a>
+                            <a href="#" onClick={() => {this.handleDbChange("Db1")}}>Db1</a>
                         </li>
                         <li>
                             <a href="##">Db2</a>
