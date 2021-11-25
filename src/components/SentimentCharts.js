@@ -345,6 +345,8 @@ class SentimentCharts extends React.Component {
                           <input type="date" 
                           name="startDate"
                           onBlur={this.handleFromDatesChanges}/>
+
+                          
                         </center>
                       </div>
                     </div>

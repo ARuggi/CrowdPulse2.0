@@ -1699,6 +1699,7 @@ input {
   border: solid transparent 2px !important;
 }
 
+
 input[type="checkbox"],
 input[type="radio"] {
   min-height: auto;
@@ -1758,9 +1759,6 @@ input:focus {
   box-shadow: 0 0 0 2px rgba(134, 182, 254, 0.5);
 }
 
-input:enabled:read-write:-webkit-any(:focus, :hover)::-webkit-calendar-picker-indicator {
-  display: none !important;
-}
 
 .check {
   position: relative;
@@ -4237,4 +4235,9 @@ label {
     -ms-flex-direction: column;
     flex-direction: column;
   }
+}
+
+
+.react-tags__search-input{
+  width: 100% !important;
 }
