@@ -21,6 +21,19 @@ router.get('/getAnalyzedData', (req, res) => {
 
     AnalyzedTweetTemplateCopy.find({  })
         .then((data) => {
+            
+            res.json(data);
+        })
+        .catch((error) => {
+            console.log('error: ', error);
+        });
+});
+
+router.get('/getTags', (req, res) => {
+
+    
+    AnalyzedTweetTemplateCopy.find().distinct('tags')
+        .then((data) => {
             console.log('Data: ', data);
             res.json(data);
         })
@@ -28,6 +41,7 @@ router.get('/getAnalyzedData', (req, res) => {
             console.log('error: ', error);
         });
 });
+
 
 router.get('/getAnalyzedSentiment', (req, res) => {
 
@@ -54,7 +68,7 @@ router.get('/getAnalyzedSentiment', (req, res) => {
                 neutral: neutral,
              }
 
-            console.log('sent: ', sentCounter);
+            
             res.json(sentCounter);
         })
         .catch((error) => {
