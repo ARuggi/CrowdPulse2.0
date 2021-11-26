@@ -34,7 +34,6 @@ router.get('/getTags', (req, res) => {
     
     AnalyzedTweetTemplateCopy.find().distinct('tags')
         .then((data) => {
-            console.log('Data: ', data);
             res.json(data);
         })
         .catch((error) => {

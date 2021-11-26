@@ -122,7 +122,7 @@ class App extends React.Component {
                             <a href="#" onClick={() => {this.handleDbChange("Db1")}}>Db1</a>
                         </li>
                         <li>
-                            <a href="##">Db2</a>
+                            <a href="##" onClick={() => {this.handleDbChange("Db2")}}>Db2</a>
                         </li>
                     </ul>
                 </li>

@@ -8,6 +8,7 @@ import React from 'react';
 
 
 
+
 class SentimentCharts extends React.Component {
     constructor (props) {
         super(props)
@@ -21,8 +22,8 @@ class SentimentCharts extends React.Component {
             toDate : null,
 
         }
-
-        this.getSentimentData(props.db)
+        
+        this.getSentimentData(this.props.db)
     }
 
     getSentimentData = (db) => {
@@ -279,10 +280,31 @@ class SentimentCharts extends React.Component {
         this.state.counter = tempCounter
 
       }
+
+      handleTags = (tags) => {
+        
+        console.log(tags)
+        var i =0
+        var j =0
+        var k = 0
+        var temp
+        while(i<this.data.length){
+          j=0
+          while(j<this.data[i].tags.tag_me.length){
+            temp=this.data[i].tags.tag_me[j].split(" : ")
+            alert(temp.find(tags[0].name))
+            //TODO completare ciclo ricerca tags
+            j++
+          }
+          i++
+        }
+      }
     
       prova = () => {
-       this.query()
+       alert("ciao")
       }
+
+      
     
       render () {
           return(
@@ -325,7 +347,7 @@ class SentimentCharts extends React.Component {
                     <div className="col-md-12 col-xl-12">
                       <div className="stat-cards-info">
                         <center><h4>Tags</h4><br />
-                        <SearchFilters/>
+                        <SearchFilters parentCallback = {this.handleTags.bind(this)}/>
                           
                         </center>
                       </div>
