@@ -38,9 +38,9 @@ class SentimentCharts extends React.Component {
           var i=0
           this.state.totalTweets = data.length
           while(i<data.length){
-              if (data[i].sentiment['sent-it'].sentiment=='negative')
+              if (data[i].sentiment['sent-it'].sentiment==='negative')
                   negative++
-              else if (data[i].sentiment['sent-it'].sentiment=='positive')
+              else if (data[i].sentiment['sent-it'].sentiment==='positive')
                   positive ++
               else
                   neutral ++
@@ -49,9 +49,9 @@ class SentimentCharts extends React.Component {
           }
           i=0
           while(i<data.length){
-            if (data[i].sentiment['feel-it'].sentiment=='negative')
+            if (data[i].sentiment['feel-it'].sentiment==='negative')
                 negative++
-            else if (data[i].sentiment['feel-it'].sentiment=='positive')
+            else if (data[i].sentiment['feel-it'].sentiment==='positive')
                 positive ++
             else
                 neutral ++
@@ -78,14 +78,14 @@ class SentimentCharts extends React.Component {
     
       
       handleFromDatesChanges = (event) => {
-        if(event.target.value!=""){
+        if(event.target.value!==""){
           this.state.fromDate = event.target.value
           this.filterDataByDates()
         }
       }
     
       handleToDatesChanges = (event) => {
-        if(event.target.value!=""){
+        if(event.target.value!==""){
           this.state.toDate = event.target.value
           this.filterDataByDates()
         }
@@ -101,7 +101,7 @@ class SentimentCharts extends React.Component {
           var j=0
           this.setState({oldData: this.state.data}) //save last data state
     
-          if(this.state.fromDate==null){
+          if(this.state.fromDate===null){
            //fromdate Null
     
     
@@ -122,7 +122,7 @@ class SentimentCharts extends React.Component {
 
         this.state.data = tempData//set Data
     
-          }else if(this.state.toDate==null){
+          }else if(this.state.toDate===null){
             //todate Null                           
                                       
            while(i<this.state.data.length){
@@ -143,7 +143,7 @@ class SentimentCharts extends React.Component {
     
         this.state.data = tempData //save filtered datas
     
-          }else if(this.state.fromDate!=null && this.state.fromDate!=null){
+          }else if(this.state.fromDate!==null && this.state.fromDate!==null){
                    
             while(i<this.state.data.length){
               if (this.state.data[i].created_at>this.state.fromDate
@@ -175,11 +175,11 @@ class SentimentCharts extends React.Component {
     
       handleCategory = (event) => {
         this.state.flagType = event.target.value
-        this.query()
+        this.handleQuery()
       }
 
       handleQuery = () => {
-        if(this.state.data==""){
+        if(this.state.data.length===0){
           
           var tempCounter = {
             positive:0,
@@ -187,15 +187,70 @@ class SentimentCharts extends React.Component {
             neutral:0
           }
           this.state.totalTweets=0
-          this.setState({counter : tempCounter})//reset counters
-          
+          this.setState({counter : tempCounter})//reset counters        
           this.setState({data: this.state.oldData}) //save last data state
+          
           
         }else{
           this.state.totalTweets=this.state.data.length
           this.query()
         }
       }
+
+      handleTags = (tags) => {
+        if(tags.length>0){
+          
+          this.filterByTags(tags)
+        }else{
+          
+          this.state.data= this.state.oldData
+          console.log(this.state.data)
+          this.handleQuery()
+        }
+      }
+      
+      filterByTags = (tags) => {
+        
+        var i =0
+        var j =0
+        var k = 0
+        var z = 0
+        var temp
+        var tempData = []
+        var flag = false
+
+        //this.setState({oldData: this.state.data}) //save last data state
+        
+        while(i<this.state.data.length){
+          j=0
+          while(j<this.state.data[i].tags.tag_me.length){
+            temp=this.state.data[i].tags.tag_me[j].split(" : ")
+            
+            while(k<tags.length){
+              if(temp.some(a => a.includes(tags[k].name))===true){
+                flag = true               
+              }else{
+                flag = false
+              }
+              k++
+            }
+
+            if(flag===true){
+              tempData[z]= this.state.data[i]
+              z++
+            }
+            k=0
+            j++
+          }
+          i++
+        }
+
+        this.state.data = tempData //set Data
+        console.log(this.state.data)
+        this.handleQuery()
+        
+      }
+
     
       query = () => {
        
@@ -204,26 +259,26 @@ class SentimentCharts extends React.Component {
         var neutral = 0
         var i=0
         var tempCounter 
-    
-        
-        switch(this.state.flagType){
-          case 0 :
+
+
+        if (this.state.flagType===0) {
+          
          
-          while(i<this.state.oldData.length){
+          while(i<this.state.data.length){
             
-            if (this.state.oldData[i].sentiment['sent-it'].sentiment=='negative')
+            if (this.state.data[i].sentiment['sent-it'].sentiment==='negative')
               negative++
-            else if (this.state.oldData[i].sentiment['sent-it'].sentiment=='positive')
+            else if (this.state.data[i].sentiment['sent-it'].sentiment==='positive')
               positive ++
             else
               neutral ++
             i++
           }
           i=0
-          while(i<this.state.oldData.length){
-            if (this.state.oldData[i].sentiment['feel-it'].sentiment=='negative')
+          while(i<this.state.data.length){
+            if (this.state.data[i].sentiment['feel-it'].sentiment==='negative')
               negative++
-            else if (this.state.oldData[i].sentiment['feel-it'].sentiment=='positive')
+            else if (this.state.data[i].sentiment['feel-it'].sentiment==='positive')
               positive ++
             else
               neutral ++
@@ -235,33 +290,12 @@ class SentimentCharts extends React.Component {
             negative: negative,
             neutral: neutral,
          }
-          break;
-    
-          case 1 :
-              
-            while(i<this.state.oldData.length){
-              if (this.state.oldData[i].sentiment['sent-it'].sentiment=='negative')
-                negative++
-              else if (this.state.oldData[i].sentiment['sent-it'].sentiment=='positive')
-                positive ++
-              else
-                neutral ++
-              i++
-            }
-            tempCounter = {
-              positive: positive,
-              negative: negative,
-              neutral: neutral,
-           }
-            break;
-    
-    
-          case 2 :
-    
-          while(i<this.state.oldData.length){
-            if (this.state.oldData[i].sentiment['feel-it'].sentiment=='negative')
+
+        }else if(this.state.flagType===1){
+          while(i<this.state.data.length){
+            if (this.state.data[i].sentiment['sent-it'].sentiment==='negative')
               negative++
-            else if (this.state.oldData[i].sentiment['feel-it'].sentiment=='positive')
+            else if (this.state.data[i].sentiment['sent-it'].sentiment==='positive')
               positive ++
             else
               neutral ++
@@ -272,33 +306,29 @@ class SentimentCharts extends React.Component {
             negative: negative,
             neutral: neutral,
          }
-          break;
-    
-        }      
-                
-        
-        this.state.counter = tempCounter
-
-      }
-
-      handleTags = (tags) => {
-        
-        console.log(tags)
-        var i =0
-        var j =0
-        var k = 0
-        var temp
-        while(i<this.data.length){
-          j=0
-          while(j<this.data[i].tags.tag_me.length){
-            temp=this.data[i].tags.tag_me[j].split(" : ")
-            alert(temp.find(tags[0].name))
-            //TODO completare ciclo ricerca tags
-            j++
+         
+        }else{
+          while(i<this.state.data.length){
+            if (this.state.data[i].sentiment['feel-it'].sentiment==='negative')
+              negative++
+            else if (this.state.data[i].sentiment['feel-it'].sentiment==='positive')
+              positive ++
+            else
+              neutral ++
+            i++
           }
-          i++
-        }
+          tempCounter = {
+            positive: positive,
+            negative: negative,
+            neutral: neutral,
+         }
+        }    
+        
+        this.setState({counter : tempCounter})
+        //this.state.counter = tempCounter
+        
       }
+
     
       prova = () => {
        alert("ciao")
