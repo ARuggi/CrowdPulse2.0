@@ -1230,6 +1230,7 @@ button {
   -o-transition: 0.3s all;
   transition: 0.3s all;
   border: 2px solid transparent;
+  background: transparent;
 }
 
 button:focus {
@@ -4239,6 +4240,18 @@ label {
 
 .react-tags__search-input{
   width: 100% !important;
+  margin-top: 10px;
+}
+
+
+
+
+.react-tags__selected-tag-name{
+  background-color: #E0DEDE !important; 
+  padding: 5px !important;
+  margin: 5px !important; 
+  margin-bottom: 100px !important;
+  border-radius: 10px !important;
 }
 
 .tag{
