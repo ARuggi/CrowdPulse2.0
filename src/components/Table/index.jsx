@@ -1,28 +1,50 @@
 import React, { useState } from "react";
 
 import useTable from "../../hooks/useTable.js";
-import styles from "./table.css";
+import "./table.css";
 import TableFooter from "./TableFooter";
+
+const printTags = (data) =>{
+  var i = 0
+  var temp 
+   const tags = []
+  
+  while(i<data.tags.tag_me.length){
+      temp = data.tags.tag_me[i].split(" : ")
+      tags[i] = {
+        name : temp[0],
+        link : temp[3]
+      }
+      i++
+  }
+
+  return(
+    tags.map(item=>(<a href={item.link} className="tag">{item.name}</a>))
+   
+    )
+  
+}
 
 const Table = ({ data, rowsPerPage }) => {
   const [page, setPage] = useState(1);
   const { slice, range } = useTable(data, page, rowsPerPage);
+  
   return (
     <>
-      <table className={styles.table}>
-        <thead className={styles.tableRowHeader}>
+      <table className="table">
+        <thead className="tableRowHeader">
           <tr>
-            <th className={styles.tableHeader}>Country</th>
-            <th className={styles.tableHeader}>Capital</th>
-            <th className={styles.tableHeader}>Language</th>
+            <th className="tableHeader">Username</th>
+            <th className="tableHeader">Text</th>
+            <th className="tableHeader">Tags</th>
           </tr>
         </thead>
         <tbody>
-          {slice.map((el) => (
-            <tr className={styles.tableRowItems} key={el.id}>
-              <td className={styles.tableCell}>{el.name}</td>
-              <td className={styles.tableCell}>{el.capital}</td>
-              <td className={styles.tableCell}>{el.language}</td>
+          {slice.map((data) => (
+            <tr className="tableRowItems" >
+              <td className="tableCell">{data.author_username}</td>
+              <td className="tableCell">{data.raw_text}</td>
+              <td className="tableCell">{printTags(data)} </td>
             </tr>
           ))}
         </tbody>

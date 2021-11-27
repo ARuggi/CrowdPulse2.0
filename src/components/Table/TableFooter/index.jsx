@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import styles from "./footer.css";
+import "./footer.css";
 
 const TableFooter = ({ range, setPage, page, slice }) => {
   useEffect(() => {
@@ -9,12 +9,12 @@ const TableFooter = ({ range, setPage, page, slice }) => {
     }
   }, [slice, page, setPage]);
   return (
-    <div className={styles.tableFooter}>
+    <div className='tableFooter'>
       {range.map((el, index) => (
         <button
           key={index}
-          className={`${styles.button} ${
-            page === el ? styles.activeButton : styles.inactiveButton
+          className={`button ${
+            page === el ? 'activeButton' : 'inactiveButton'
           }`}
           onClick={() => setPage(el)}
         >

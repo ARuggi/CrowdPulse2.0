@@ -8,18 +8,30 @@ class TweetList extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-            data: [],
-            fromDate: null,
-            toDate : null,
-        }
+          totalTweets: 0,
+          flagType: 0,
+          counter : [],
+          oldData : [],
+          data: [],
+          fromDate: null,
+          toDate : null,
+
+      }
+      
+      this.getSentimentData(this.props.db)
     }
 
-    getSentimentData = () => {
+
+    getSentimentData = (db) => {
+
+      //TODO selezione db
         axios.get('/tweet/getAnalyzedData')
         .then((response) => {
           const data = response.data;
-          var i=0   
-         this.setState({data : data})
+          this.setState({data : data})
+          this.setState({oldData : data})
+          this.setState({totalTweets : data.length})
+
       })
       .catch((error) => {
           console.log('error: ', error)
@@ -29,14 +41,14 @@ class TweetList extends React.Component {
     
       
       handleFromDatesChanges = (event) => {
-        if(event.target.value!=""){
+        if(event.target.value!==""){
           this.state.fromDate = event.target.value
           this.filterDataByDates()
         }
       }
     
       handleToDatesChanges = (event) => {
-        if(event.target.value!=""){
+        if(event.target.value!==""){
           this.state.toDate = event.target.value
           this.filterDataByDates()
         }
@@ -46,58 +58,135 @@ class TweetList extends React.Component {
     
       filterDataByDates = () => {
        
-          var negative = 0
-          var positive = 0
-          var neutral = 0
+
+          var tempData = []
           var i=0
+          var j=0
+          this.setState({oldData: this.state.data}) //save last data state
     
-          if(this.state.fromDate==null){
+          if(this.state.fromDate===null){
            //fromdate Null
     
+    
+           while(i<this.state.data.length){
+            if (this.state.data[i].created_at<this.state.toDate){
+              tempData[j]= this.state.data[i]
+              j++
+            }else if (this.state.data[i].created_at<this.state.toDate){
+              tempData[j]= this.state.data[i]
+              j++
+            }else if (this.state.data[i].created_at<this.state.toDate ){
+              tempData[j]= this.state.data[i]
+              j++
+            }            
+    
+            i++
+        }
 
+        this.setState({data:tempData})
+        this.state.totalTweets=tempData.length
     
-       
+          }else if(this.state.toDate===null){
+            //todate Null                           
+                                      
+           while(i<this.state.data.length){
+            if (this.state.data[i].created_at>this.state.fromDate){
+                tempData[j]= this.state.data[i]
+                j++
+            }else if (this.state.data[i].created_at>this.state.fromDate){
+                tempData[j]= this.state.data[i]
+                j++
+            }else if (this.state.data[i].created_at>this.state.fromDate ){
+                tempData[j]= this.state.data[i]
+                j++
+            }
+                   
+            i++
+        }
     
-        //this.setState({data : data}) settare i nuovi dati
     
-          }else if(this.state.toDate==null){
-            //todate Null
-                            
-
+        this.setState({data:tempData})
+        this.state.totalTweets=tempData.length
     
-       
-
-        //this.setState({data : data}) settare i nuovi dati
+          }else if(this.state.fromDate!==null && this.state.fromDate!==null){
+                   
+            while(i<this.state.data.length){
+              if (this.state.data[i].created_at>this.state.fromDate
+              && this.state.data[i].created_at<this.state.toDate){
+                tempData[j]= this.state.data[i]
+                j++
+              }else if (this.state.data[i].created_at>this.state.fromDate
+              && this.state.data[i].created_at<this.state.toDate){
+                tempData[j]= this.state.data[i]
+                j++
+              }else if (this.state.data[i].created_at>this.state.fromDate
+                  && this.state.data[i].created_at<this.state.toDate){
+                    tempData[j]= this.state.data[i]
+                    j++
+                  }
+               
     
-          }else if(this.state.fromDate!=null && this.state.fromDate!=null){
-
-    
-        
-          
-          //this.setState({data : data}) settare i nuovi dati
-    
+              i++
           }
     
+          this.setState({data:tempData})
+          this.state.totalTweets=tempData.length
+          }
+        
+    
     
       }
-    
-      query = () => {
-       
-        var negative = 0
-        var positive = 0
-        var neutral = 0
-        var i=0
+
+      handleTags = (tags) => {
+        if(tags.length>0){
+          
+          this.filterByTags(tags)
+        }else{
+          this.setState({data:this.state.oldData})
+          this.state.totalTweets=this.state.oldData.length
+          
+        }
+      }
       
-    
-               
+      filterByTags = (tags) => {
         
-       
-        //this.setState({data : data})
-      }
-    
-      prova = (event) => {
+        var i =0
+        var j =0
+        var k = 0
+        var z = 0
+        var temp
+        var tempData = []
+        var flag = false
+        
+        while(i<this.state.data.length){
+          j=0
+          while(j<this.state.data[i].tags.tag_me.length){
+            temp=this.state.data[i].tags.tag_me[j].split(" : ")
+            
+            while(k<tags.length){
+              if(temp.some(a => a.includes(tags[k].name))===true){
+                flag = true               
+              }else{
+                flag = false
+              }
+              k++
+            }
+
+            if(flag===true){
+              tempData[z]= this.state.data[i]
+              z++
+            }
+            k=0
+            j++
+          }
+          i++
+        }
+
+        this.setState({data:tempData})
+        this.state.totalTweets=tempData.length
         
       }
+   
     
       render () {
           return(
@@ -106,46 +195,18 @@ class TweetList extends React.Component {
         <main className="main users chart-page" id="skip-target">
           <div className="container">
             <h1>CrowdPulse</h1>
-            <br />
+            <br/>
+            <h3>Tweet List - {this.props.db} </h3>
+            <br/>
             <div className="row stat-cards">
-              <div className="col-md-6 col-xl-4">
+              <div className="col-md-4 col-xl-5">
                 <article className="stat-cards-item">
                   <div className="row">
-                    <div className="col-md-3">
-                      
-                      <img src="https://img.icons8.com/external-justicon-lineal-justicon/64/000000/external-data-marketing-and-growth-justicon-lineal-justicon.png"/>
-                      
-                    </div>
-                    <div className="col-md-9">
-                      <div className="stat-cards-info">
-                        <center><h4>Category</h4><br />
 
-
-                        </center>
-                        <br/>
-                         <button onClick={this.getSentimentData}>Grafici</button>
-
-                         <br/>
-                         <button onClick={this.prova}>Prova</button>
-                      </div>
-                    </div>
-
-
-                  </div>
-
-                </article>
-              </div>
-
-              <div className="col-md-6 col-xl-4">
-                <article className="stat-cards-item">
-                  <div className="row">
-                    <div className="col-md-2 col-xl-2">
-                    <img src="https://img.icons8.com/ios/100/000000/tags--v1.png"/>
-                    </div>
-                    <div className="col-md-10 col-xl-10">
+                    <div className="col-md-12 col-xl-12">
                       <div className="stat-cards-info">
                         <center><h4>Tags</h4><br />
-                        <SearchFilters/>
+                        <SearchFilters parentCallback = {this.handleTags.bind(this)}/>
                           
                         </center>
                       </div>
@@ -156,7 +217,7 @@ class TweetList extends React.Component {
 
                 </article>
               </div>
-              <div className="col-md-6 col-xl-4">
+              <div className="col-md-4 col-xl-5">
                 <article className="stat-cards-item">
                   <div className="row">
                     <div className="col-md-6">
@@ -165,6 +226,8 @@ class TweetList extends React.Component {
                           <input type="date" 
                           name="startDate"
                           onBlur={this.handleFromDatesChanges}/>
+
+                          
                         </center>
                       </div>
                     </div>
@@ -176,7 +239,25 @@ class TweetList extends React.Component {
                           onBlur={this.handleToDatesChanges} />
                         </center>
                       </div>
-                    </div>                     
+                    </div> 
+                
+                  </div>
+
+                </article>
+              </div>
+              <div className="col-md-4 col-xl-2">
+                <article className="stat-cards-item">
+                  <div className="row">
+                    <div className="col-md-12 col-xl-12">
+                      <div className="stat-cards-info">
+                        <center><h4>Total Tweets</h4><br />
+                           <h1> {this.state.totalTweets} </h1>
+                          
+                        </center>
+                      </div>
+                    </div>
+
+
                   </div>
 
                 </article>
@@ -186,7 +267,7 @@ class TweetList extends React.Component {
             <div className="row">
               <div className="col-lg-12">
                 <div className="chart">
-                  <DisplayTable/>
+                  <DisplayTable data={this.state.data}/>
                 </div>
               </div>
 

@@ -2805,8 +2805,7 @@ label {
 }
 
 .chart {
-  width: 100%;
-  height: 500px;
+  width: 100%;  
   margin-bottom: 20px;
   -webkit-box-shadow: 0px 15px 50px 0px rgba(160, 163, 189, 0.1);
   box-shadow: 0px 15px 50px 0px rgba(160, 163, 189, 0.1);
@@ -4240,4 +4239,12 @@ label {
 
 .react-tags__search-input{
   width: 100% !important;
+}
+
+.tag{
+  background: #E0DEDE;
+  padding: 5px;
+  margin: 3px;
+  margin-bottom: 100px;
+  border-radius: 10px ;
 }

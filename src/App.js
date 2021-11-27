@@ -50,7 +50,7 @@ class App extends React.Component {
         case(3): 
           return <TimeLines/>;
         case(4):
-          return <TweetList/>;
+          return <TweetList db={this.state.db_selected}/>;
       }
     }
 
