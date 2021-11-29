@@ -4,6 +4,7 @@ import SentimentCharts from './components/SentimentCharts';
 import TweetList from './components/TweetList';
 import WordCloud from './components/WordCloud';
 import TimeLines from './components/TimeLines';
+import Maps from './components/Maps';
 
 
 import React from 'react';
@@ -37,6 +38,10 @@ class App extends React.Component {
     this.setState({content:4})
   }
 
+  displayMaps = () => {
+    this.setState({content:5})
+  }
+
 
 
 
@@ -48,9 +53,11 @@ class App extends React.Component {
         case(2): 
           return <WordCloud/>;
         case(3): 
-          return <TimeLines/>;
+          return <TimeLines db={this.state.db_selected}/>;
         case(4):
           return <TweetList db={this.state.db_selected}/>;
+        case(5): 
+          return <Maps db={this.state.db_selected}/>;
       }
     }
 
@@ -63,6 +70,12 @@ class App extends React.Component {
         {/* Favicon */}
         {/* Custom styles */}
         <link rel="stylesheet" href="./css/style.css" />
+
+        <link rel="stylesheet" 
+      href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""/>
+      
         <div className="layer" />
         {/* ! Body */}
         <a className="skip-link sr-only" href="#skip-target">Skip to content</a>
@@ -104,6 +117,9 @@ class App extends React.Component {
                         </li>
                         <li>
                             <a href="#tweetlist" onClick={() => {this.displayTweetList()}}>Tweet List</a>
+                        </li>
+                        <li>
+                            <a href="#maps" onClick={() => {this.displayMaps()}}>Maps</a>
                         </li>
                     </ul>
                 </li>
