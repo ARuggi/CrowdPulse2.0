@@ -42,6 +42,18 @@ router.get('/getTags', (req, res) => {
 });
 
 
+router.get('/getDataSortByDate', (req, res) => {
+
+    
+    AnalyzedTweetTemplateCopy.find().sort('created_at')
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+            console.log('error: ', error);
+        });
+});
+
 
 router.get('/getDataTimelines', (req, res) => {
 

@@ -2,8 +2,8 @@ import axios from 'axios';
 
 import SearchFilters from '../components/SearchFilters';
 import React from 'react';
-import DisplayTable from './TweetsTable';
-import LineChart from './Charts/LineChart';
+import TimeLineChart from './Charts/TimeLineChart';
+
 
 class TweetList extends React.Component {
     constructor (props) {
@@ -14,6 +14,7 @@ class TweetList extends React.Component {
           counter : [],
           oldData : [],
           data: [],
+          dataGroupByDates:[],
           fromDate: null,
           toDate : null,
 
@@ -26,13 +27,33 @@ class TweetList extends React.Component {
     getData = (db) => {
 
       //TODO selezione db
-        axios.get('/tweet/getDataTimelines')
+        axios.get('/tweet/getDataSortByDate')
         .then((response) => {
           const data = response.data;
-          this.setState({data : data})
-          this.setState({oldData : data})
-          this.setState({totalTweets : data.length})
-          console.log(data)
+          var dataGroupByDates=[{
+            id:null,
+            counter:0
+          }]
+          var i = 0
+          var j = 0
+
+          var dt = data[0].created_at.substring(0, 10)
+          dataGroupByDates[0].id=dt
+          
+          while(i<data.length){
+
+            if(dataGroupByDates[j].id===data[i].created_at.substring(0, 10)){
+              dataGroupByDates[j].counter++
+            }else{
+              j++
+              dataGroupByDates[j].id=data[i].created_at.substring(0, 10)
+              dataGroupByDates[j].counter++
+            }
+            i++
+          }
+
+          this.setState({dataGroupByDates : dataGroupByDates})
+          
 
       })
       .catch((error) => {
@@ -269,7 +290,7 @@ class TweetList extends React.Component {
             <div className="row">
               <div className="col-lg-12">
                 <div className="chart">
-                  <LineChart/>
+                  <TimeLineChart data={this.state.dataGroupByDates}/>
                 </div>
               </div>
 
