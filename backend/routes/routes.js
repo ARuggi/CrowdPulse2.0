@@ -42,6 +42,32 @@ router.get('/getTags', (req, res) => {
 });
 
 
+
+router.get('/getDataTimelines', (req, res) => {
+
+    
+    AnalyzedTweetTemplateCopy.aggregate(
+        [
+          {
+            $group: {
+              _id: { $dateToString: { format: "%y-%m-$d", date: ISODATE("$created_at") } },
+            }
+          }
+        ],
+    
+        function(err, result) {
+          if (err) {
+            console.log(err)
+            res.send(err);
+          } else {
+            console.log(result)
+            res.json(result);
+          }
+        }
+      );
+   
+});
+
 router.get('/getAnalyzedSentiment', (req, res) => {
 
     AnalyzedTweetTemplateCopy.find({  })
