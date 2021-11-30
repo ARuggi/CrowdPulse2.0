@@ -20,10 +20,20 @@ class TweetList extends React.Component {
           data: [],
           fromDate: null,
           toDate : null,
+          markers : [
+          ],
 
       }
+
+      var marker = {
+        lat : 0,
+        lng : 0,
+        author : null,
+        text : null
+      }
       
-      this.getSentimentData(this.props.db)
+     
+            this.getSentimentData(this.props.db)
     }
 
 
@@ -36,6 +46,7 @@ class TweetList extends React.Component {
           this.setState({data : data})
           this.setState({oldData : data})
           this.setState({totalTweets : data.length})
+          this.query()
 
       })
       .catch((error) => {
@@ -192,6 +203,41 @@ class TweetList extends React.Component {
         
       }
    
+      query = () => {
+        var i = 0
+        var j = 0
+
+        var marker = {
+          lat:null,
+          lng:null,
+          author:null,
+          text:null
+        }
+
+        var markers = []
+        while(i<this.state.data.length){
+          if(this.state.data[i].geo!==undefined){
+            console.log(this.state.data[i])
+            if(this.state.data[i].geo.coordinates!==undefined){
+
+              markers.push({
+                lat:this.state.data[i].geo.coordinates.latitude,
+                lng:this.state.data[i].geo.coordinates.longitude,
+                text:this.state.data[i].raw_text,
+                author:this.state.data[i].author_username
+              })
+              j++
+            }
+            
+            i++
+          }else{
+            i++
+          }
+        }
+        
+        this.setState({markers:markers})
+        
+      }
     
       render () {
           return(
@@ -276,11 +322,17 @@ class TweetList extends React.Component {
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <Marker position={[41.29246 ,13.5736108]}>
-                    <Popup>
-                         A pretty CSS3 popup. <br /> Easily customizable.
-                    </Popup>
-                    </Marker>
+ {this.state.markers.map((city, idx) => (
+                <Marker
+                  position={[city.lat, city.lng]}
+                  key={idx}
+                >
+                  <Popup>
+                    <b>
+                      {city.author}, {city.text}
+                    </b>
+                  </Popup>
+                </Marker>))}
                 </MapContainer>
                 </div>
               </div>
