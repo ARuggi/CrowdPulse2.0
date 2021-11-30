@@ -24,20 +24,12 @@ class TweetList extends React.Component {
           ],
 
       }
-
-      var marker = {
-        lat : 0,
-        lng : 0,
-        author : null,
-        text : null
-      }
-      
      
-            this.getSentimentData(this.props.db)
+      this.getData(this.props.db)
     }
 
 
-    getSentimentData = (db) => {
+    getData = (db) => {
 
       //TODO selezione db
         axios.get('/tweet/getAnalyzedData')
@@ -99,7 +91,7 @@ class TweetList extends React.Component {
             i++
         }
 
-        this.setState({data:tempData})
+        this.state.data=tempData
         this.state.totalTweets=tempData.length
     
           }else if(this.state.toDate===null){
@@ -121,7 +113,7 @@ class TweetList extends React.Component {
         }
     
     
-        this.setState({data:tempData})
+        this.state.data=tempData
         this.state.totalTweets=tempData.length
     
           }else if(this.state.fromDate!==null && this.state.fromDate!==null){
@@ -145,9 +137,11 @@ class TweetList extends React.Component {
               i++
           }
     
-          this.setState({data:tempData})
+          this.state.data=tempData
           this.state.totalTweets=tempData.length
           }
+
+          this.query()
         
     
     
@@ -158,8 +152,10 @@ class TweetList extends React.Component {
           
           this.filterByTags(tags)
         }else{
-          this.setState({data:this.state.oldData})
+          
+          this.state.data = this.state.oldData
           this.state.totalTweets=this.state.oldData.length
+          this.query()
           
         }
       }
@@ -198,26 +194,22 @@ class TweetList extends React.Component {
           i++
         }
 
-        this.setState({data:tempData})
+       
+        this.state.data=tempData
         this.state.totalTweets=tempData.length
+        this.query()
         
       }
    
       query = () => {
         var i = 0
-        var j = 0
-
-        var marker = {
-          lat:null,
-          lng:null,
-          author:null,
-          text:null
-        }
-
+       
         var markers = []
+
+        
         while(i<this.state.data.length){
           if(this.state.data[i].geo!==undefined){
-            console.log(this.state.data[i])
+            
             if(this.state.data[i].geo.coordinates!==undefined){
 
               markers.push({
@@ -226,7 +218,7 @@ class TweetList extends React.Component {
                 text:this.state.data[i].raw_text,
                 author:this.state.data[i].author_username
               })
-              j++
+             
             }
             
             i++
@@ -236,6 +228,9 @@ class TweetList extends React.Component {
         }
         
         this.setState({markers:markers})
+        this.state.markers=markers
+       
+        
         
       }
     
