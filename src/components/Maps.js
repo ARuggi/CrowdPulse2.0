@@ -141,7 +141,7 @@ class TweetList extends React.Component {
           this.state.totalTweets=tempData.length
           }
 
-          this.query()
+          this.handleQuery()
         
     
     
@@ -201,6 +201,21 @@ class TweetList extends React.Component {
         
       }
    
+
+      handleQuery = () =>{
+        if(this.state.data.length===0){
+          
+          this.state.totalTweets=0
+          this.setState({data: this.state.oldData}) //save last data state
+          this.query()
+          
+        }else{
+          this.state.totalTweets=this.state.data.length
+          this.query()
+        }
+      }
+      
+
       query = () => {
         var i = 0
        

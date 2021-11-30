@@ -62,7 +62,18 @@ class TweetList extends React.Component {
           var tempData = []
           var i=0
           var j=0
-          this.setState({oldData: this.state.data}) //save last data state
+         
+
+          if(this.state.data.length===0){
+              
+            this.state.totalTweets=0
+            this.state.data= this.state.oldData //save last data state
+             
+          }else{
+            this.state.oldData= this.state.data
+          }
+        
+          
     
           if(this.state.fromDate===null){
            //fromdate Null

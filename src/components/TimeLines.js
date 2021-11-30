@@ -22,38 +22,18 @@ class TweetList extends React.Component {
       
       this.getData(this.props.db)
     }
-
-
+  
+     
     getData = (db) => {
 
       //TODO selezione db
         axios.get('/tweet/getDataSortByDate')
         .then((response) => {
           const data = response.data;
-          var dataGroupByDates=[{
-            id:null,
-            counter:0
-          }]
-          var i = 0
-          var j = 0
-
-          var dt = data[0].created_at.substring(0, 10)
-          dataGroupByDates[0].id=dt
-          
-          while(i<data.length){
-
-            if(dataGroupByDates[j].id===data[i].created_at.substring(0, 10)){
-              dataGroupByDates[j].counter++
-            }else{
-              j++
-              dataGroupByDates[j].id=data[i].created_at.substring(0, 10)
-              dataGroupByDates[j].counter++
-            }
-            i++
-          }
-
-          this.setState({dataGroupByDates : dataGroupByDates})
-          
+          this.setState({data : data})
+          this.setState({oldData : data})
+          this.setState({totalTweets : data.length})
+          this.query()
 
       })
       .catch((error) => {
@@ -61,7 +41,6 @@ class TweetList extends React.Component {
       });
     
       }
-    
       
       handleFromDatesChanges = (event) => {
         if(event.target.value!==""){
@@ -80,94 +59,107 @@ class TweetList extends React.Component {
     
     
       filterDataByDates = () => {
-       
-
-          var tempData = []
-          var i=0
-          var j=0
-          this.setState({oldData: this.state.data}) //save last data state
-    
-          if(this.state.fromDate===null){
-           //fromdate Null
-    
-    
-           while(i<this.state.data.length){
-            if (this.state.data[i].created_at<this.state.toDate){
-              tempData[j]= this.state.data[i]
-              j++
-            }else if (this.state.data[i].created_at<this.state.toDate){
-              tempData[j]= this.state.data[i]
-              j++
-            }else if (this.state.data[i].created_at<this.state.toDate ){
-              tempData[j]= this.state.data[i]
-              j++
-            }            
-    
-            i++
-        }
-
-        this.setState({data:tempData})
-        this.state.totalTweets=tempData.length
-    
-          }else if(this.state.toDate===null){
-            //todate Null                           
-                                      
-           while(i<this.state.data.length){
-            if (this.state.data[i].created_at>this.state.fromDate){
-                tempData[j]= this.state.data[i]
-                j++
-            }else if (this.state.data[i].created_at>this.state.fromDate){
-                tempData[j]= this.state.data[i]
-                j++
-            }else if (this.state.data[i].created_at>this.state.fromDate ){
-                tempData[j]= this.state.data[i]
-                j++
-            }
-                   
-            i++
-        }
-    
-    
-        this.setState({data:tempData})
-        this.state.totalTweets=tempData.length
-    
-          }else if(this.state.fromDate!==null && this.state.fromDate!==null){
-                   
-            while(i<this.state.data.length){
-              if (this.state.data[i].created_at>this.state.fromDate
-              && this.state.data[i].created_at<this.state.toDate){
-                tempData[j]= this.state.data[i]
-                j++
-              }else if (this.state.data[i].created_at>this.state.fromDate
-              && this.state.data[i].created_at<this.state.toDate){
-                tempData[j]= this.state.data[i]
-                j++
-              }else if (this.state.data[i].created_at>this.state.fromDate
-                  && this.state.data[i].created_at<this.state.toDate){
-                    tempData[j]= this.state.data[i]
-                    j++
-                  }
-               
-    
-              i++
-          }
-    
-          this.setState({data:tempData})
-          this.state.totalTweets=tempData.length
-          }
-        
-    
-    
+      
+        var tempData = []
+        var i=0
+        var j=0
+        this.setState({oldData: this.state.data}) //save last data state
+  
+        if(this.state.fromDate===null){
+         //fromdate Null
+  
+  
+         while(i<this.state.data.length){
+          if (this.state.data[i].created_at<this.state.toDate){
+            tempData[j]= this.state.data[i]
+            j++
+          }else if (this.state.data[i].created_at<this.state.toDate){
+            tempData[j]= this.state.data[i]
+            j++
+          }else if (this.state.data[i].created_at<this.state.toDate ){
+            tempData[j]= this.state.data[i]
+            j++
+          }            
+  
+          i++
       }
+
+      this.state.data = tempData//set Data
+  
+        }else if(this.state.toDate===null){
+          //todate Null                           
+                                    
+         while(i<this.state.data.length){
+          if (this.state.data[i].created_at>this.state.fromDate){
+              tempData[j]= this.state.data[i]
+              j++
+          }else if (this.state.data[i].created_at>this.state.fromDate){
+              tempData[j]= this.state.data[i]
+              j++
+          }else if (this.state.data[i].created_at>this.state.fromDate ){
+              tempData[j]= this.state.data[i]
+              j++
+          }
+                 
+          i++
+      }
+  
+  
+      this.state.data = tempData //save filtered datas
+  
+        }else if(this.state.fromDate!==null && this.state.fromDate!==null){
+                 
+          while(i<this.state.data.length){
+            if (this.state.data[i].created_at>this.state.fromDate
+            && this.state.data[i].created_at<this.state.toDate){
+              tempData[j]= this.state.data[i]
+              j++
+            }else if (this.state.data[i].created_at>this.state.fromDate
+            && this.state.data[i].created_at<this.state.toDate){
+              tempData[j]= this.state.data[i]
+              j++
+            }else if (this.state.data[i].created_at>this.state.fromDate
+                && this.state.data[i].created_at<this.state.toDate){
+                  tempData[j]= this.state.data[i]
+                  j++
+                }
+             
+  
+            i++
+        }
+  
+       this.state.data = tempData //set Data
+  
+        }
+
+        this.handleQuery()
+  
+  
+    }
 
       handleTags = (tags) => {
         if(tags.length>0){
           
           this.filterByTags(tags)
         }else{
-          this.setState({data:this.state.oldData})
-          this.state.totalTweets=this.state.oldData.length
           
+          this.state.data = this.state.oldData
+          this.state.totalTweets=this.state.oldData.length
+          this.query()
+          
+        }
+      }
+
+      handleQuery = () =>{
+        if(this.state.data.length===0){
+          
+          this.state.totalTweets=0
+          this.setState({data: this.state.oldData}) //save last data state
+          this.query()
+          
+        }else{
+          this.state.totalTweets=this.state.data.length
+          this.query()
         }
       }
       
@@ -205,8 +197,42 @@ class TweetList extends React.Component {
           i++
         }
 
-        this.setState({data:tempData})
+       
+        this.state.data=tempData
         this.state.totalTweets=tempData.length
+        this.query()
+        
+      }
+
+      query = () =>{
+        var dataGroupByDates=[{
+          id:null,
+          counter:null
+        }]
+
+        var i = 0
+        var j = 0
+        
+        if(this.state.data.length!==0){
+          var dt = this.state.data[0].created_at.substring(0, 10)
+          dataGroupByDates[0].id=dt
+
+          while(i<this.state.data.length){
+
+            if(dataGroupByDates[j].id===this.state.data[i].created_at.substring(0, 10)){
+              dataGroupByDates[j].counter++
+            }else{
+              j++
+              dataGroupByDates[j].id=this.state.data[i].created_at.substring(0, 10)
+              dataGroupByDates[j].counter++
+            }
+            i++
+          }
+          
+        }
+
+        this.setState({dataGroupByDates : dataGroupByDates})
+        this.state.dataGroupByDates=dataGroupByDates
         
       }
    
@@ -229,7 +255,7 @@ class TweetList extends React.Component {
                     <div className="col-md-12 col-xl-12">
                       <div className="stat-cards-info">
                         <center><h4>Tags</h4><br />
-
+                        <SearchFilters parentCallback = {this.handleTags.bind(this)}/>
                           
                         </center>
                       </div>
