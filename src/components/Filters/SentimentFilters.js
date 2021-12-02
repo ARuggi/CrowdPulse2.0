@@ -5,6 +5,8 @@ import React from 'react';
 class Filters extends React.Component{
     constructor (props) {
         super(props)
+        this.sendData=this.sendData.bind(this)
+
         this.state = {
             totalTweets: 0,
             flagType: 0,
@@ -62,6 +64,7 @@ class Filters extends React.Component{
           this.setState({ counter: tempCounter })
           this.setState({data : data})
           this.setState({oldData : data})
+          this.sendData()
       })
       .catch((error) => {
           console.log('error: ', error)
@@ -168,6 +171,7 @@ class Filters extends React.Component{
     
       handleCategory = (event) => {
         this.state.flagType = event.target.value
+        
         this.handleQuery()
       }
 
@@ -180,9 +184,10 @@ class Filters extends React.Component{
             neutral:0
           }
           this.state.totalTweets=0
-          this.setState({counter : tempCounter})//reset counters        
+          this.state.counter = tempCounter //reset counter
+          //this.setState({counter : tempCounter})//reset counters        
           this.setState({data: this.state.oldData}) //save last data state
-          
+          this.sendData()
           
         }else{
           this.state.totalTweets=this.state.data.length
@@ -197,7 +202,6 @@ class Filters extends React.Component{
         }else{
           
           this.state.data= this.state.oldData
-          console.log(this.state.data)
           this.handleQuery()
         }
       }
@@ -246,8 +250,85 @@ class Filters extends React.Component{
 
     
 
-      query = () =>{
-        this.props.parentCallback(this.state.data);
+      query = () => {
+       
+        var negative = 0
+        var positive = 0
+        var neutral = 0
+        var i=0
+        var tempCounter 
+
+
+        if (this.state.flagType===0) {
+          
+         
+          while(i<this.state.data.length){
+            
+            if (this.state.data[i].sentiment['sent-it'].sentiment==='negative')
+              negative++
+            else if (this.state.data[i].sentiment['sent-it'].sentiment==='positive')
+              positive ++
+            else
+              neutral ++
+            i++
+          }
+          i=0
+          while(i<this.state.data.length){
+            if (this.state.data[i].sentiment['feel-it'].sentiment==='negative')
+              negative++
+            else if (this.state.data[i].sentiment['feel-it'].sentiment==='positive')
+              positive ++
+            else
+              neutral ++
+            i++
+          }
+    
+          tempCounter = {
+            positive: positive,
+            negative: negative,
+            neutral: neutral,
+         }
+
+        }else if(this.state.flagType===1){
+          while(i<this.state.data.length){
+            if (this.state.data[i].sentiment['sent-it'].sentiment==='negative')
+              negative++
+            else if (this.state.data[i].sentiment['sent-it'].sentiment==='positive')
+              positive ++
+            else
+              neutral ++
+            i++
+          }
+          tempCounter = {
+            positive: positive,
+            negative: negative,
+            neutral: neutral,
+         }
+         
+        }else{
+          while(i<this.state.data.length){
+            if (this.state.data[i].sentiment['feel-it'].sentiment==='negative')
+              negative++
+            else if (this.state.data[i].sentiment['feel-it'].sentiment==='positive')
+              positive ++
+            else
+              neutral ++
+            i++
+          }
+          tempCounter = {
+            positive: positive,
+            negative: negative,
+            neutral: neutral,
+         }
+        }    
+        
+        this.state.counter = tempCounter
+        this.sendData()  
+      }
+
+
+      sendData = () =>{
+        this.props.parentCallback(this.state.counter);
       }
       
       

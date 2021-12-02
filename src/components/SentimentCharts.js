@@ -14,101 +14,17 @@ class SentimentCharts extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      data:[],
       counter:[],
       }
 
 }
-    handleQuery = (data) => {
+    handleQuery = (counter) => {
       
-      this.setState({data:data})
-      this.state.data = data
-      this.query()
+      this.setState({counter:counter})
+      this.state.counter = counter
     }
 
-    query = () => {
-       
-        var negative = 0
-        var positive = 0
-        var neutral = 0
-        var i=0
-        var tempCounter 
 
-
-        if (this.state.flagType===0) {
-          
-         
-          while(i<this.state.data.length){
-            
-            if (this.state.data[i].sentiment['sent-it'].sentiment==='negative')
-              negative++
-            else if (this.state.data[i].sentiment['sent-it'].sentiment==='positive')
-              positive ++
-            else
-              neutral ++
-            i++
-          }
-          i=0
-          while(i<this.state.data.length){
-            if (this.state.data[i].sentiment['feel-it'].sentiment==='negative')
-              negative++
-            else if (this.state.data[i].sentiment['feel-it'].sentiment==='positive')
-              positive ++
-            else
-              neutral ++
-            i++
-          }
-    
-          tempCounter = {
-            positive: positive,
-            negative: negative,
-            neutral: neutral,
-         }
-
-        }else if(this.state.flagType===1){
-          while(i<this.state.data.length){
-            if (this.state.data[i].sentiment['sent-it'].sentiment==='negative')
-              negative++
-            else if (this.state.data[i].sentiment['sent-it'].sentiment==='positive')
-              positive ++
-            else
-              neutral ++
-            i++
-          }
-          tempCounter = {
-            positive: positive,
-            negative: negative,
-            neutral: neutral,
-         }
-         
-        }else{
-          while(i<this.state.data.length){
-            if (this.state.data[i].sentiment['feel-it'].sentiment==='negative')
-              negative++
-            else if (this.state.data[i].sentiment['feel-it'].sentiment==='positive')
-              positive ++
-            else
-              neutral ++
-            i++
-          }
-          tempCounter = {
-            positive: positive,
-            negative: negative,
-            neutral: neutral,
-         }
-        }    
-        
-        this.setState({counter : tempCounter})
-        //this.state.counter = tempCounter
-        
-      }
-
-    
-      prova = () => {
-       alert("ciao")
-      }
-
-      
     
       render () {
           return(
