@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import SearchFilters from '../components/SearchFilters';
+import SearchFilters from './Filters/SearchFilters';
 import React from 'react';
 import TimeLineChart from './Charts/TimeLineChart';
 

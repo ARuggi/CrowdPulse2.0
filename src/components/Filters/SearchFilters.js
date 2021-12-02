@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactTags from 'react-tag-autocomplete'
-import '../searchbar.css';
+import './css/searchbar.css';
 import axios from 'axios';
 
 
