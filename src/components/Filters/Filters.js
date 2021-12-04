@@ -1,6 +1,9 @@
 import axios from 'axios';
 import SearchFilters from './SearchFilters';
+import SearchText from './SearchText';
+import SearchHashtag from './SearchHashtag';
 import React from 'react';
+
 
 class Filters extends React.Component{
 
@@ -194,6 +197,81 @@ class Filters extends React.Component{
         this.query()
         
       }
+
+
+
+      handleText = (text) => {
+        if(text.length>0){
+          
+          this.filterByText(text)
+        }else{
+          
+          this.state.data = this.state.oldData
+          this.state.totalTweets=this.state.oldData.length
+          this.query()
+          
+        }
+      }
+
+      filterByText = (text) => {
+        
+      }
+
+      handleHashtags = (hashtags) => {
+        if(hashtags.length>0){
+          
+          this.filterByHashtags(hashtags)
+        }else{
+          
+          this.state.data = this.state.oldData
+          this.state.totalTweets=this.state.oldData.length
+          this.query()
+          
+        }
+      }
+
+      filterByHashtags = (hashtags) => {
+        var i =0
+        var j =0
+        var k = 0
+        var z = 0
+        var temp
+        var tempData = []
+        var flag = false
+
+        while(i<this.state.data.length){
+          j=0
+          if(this.state.data[i].twitter_entities.hashtags!==undefined){
+            while(j<this.state.data[i].twitter_entities.hashtags.length){
+              temp=this.state.data[i].twitter_entities.hashtags[j]
+             
+              while(k<hashtags.length){
+                if(temp===hashtags[k].name){
+                  flag = true               
+                }else{
+                  flag = false
+                }
+                k++
+              }
+  
+              if(flag===true){
+                tempData[z]= this.state.data[i]
+                z++
+              }
+              k=0
+              j++
+            }
+          }
+
+          i++
+        }
+
+               
+        this.state.data=tempData
+        this.state.totalTweets=tempData.length
+        this.query()
+      }
+
    
 
       handleQuery = () =>{
@@ -217,7 +295,8 @@ class Filters extends React.Component{
 
     
     render(){
-        return(            
+        return(      
+          <>      
         <div className="row stat-cards">
         <div className="col-md-4 col-xl-5">
           <article className="stat-cards-item">
@@ -282,7 +361,69 @@ class Filters extends React.Component{
 
           </article>
         </div>
-      </div>)
+      </div>
+      <br></br>
+      <div className="row stat-cards">
+        <div className="col-md-4 col-xl-4">
+          <article className="stat-cards-item">
+            <div className="row">
+
+              <div className="col-md-12 col-xl-12">
+                <div className="stat-cards-info">
+                  <center><h4>Tags</h4><br />
+                  <SearchFilters parentCallback = {this.handleTags.bind(this)}/>
+                    
+                  </center>
+                </div>
+              </div>
+
+
+            </div>
+
+          </article>
+        </div>
+
+        <div className="col-md-4 col-xl-4">
+          <article className="stat-cards-item">
+            <div className="row">
+
+              <div className="col-md-12 col-xl-12">
+                <div className="stat-cards-info">
+                  <center><h4>Processed Text</h4><br />
+                  <SearchText parentCallback = {this.handleText.bind(this)}/>
+                    
+                  </center>
+                </div>
+              </div>
+
+
+            </div>
+
+          </article>
+        </div>
+
+        <div className="col-md-4 col-xl-4">
+          <article className="stat-cards-item">
+            <div className="row">
+
+              <div className="col-md-12 col-xl-12">
+                <div className="stat-cards-info">
+                  <center><h4>Hashtags</h4><br />
+                  <SearchHashtag parentCallback = {this.handleHashtags.bind(this)}/>
+                    
+                  </center>
+                </div>
+              </div>
+
+
+            </div>
+
+          </article>
+        </div>
+
+
+      </div>
+      </>)
     }
 }
 

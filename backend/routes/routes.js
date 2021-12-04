@@ -41,6 +41,19 @@ router.get('/getTags', (req, res) => {
         });
 });
 
+router.get('/getHashtags', (req, res) => {
+
+    
+    AnalyzedTweetTemplateCopy.find().distinct('twitter_entities')
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+            console.log('error: ', error);
+        });
+});
+
+
 
 router.get('/getDataSortByDate', (req, res) => {
 
