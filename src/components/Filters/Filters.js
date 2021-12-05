@@ -144,6 +144,8 @@ class Filters extends React.Component{
     
       }
 
+      //TAGS SECTION
+
       handleTags = (tags) => {
         if(tags.length>0){
           
@@ -198,7 +200,7 @@ class Filters extends React.Component{
         
       }
 
-
+/// TEXT SECTION
 
       handleText = (text) => {
         if(text.length>0){
@@ -214,8 +216,47 @@ class Filters extends React.Component{
       }
 
       filterByText = (text) => {
+
+        var i =0
+        var j =0
+        var k = 0
+        var z = 0
+        var temp
+        var tempData = []
+        var flag = false
+        
+        while(i<this.state.data.length){
+          j=0
+          while(j<this.state.data[i].spacy.processed_text.length){
+            temp=this.state.data[i].spacy.processed_text[j].split(" ")
+            
+            while(k<text.length){
+              if(temp.some(a => a.includes(text[k].name))===true){
+                flag = true               
+              }else{
+                flag = false
+              }
+              k++
+            }
+
+            if(flag===true){
+              tempData[z]= this.state.data[i]
+              z++
+            }
+            k=0
+            j++
+          }
+          i++
+        }
+
+       
+        this.state.data=tempData
+        this.state.totalTweets=tempData.length
+        this.query()
         
       }
+
+  /// HASHTAGS SECTION
 
       handleHashtags = (hashtags) => {
         if(hashtags.length>0){

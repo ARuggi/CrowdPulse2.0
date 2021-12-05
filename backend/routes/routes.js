@@ -54,6 +54,19 @@ router.get('/getHashtags', (req, res) => {
 });
 
 
+router.get('/getText', (req, res) => {
+
+    
+    AnalyzedTweetTemplateCopy.find().distinct('spacy')
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+            console.log('error: ', error);
+        });
+});
+
+
 
 router.get('/getDataSortByDate', (req, res) => {
 

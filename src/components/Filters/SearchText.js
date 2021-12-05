@@ -10,7 +10,7 @@ class SearchText extends React.Component {
     super()
     this.sendData = this.sendData.bind(this)
     this.state = {
-      tags: [     
+      text: [     
       ],
       suggestions: [
        
@@ -19,24 +19,22 @@ class SearchText extends React.Component {
   
 
 
-    axios.get('/tweet/getTags')
+    axios.get('/tweet/getText')
         .then((response) => {
           var i = 0
           var j = 0
-          var k =0
+
           const data = response.data
-          var temp =data[0].tag_me[0].split(" : ")
+          var temp =data[0].processed_text[0].split(" ")
           var tempSuggestion = []
           while(i<data.length){
             j=0
-            while(j<data[i].tag_me.length){
-              temp=data[i].tag_me[j].split(" : ")
-              
-              tempSuggestion[k] = {
-                id:temp[1],
-                name: temp[0]
-              }
-              k++
+            while(j<data[i].processed_text.length){
+              temp=data[i].processed_text[j].split(" ")
+              tempSuggestion.push({
+                id:0,
+                name: temp[0]              
+              })
               j++
             }
 
@@ -44,7 +42,7 @@ class SearchText extends React.Component {
           }
           
           
-          //this.state.suggestions = tempSuggestion
+          console.log(tempSuggestion)
           this.setState({suggestions: tempSuggestion})
          
            
@@ -60,21 +58,21 @@ class SearchText extends React.Component {
 
   
 
-  sendData = (tags) =>{
-    this.props.parentCallback(tags);
+  sendData = (text) =>{
+    this.props.parentCallback(text);
   }
 
   onDelete (i) {
-    const tags = this.state.tags.slice(0)
-    tags.splice(i, 1)
-    this.setState({ tags })
-    this.sendData(tags)
+    const text = this.state.text.slice(0)
+    text.splice(i, 1)
+    this.setState({ text })
+    this.sendData(text)
   }
 
   onAddition (tag) {
-    const tags = [].concat(this.state.tags, tag)
-    this.setState({ tags })
-    this.sendData(tags)
+    const text = [].concat(this.state.text, tag)
+    this.setState({ text })
+    this.sendData(text)
   }
 
   render () {
@@ -83,7 +81,7 @@ class SearchText extends React.Component {
       <ReactTags
         placeholderText="Add new Text"
         ref={this.reactTags}
-        tags={this.state.tags}
+        tags={this.state.text}
         suggestions={this.state.suggestions}
         onDelete={this.onDelete.bind(this)}
         onAddition={this.onAddition.bind(this)} 
