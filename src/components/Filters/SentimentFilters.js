@@ -1,6 +1,8 @@
 import axios from 'axios';
 import SearchFilters from './SearchFilters';
 import React from 'react';
+import SearchText from './SearchText';
+import SearchHashtag from './SearchHashtag';
 
 class Filters extends React.Component{
     constructor (props) {
@@ -248,6 +250,121 @@ class Filters extends React.Component{
         
       }
 
+
+      
+/// TEXT SECTION
+
+handleText = (text) => {
+  if(text.length>0){
+    
+    this.filterByText(text)
+  }else{
+    
+    this.state.data = this.state.oldData
+    this.state.totalTweets=this.state.oldData.length
+    this.query()
+    
+  }
+}
+
+filterByText = (text) => {
+
+  var i =0
+  var j =0
+  var k = 0
+  var z = 0
+  var temp
+  var tempData = []
+  var flag = false
+  
+  while(i<this.state.data.length){
+    j=0
+    while(j<this.state.data[i].spacy.processed_text.length){
+      temp=this.state.data[i].spacy.processed_text[j].split(" ")
+      
+      while(k<text.length){
+        if(temp.some(a => a.includes(text[k].name))===true){
+          flag = true               
+        }else{
+          flag = false
+        }
+        k++
+      }
+
+      if(flag===true){
+        tempData[z]= this.state.data[i]
+        z++
+      }
+      k=0
+      j++
+    }
+    i++
+  }
+
+ 
+  this.state.data=tempData
+  this.state.totalTweets=tempData.length
+  this.query()
+  
+}
+
+/// HASHTAGS SECTION
+
+handleHashtags = (hashtags) => {
+  if(hashtags.length>0){
+    
+    this.filterByHashtags(hashtags)
+  }else{
+    
+    this.state.data = this.state.oldData
+    this.state.totalTweets=this.state.oldData.length
+    this.query()
+    
+  }
+}
+
+filterByHashtags = (hashtags) => {
+  var i =0
+  var j =0
+  var k = 0
+  var z = 0
+  var temp
+  var tempData = []
+  var flag = false
+
+  while(i<this.state.data.length){
+    j=0
+    if(this.state.data[i].twitter_entities.hashtags!==undefined){
+      while(j<this.state.data[i].twitter_entities.hashtags.length){
+        temp=this.state.data[i].twitter_entities.hashtags[j]
+       
+        while(k<hashtags.length){
+          if(temp===hashtags[k].name){
+            flag = true               
+          }else{
+            flag = false
+          }
+          k++
+        }
+
+        if(flag===true){
+          tempData[z]= this.state.data[i]
+          z++
+        }
+        k=0
+        j++
+      }
+    }
+
+    i++
+  }
+
+         
+  this.state.data=tempData
+  this.state.totalTweets=tempData.length
+  this.query()
+}
+
     
 
       query = () => {
@@ -336,8 +453,9 @@ class Filters extends React.Component{
     
     render(){
         return(            
+          <>
             <div className="row stat-cards">
-              <div className="col-md-3 col-xl-2">
+              <div className="col-md-4 col-xl-4">
                 <article className="stat-cards-item">
                   <div className="row">
                     <div className="col-md-12">
@@ -359,26 +477,7 @@ class Filters extends React.Component{
 
                 </article>
               </div>
-
-              <div className="col-md-3 col-xl-4">
-                <article className="stat-cards-item">
-                  <div className="row">
-
-                    <div className="col-md-12 col-xl-12">
-                      <div className="stat-cards-info">
-                        <center><h4>Tags</h4><br />
-                        <SearchFilters parentCallback = {this.handleTags.bind(this)}/>
-                          
-                        </center>
-                      </div>
-                    </div>
-
-
-                  </div>
-
-                </article>
-              </div>
-              <div className="col-md-3 col-xl-4">
+              <div className="col-md-6 col-xl-6">
                 <article className="stat-cards-item">
                   <div className="row">
                     <div className="col-md-6">
@@ -406,7 +505,7 @@ class Filters extends React.Component{
 
                 </article>
               </div>
-              <div className="col-md-3 col-xl-2">
+              <div className="col-md-2 col-xl-2">
                 <article className="stat-cards-item">
                   <div className="row">
                     <div className="col-md-12 col-xl-12">
@@ -424,6 +523,68 @@ class Filters extends React.Component{
                 </article>
               </div>
             </div>
+            <br></br>
+            <div className="row stat-cards">
+            <div className="col-md-4 col-xl-4">
+              <article className="stat-cards-item">
+                <div className="row">
+    
+                  <div className="col-md-12 col-xl-12">
+                    <div className="stat-cards-info">
+                      <center><h4>Tags</h4><br />
+                      <SearchFilters parentCallback = {this.handleTags.bind(this)}/>
+                        
+                      </center>
+                    </div>
+                  </div>
+    
+    
+                </div>
+    
+              </article>
+            </div>
+    
+            <div className="col-md-4 col-xl-4">
+              <article className="stat-cards-item">
+                <div className="row">
+    
+                  <div className="col-md-12 col-xl-12">
+                    <div className="stat-cards-info">
+                      <center><h4>Processed Text</h4><br />
+                      <SearchText parentCallback = {this.handleText.bind(this)}/>
+                        
+                      </center>
+                    </div>
+                  </div>
+    
+    
+                </div>
+    
+              </article>
+            </div>
+    
+            <div className="col-md-4 col-xl-4">
+              <article className="stat-cards-item">
+                <div className="row">
+    
+                  <div className="col-md-12 col-xl-12">
+                    <div className="stat-cards-info">
+                      <center><h4>Hashtags</h4><br />
+                      <SearchHashtag parentCallback = {this.handleHashtags.bind(this)}/>
+                        
+                      </center>
+                    </div>
+                  </div>
+    
+    
+                </div>
+    
+              </article>
+            </div>
+    
+    
+          </div>
+          </>
       )
     }
 }

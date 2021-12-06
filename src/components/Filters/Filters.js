@@ -339,25 +339,8 @@ class Filters extends React.Component{
         return(      
           <>      
         <div className="row stat-cards">
-        <div className="col-md-4 col-xl-5">
-          <article className="stat-cards-item">
-            <div className="row">
 
-              <div className="col-md-12 col-xl-12">
-                <div className="stat-cards-info">
-                  <center><h4>Tags</h4><br />
-                  <SearchFilters parentCallback = {this.handleTags.bind(this)}/>
-                    
-                  </center>
-                </div>
-              </div>
-
-
-            </div>
-
-          </article>
-        </div>
-        <div className="col-md-4 col-xl-5">
+        <div className="col-md-6 col-xl-6">
           <article className="stat-cards-item">
             <div className="row">
               <div className="col-md-6">
@@ -385,7 +368,7 @@ class Filters extends React.Component{
 
           </article>
         </div>
-        <div className="col-md-4 col-xl-2">
+        <div className="col-md-6 col-xl-6">
           <article className="stat-cards-item">
             <div className="row">
               <div className="col-md-12 col-xl-12">
