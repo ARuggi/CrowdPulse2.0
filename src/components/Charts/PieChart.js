@@ -1,22 +1,23 @@
 import React from "react";
 import {Pie} from 'react-chartjs-2';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-
-
 
 
 const PieChart = (props) =>{
   var negative = props.negative
   var positive = props.positive
   var neutral = props.neutral
-    return(
-        <div>
-            <Pie
-	 data = {{
+  var data2 = [negative, neutral, positive]
+
+  
+  let total = data2.reduce((accumulator, currentValue) => accumulator + currentValue);
+    
+  var labels = data2.map(value => Math.round((value / total) * 100) + '%');
+
+  const  data = {
     labels: [
-      'Negative',
-      'Neutral',
-      'Positive'
+      'Negative = ' + labels[0],
+      'Neutral = '  + labels[1],
+      'Positive = ' + labels[2]
     ],
     datasets: [{
       label: 'Sentiment',
@@ -29,34 +30,35 @@ const PieChart = (props) =>{
       ],
       hoverOffset: 4
     }]
-  }}
+  }
+  const option = {
+    tooltips: {
+      callbacks: {
+        label: function(tooltipItem, data) {
+          var dataset = data.datasets[tooltipItem.datasetIndex];
+          var meta = dataset._meta[Object.keys(dataset._meta)[0]];
+          var total = meta.total;
+          var currentValue = dataset.data[tooltipItem.index];
+          var percentage = parseFloat((currentValue/total*100).toFixed(1));
+          return currentValue + ' (' + percentage + '%)';
+        },
+        title: function(tooltipItem, data) {
+          return data.labels[tooltipItem[0].index];
+        }
+      }
+    }
+  }
+
+    return(
+        <div>
+            <Pie
+	 data = {data}
 	width={100}
 	height={400}
-  plugins={[ChartDataLabels]}
-	options={{ 
-    tooltips: {
-      enabled: false
-      
-  },
-  plugins: {
-      datalabels: {
-        formatter: (value, ctx) => {
-          let sum = 0;
-          let dataArr = ctx.chart.data.datasets[0].data;
-          dataArr.map(data => {
-              sum += data;
-          });
-          let percentage = (value*100 / sum).toFixed(2)+"%";
-          return percentage;
-      },
-      color: '#fff',
-      }
-  }
-      ,
-    maintainAspectRatio: false }}
             />
         </div>
     )
+    
 }
 
 export default PieChart
