@@ -81,7 +81,14 @@ class Filters extends React.Component{
       handleFromDatesChanges = (event) => {
         if(event.target.value!==""){
           this.state.fromDate = event.target.value
-          this.filterDataByDates()
+          if(this.state.data.length===0){
+            this.state.data= this.state.oldData
+            this.filterDataByDates()
+            this.resetFilter()
+          }else{
+            this.filterDataByDates()
+          }
+         
         }else{
           this.resetFilter()
         }
@@ -90,7 +97,13 @@ class Filters extends React.Component{
       handleToDatesChanges = (event) => {
         if(event.target.value!==""){
           this.state.toDate = event.target.value
-          this.filterDataByDates()
+          if(this.state.data.length===0){
+            this.state.data= this.state.oldData
+            this.filterDataByDates()
+            this.resetFilter()
+          }else{
+            this.filterDataByDates()
+          }
         }else{
           this.resetFilter()
         }
