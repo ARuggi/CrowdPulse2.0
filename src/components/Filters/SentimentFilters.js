@@ -15,6 +15,9 @@ class Filters extends React.Component{
             counter : [],
             oldData : [],
             data: [],
+            tags : [],
+            text : [],
+            hashtags : [],
             fromDate: null,
             toDate : null,
 
@@ -79,6 +82,8 @@ class Filters extends React.Component{
         if(event.target.value!==""){
           this.state.fromDate = event.target.value
           this.filterDataByDates()
+        }else{
+          this.resetFilter()
         }
       }
     
@@ -86,18 +91,17 @@ class Filters extends React.Component{
         if(event.target.value!==""){
           this.state.toDate = event.target.value
           this.filterDataByDates()
+        }else{
+          this.resetFilter()
         }
     
       }
     
     
-      filterDataByDates = () => {
-       
-
+      filterDataByDates = () => {   
           var tempData = []
           var i=0
           var j=0
-          this.setState({oldData: this.state.data}) //save last data state
     
           if(this.state.fromDate===null){
            //fromdate Null
@@ -172,8 +176,7 @@ class Filters extends React.Component{
       }
     
       handleCategory = (event) => {
-        this.state.flagType = event.target.value
-        
+        this.state.flagType = event.target.value        
         this.handleQuery()
       }
 
@@ -187,8 +190,6 @@ class Filters extends React.Component{
           }
           this.state.totalTweets=0
           this.state.counter = tempCounter //reset counter
-          //this.setState({counter : tempCounter})//reset counters        
-          this.setState({data: this.state.oldData}) //save last data state
           this.sendData()
           
         }else{
@@ -198,13 +199,14 @@ class Filters extends React.Component{
       }
 
       handleTags = (tags) => {
-        if(tags.length>0){
-          
+        if(tags.length>this.state.tags.length){
+          this.state.tags = tags
           this.filterByTags(tags)
-        }else{
-          
-          this.state.data= this.state.oldData
           this.handleQuery()
+        }else{
+          this.state.tags = tags
+          this.resetFilter()
+
         }
       }
       
@@ -246,7 +248,7 @@ class Filters extends React.Component{
 
         this.state.data = tempData //set Data
         
-        this.handleQuery()
+        
         
       }
 
@@ -255,15 +257,14 @@ class Filters extends React.Component{
 /// TEXT SECTION
 
 handleText = (text) => {
-  if(text.length>0){
-    
+  if(text.length>this.state.text.length){
+
+    this.state.text=text 
     this.filterByText(text)
+    this.handleQuery()
   }else{
-    
-    this.state.data = this.state.oldData
-    this.state.totalTweets=this.state.oldData.length
-    this.query()
-    
+   this.state.text=text 
+   this.resetFilter()
   }
 }
 
@@ -304,22 +305,20 @@ filterByText = (text) => {
  
   this.state.data=tempData
   this.state.totalTweets=tempData.length
-  this.query()
+
   
 }
 
 /// HASHTAGS SECTION
 
 handleHashtags = (hashtags) => {
-  if(hashtags.length>0){
-    
+  if(hashtags.length>this.state.hashtags.length){
+    this.state.hashtags=hashtags
     this.filterByHashtags(hashtags)
+    this.handleQuery()
   }else{
-    
-    this.state.data = this.state.oldData
-    this.state.totalTweets=this.state.oldData.length
-    this.query()
-    
+    this.state.hashtags=hashtags
+    this.resetFilter()
   }
 }
 
@@ -362,7 +361,7 @@ filterByHashtags = (hashtags) => {
          
   this.state.data=tempData
   this.state.totalTweets=tempData.length
-  this.query()
+  
 }
 
     
@@ -374,10 +373,9 @@ filterByHashtags = (hashtags) => {
         var neutral = 0
         var i=0
         var tempCounter 
-
         
         if (this.state.flagType===0 || this.state.flagType==='0') {
-          
+        
           
          
           while(i<this.state.data.length){
@@ -443,6 +441,30 @@ filterByHashtags = (hashtags) => {
         
         this.state.counter = tempCounter
         this.sendData()  
+      }
+
+      resetFilter = () => {
+
+        this.state.data= this.state.oldData
+
+        if(this.state.fromDate!==null || this.state.toDate!==null ){
+          this.filterDataByDates()
+        }
+        
+        if(this.state.tags.length!==0){
+          this.filterByTags(this.state.tags)
+        }
+
+        if(this.state.hashtags.length!==0){
+          this.filterByHashtags(this.state.hashtags)
+        }
+
+        if(this.state.text.length!==0){
+          this.filterByText(this.state.text)
+        }
+
+        this.handleQuery()
+
       }
 
 
