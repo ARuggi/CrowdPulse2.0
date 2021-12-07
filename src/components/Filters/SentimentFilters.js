@@ -375,8 +375,9 @@ filterByHashtags = (hashtags) => {
         var i=0
         var tempCounter 
 
-
-        if (this.state.flagType===0) {
+        
+        if (this.state.flagType===0 || this.state.flagType==='0') {
+          
           
          
           while(i<this.state.data.length){
@@ -406,7 +407,7 @@ filterByHashtags = (hashtags) => {
             neutral: neutral,
          }
 
-        }else if(this.state.flagType===1){
+        }else if(this.state.flagType===1 || this.state.flagType==='1'){
           while(i<this.state.data.length){
             if (this.state.data[i].sentiment['sent-it'].sentiment==='negative')
               negative++
@@ -423,6 +424,7 @@ filterByHashtags = (hashtags) => {
          }
          
         }else{
+          
           while(i<this.state.data.length){
             if (this.state.data[i].sentiment['feel-it'].sentiment==='negative')
               negative++
