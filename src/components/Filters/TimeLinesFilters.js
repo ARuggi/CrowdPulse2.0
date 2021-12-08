@@ -17,6 +17,9 @@ class Filters extends React.Component{
           counter : [],
           oldData : [],
           data: [],
+          tags : [],
+          text : [],
+          hashtags : [],
           fromDate: null,
           toDate : null,
 
@@ -43,22 +46,41 @@ class Filters extends React.Component{
         });
       
         }
-    
+
+      //DATES FILTERS
       
       handleFromDatesChanges = (event) => {
         if(event.target.value!==""){
           this.state.fromDate = event.target.value
-          this.filterDataByDates()
+          if(this.state.data.length===0){
+            this.state.data= this.state.oldData
+            this.filterDataByDates()
+            this.resetFilter()
+          }else{
+            this.filterDataByDates()
+          }
+         
+        }else{
+          this.resetFilter()
         }
       }
     
       handleToDatesChanges = (event) => {
         if(event.target.value!==""){
           this.state.toDate = event.target.value
-          this.filterDataByDates()
+          if(this.state.data.length===0){
+            this.state.data= this.state.oldData
+            this.filterDataByDates()
+            this.resetFilter()
+          }else{
+            this.filterDataByDates()
+          }
+        }else{
+          this.resetFilter()
         }
     
       }
+    
     
     
       filterDataByDates = () => {
@@ -143,19 +165,18 @@ class Filters extends React.Component{
     
     
       }
+         //END DATES FILTERS
 
       //TAGS SECTION
-
       handleTags = (tags) => {
-        if(tags.length>0){
-          
+        if(tags.length>this.state.tags.length){
+          this.state.tags = tags
           this.filterByTags(tags)
+          this.handleQuery()
         }else{
-          
-          this.state.data = this.state.oldData
-          this.state.totalTweets=this.state.oldData.length
-          this.query()
-          
+          this.state.tags = tags
+          this.resetFilter()
+
         }
       }
       
@@ -196,24 +217,23 @@ class Filters extends React.Component{
        
         this.state.data=tempData
         this.state.totalTweets=tempData.length
-        this.query()
+        this.handleQuery()
         
       }
 
 /// TEXT SECTION
 
-      handleText = (text) => {
-        if(text.length>0){
-          
-          this.filterByText(text)
-        }else{
-          
-          this.state.data = this.state.oldData
-          this.state.totalTweets=this.state.oldData.length
-          this.query()
-          
-        }
-      }
+handleText = (text) => {
+  if(text.length>this.state.text.length){
+
+    this.state.text=text 
+    this.filterByText(text)
+    this.handleQuery()
+  }else{
+   this.state.text=text 
+   this.resetFilter()
+  }
+}
 
       filterByText = (text) => {
 
@@ -252,25 +272,22 @@ class Filters extends React.Component{
        
         this.state.data=tempData
         this.state.totalTweets=tempData.length
-        this.query()
+        this.handleQuery()
         
       }
 
   /// HASHTAGS SECTION
 
-      handleHashtags = (hashtags) => {
-        if(hashtags.length>0){
-          
-          this.filterByHashtags(hashtags)
-        }else{
-          
-          this.state.data = this.state.oldData
-          this.state.totalTweets=this.state.oldData.length
-          this.query()
-          
-        }
-      }
-
+  handleHashtags = (hashtags) => {
+    if(hashtags.length>this.state.hashtags.length){
+      this.state.hashtags=hashtags
+      this.filterByHashtags(hashtags)
+      this.handleQuery()
+    }else{
+      this.state.hashtags=hashtags
+      this.resetFilter()
+    }
+  }
       filterByHashtags = (hashtags) => {
         var i =0
         var j =0
@@ -310,23 +327,47 @@ class Filters extends React.Component{
                
         this.state.data=tempData
         this.state.totalTweets=tempData.length
-        this.query()
+        this.handleQuery()
       }
 
+            //RESET SECTIOn
+            resetFilter = () => {
+
+              this.state.data= this.state.oldData
+      
+              if(this.state.fromDate!==null || this.state.toDate!==null ){
+                this.filterDataByDates()
+              }
+              
+              if(this.state.tags.length!==0){
+                this.filterByTags(this.state.tags)
+              }
+      
+              if(this.state.hashtags.length!==0){
+                this.filterByHashtags(this.state.hashtags)
+              }
+      
+              if(this.state.text.length!==0){
+                this.filterByText(this.state.text)
+              }
+      
+              this.handleQuery()
+      
+            }
    
 
-      handleQuery = () =>{
-        if(this.state.data.length===0){
-          
-          this.state.totalTweets=0
-          this.setState({data: this.state.oldData}) //save last data state
-          this.query()
-          
-        }else{
-          this.state.totalTweets=this.state.data.length
-          this.query()
-        }
-      }
+
+            handleQuery = () =>{
+              if(this.state.data.length===0){
+                
+                this.state.totalTweets=0
+                this.query()
+                
+              }else{
+                this.state.totalTweets=this.state.data.length
+                this.query()
+              }
+            }
 
       query = () =>{
         this.props.parentCallback(this.state.data);

@@ -77,6 +77,7 @@ class Filters extends React.Component{
     
       }
     
+      //DATES FILTERS
       
       handleFromDatesChanges = (event) => {
         if(event.target.value!==""){
@@ -187,29 +188,18 @@ class Filters extends React.Component{
     
     
       }
+
+      //END DATES FILTERS
     
+      // CATEGORY
       handleCategory = (event) => {
         this.state.flagType = event.target.value        
         this.handleQuery()
       }
 
-      handleQuery = () => {
-        if(this.state.data.length===0){
-          
-          var tempCounter = {
-            positive:0,
-            negative:0,
-            neutral:0
-          }
-          this.state.totalTweets=0
-          this.state.counter = tempCounter //reset counter
-          this.sendData()
-          
-        }else{
-          this.state.totalTweets=this.state.data.length
-          this.query()
-        }
-      }
+      //END CATEGORY
+
+
 
       handleTags = (tags) => {
         if(tags.length>this.state.tags.length){
@@ -377,7 +367,24 @@ filterByHashtags = (hashtags) => {
   
 }
 
+  //QUERY SECTION  
+handleQuery = () => {
+  if(this.state.data.length===0){
     
+    var tempCounter = {
+      positive:0,
+      negative:0,
+      neutral:0
+    }
+    this.state.totalTweets=0
+    this.state.counter = tempCounter //reset counter
+    this.sendData()
+    
+  }else{
+    this.state.totalTweets=this.state.data.length
+    this.query()
+  }
+}
 
       query = () => {
        
