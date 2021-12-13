@@ -14,3 +14,4 @@ app.use(cors())
 app.use('/tweet',routes)
 app.listen(4000, () => console.log("server is running"))
 
+//DATABASE_ACCES = "mongodb+srv://js:js539@jsmongodb.ayrge.mongodb.net/prova?retryWrites=true&w=majority"
