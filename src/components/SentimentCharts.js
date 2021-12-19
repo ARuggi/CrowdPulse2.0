@@ -1,8 +1,7 @@
 
 import BarChart from './Charts/BarChart';
-import LineChart from './Charts/LineChart';
 import PieChart from './Charts/PieChart';
-import RadarChart from './Charts/RadarChart';
+import MultiLineChart from './Charts/MultiTimeLineChart';
 import Filters from './Filters/SentimentFilters';
 import React from 'react';
 
@@ -14,15 +13,27 @@ class SentimentCharts extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      counter:[],
+      totalTweets: 0,
+      flagType: 0,
+      counter : [],
+      dataGroupByDates:[],
+
       }
 
 }
-    handleQuery = (counter) => {
+    handleQuery = (dataGroupByDates,counter) => {
       
       this.setState({counter:counter})
       this.state.counter = counter
+
+      this.setState({dataGroupByDates:dataGroupByDates})
+      this.state.dataGroupByDates = dataGroupByDates
+
+      console.log(dataGroupByDates)
+
     }
+
+
 
 
     
@@ -58,18 +69,12 @@ class SentimentCharts extends React.Component {
             <div className="row">
               <div className="col-lg-12">
                 <div className="chart">
-                <LineChart />
+                <MultiLineChart  data={this.state.dataGroupByDates}/>
                   
                 </div>
               </div>
             </div>
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="chart">
-                <RadarChart />
-                </div>
-              </div>
-            </div>
+
           </div>
         </main>
         {/* ! Footer */}

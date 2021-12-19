@@ -18,6 +18,7 @@ class Filters extends React.Component{
             tags : [],
             text : [],
             hashtags : [],
+            dataGroupByDates: [],
             fromDate: null,
             toDate : null,
 
@@ -29,7 +30,7 @@ class Filters extends React.Component{
     getSentimentData = (db) => {
 
       //TODO selezione db
-        axios.get('/tweet/getAnalyzedData')
+        axios.get('/tweet/getDataSortByDate')
         .then((response) => {
           const data = response.data;
           var negative = 0
@@ -69,6 +70,56 @@ class Filters extends React.Component{
           this.setState({ counter: tempCounter })
           this.setState({data : data})
           this.setState({oldData : data})
+
+          
+         
+
+      var dataGroupByDates=[{
+        id:null,
+        counterPositive:null,
+        counterNegative:null,
+        counterNeutral:null,
+      }]
+
+      var i = 0
+      var j = 0
+      
+      if(this.state.data.length!==0){
+        var dt = this.state.data[0].created_at.substring(0, 10)
+        dataGroupByDates[0].id=dt
+
+        while(i<this.state.data.length){
+
+          if(dataGroupByDates[j].id===this.state.data[i].created_at.substring(0, 10)){
+            if( this.state.data[i].sentiment['sent-it'].sentiment==='positive'){
+              dataGroupByDates[j].counterPositive++
+            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='negative'){
+              dataGroupByDates[j].counterNegative++
+            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='neutral'){
+              dataGroupByDates[j].counterNeutral++
+            }
+
+
+          }else{
+            j++
+            dataGroupByDates[j].id=this.state.data[i].created_at.substring(0, 10)
+            if( this.state.data[i].sentiment['sent-it'].sentiment==='positive'){
+              dataGroupByDates[j].counterPositive++
+            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='negative'){
+              dataGroupByDates[j].counterNegative++
+            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='neutral'){
+              dataGroupByDates[j].counterNeutral++
+            }
+          }
+          i++
+        }
+        
+      }
+
+      this.setState({dataGroupByDates : dataGroupByDates})
+      this.state.dataGroupByDates=dataGroupByDates     
+
+
           this.sendData()
       })
       .catch((error) => {
@@ -460,8 +511,59 @@ handleQuery = () => {
         }    
         
         this.state.counter = tempCounter
+
+         
+
+      var dataGroupByDates=[{
+        id:null,
+        counterPositive:null,
+        counterNegative:null,
+        counterNeutral:null,
+      }]
+
+      var i = 0
+      var j = 0
+      
+      if(this.state.data.length!==0){
+        var dt = this.state.data[0].created_at.substring(0, 10)
+        dataGroupByDates[0].id=dt
+
+        while(i<this.state.data.length){
+
+          if(dataGroupByDates[j].id===this.state.data[i].created_at.substring(0, 10)){
+            if( this.state.data[i].sentiment['sent-it'].sentiment==='positive'){
+              dataGroupByDates[j].counterPositive++
+            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='negative'){
+              dataGroupByDates[j].counterNegative++
+            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='neutral'){
+              dataGroupByDates[j].counterNeutral++
+            }
+
+
+          }else{
+            j++
+            dataGroupByDates[j].id=this.state.data[i].created_at.substring(0, 10)
+            if( this.state.data[i].sentiment['sent-it'].sentiment==='positive'){
+              dataGroupByDates[j].counterPositive++
+            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='negative'){
+              dataGroupByDates[j].counterNegative++
+            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='neutral'){
+              dataGroupByDates[j].counterNeutral++
+            }
+          }
+          i++
+        }
+        
+      }
+
+      this.setState({dataGroupByDates : dataGroupByDates})
+      this.state.dataGroupByDates=dataGroupByDates     
+
+
+
         this.sendData()  
       }
+
 
       resetFilter = () => {
 
@@ -487,9 +589,9 @@ handleQuery = () => {
 
       }
 
-
+    
       sendData = () =>{
-        this.props.parentCallback(this.state.counter);
+        this.props.parentCallback(this.state.dataGroupByDates,this.state.counter);
       }
       
       

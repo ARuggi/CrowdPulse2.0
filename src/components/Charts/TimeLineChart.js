@@ -8,7 +8,7 @@ const TimeLineChart = (props) =>{
     var i=0
     var labels=[]
     var dataValue=[]
-    console.log(props.data)
+    
     
     while(i<props.data.length){
         labels[i]=props.data[i].id

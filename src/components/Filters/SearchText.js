@@ -41,8 +41,8 @@ class SearchText extends React.Component {
               i++
           }
           
-          
-          console.log(tempSuggestion)
+         
+
           this.setState({suggestions: tempSuggestion})
          
            
