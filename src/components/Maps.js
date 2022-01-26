@@ -2,7 +2,8 @@
 
 import Filters from './Filters/Filters'
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import PreLoader from "./preloader";
 
 
 class Maps extends React.Component {
@@ -13,7 +14,16 @@ class Maps extends React.Component {
     this.state = {
       data:[],
       markers : [],
+      flag:0
+
     }
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.db!==this.props.db){
+      this.setState({flag:0})
+    }
+    
   }
 
   handleQuery = (data) => {
@@ -21,6 +31,7 @@ class Maps extends React.Component {
     this.setState({data:data})
     this.state.data = data
     this.query()
+    this.setState({flag:1})
   
   }
 
@@ -52,12 +63,48 @@ class Maps extends React.Component {
         
         this.setState({markers:markers})
         this.state.markers=markers
-        console.log(this.state.markers)
+
         
         
       }
     
       render () {
+        var body;
+
+        if(this.state.flag>0){
+
+           body=              <div className="row">
+           <div className="col-lg-12">
+             <div className="chart" id="mapCanvas">
+             <MapContainer center={[41.29246 ,13.5736108]} zoom={6} scrollWheelZoom={false}>
+             {this.state.markers.map((city, idx) => (
+             <Marker
+               position={[city.lat, city.lng]}
+               key={idx}
+             >
+               <Popup>
+                 <b>
+                   {city.author}, {city.text}
+                 </b>
+               </Popup>
+             </Marker>))}
+                 <TileLayer
+                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+             </MapContainer>
+             </div>
+           </div>
+
+         </div>
+        }else{
+          body=
+          <div className="row">
+            <div className="col-lg-12">
+            <div className="chart"> <PreLoader/></div>
+          </div>
+          </div>
+        }
           return(
         <div className="main-wrapper">
         {/* ! Main */}
@@ -67,32 +114,9 @@ class Maps extends React.Component {
             <br/>
             <h3>Maps - {this.props.db} </h3>
             <br/>
-            <Filters parentCallback = {this.handleQuery.bind(this)}/>
+            <Filters parentCallback = {this.handleQuery.bind(this)} db = {this.props.db}/>
             <br/>
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="chart">
-                <MapContainer center={[41.29246 ,13.5736108]} zoom={6} scrollWheelZoom={false}>
-                {this.state.markers.map((city, idx) => (
-                <Marker
-                  position={[city.lat, city.lng]}
-                  key={idx}
-                >
-                  <Popup>
-                    <b>
-                      {city.author}, {city.text}
-                    </b>
-                  </Popup>
-                </Marker>))}
-                    <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-                </MapContainer>
-                </div>
-              </div>
-
-            </div>
+            {body}
 
           </div>
         </main>

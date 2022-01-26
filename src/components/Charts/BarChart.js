@@ -14,6 +14,7 @@ data= {{
     labels: ['Negative','Neutral', 'Positive'],
     datasets: [{
         label: 'Sentiments',
+
         data: [negative, neutral, positive],
         backgroundColor: [
             'rgba(255, 99, 132, 0.2)',           

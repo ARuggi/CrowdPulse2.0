@@ -5,7 +5,9 @@ import TweetList from './components/TweetList';
 import WordCloud from './components/WordCloud';
 import TimeLines from './components/TimeLines';
 import Maps from './components/Maps';
-
+import Home from './components/Home';
+import { jsPDF } from "jspdf";
+import  html2canvas  from 'html2canvas';
 
 import React from 'react';
 
@@ -16,10 +18,12 @@ class App extends React.Component {
 
   state = {
     content:0,
-    db_selected:"db1"  };
-
+    db_selected:"aTweets"  };
+    
   handleDbChange = (db) => {
     this.setState({db_selected:db})
+
+    //autorefresh 
   }
 
   displaySentimentCharts = () => {
@@ -42,16 +46,69 @@ class App extends React.Component {
     this.setState({content:5})
   }
 
+  export = () => {
+    var doc;
+    var canvas;
+    var canvasImage,canvasImage2,canvasImage3;
+    switch(this.state.content){
+      case(1): 
+        doc = new jsPDF();
+        canvas = document.getElementsByTagName('canvas');
+        canvasImage = canvas[0].toDataURL('image/png',1.0);
+        canvasImage2 = canvas[1].toDataURL('image/png',1.0);
+        canvasImage3 = canvas[2].toDataURL('image/png',1.0);
+  
+        doc.addImage(canvasImage,'PNG',5,15,200,85,'alias1');
+        doc.addImage(canvasImage2,'PNG',70,110,70,70,'alias2');
+        doc.addImage(canvasImage3,'PNG',5,200,200,85,'alias3');  
+        doc.save("reportSentiments.pdf");
+        break
+      case(2): 
+        doc = new jsPDF('landscape') 
+        var input = document.getElementById('wordChart');
+        html2canvas(input).then((canvas) => {
+          const imgData = canvas.toDataURL('image/jpg');
+          doc.addImage(imgData, 'JPG', -20,20,350,150,'alias1');
+          doc.save("wordChart.pdf");
+        });
+
+        break;
+      case(3):
+        doc = new jsPDF('landscape') 
+        canvas = document.getElementsByTagName('canvas');
+        canvasImage = canvas[0].toDataURL('image/png',1.0);
+        doc.addImage(canvasImage,'PNG',0,50,290,100,'alias1');
+        doc.save("timeLines.pdf");
+        break;
+      case(4):
+        return <TweetList db={this.state.db_selected}/>;
+      case(5): 
+      //bug
+
+      doc = new jsPDF('landscape') 
+      var input = document.getElementById('mapCanvas');
+      html2canvas(input).then((canvas) => {
+        const imgData = canvas.toDataURL('image/jpg');
+        doc.addImage(imgData, 'JPG', 0,0);
+        doc.save("map.pdf");
+      })
+    ;
+    }
+
+  }
+
 
 
 
   render() {
     const renderContent = () => {
       switch(this.state.content){
+        case(0):
+        return <Home db={this.state.db_selected}/>;
         case(1): 
           return <SentimentCharts db={this.state.db_selected}/>;
         case(2): 
-          return <WordCloud/>;
+          return <WordCloud db={this.state.db_selected}/>;
         case(3): 
           return <TimeLines db={this.state.db_selected}/>;
         case(4):
@@ -60,6 +117,10 @@ class App extends React.Component {
           return <Maps db={this.state.db_selected}/>;
       }
     }
+
+
+
+ 
 
     return (
       <div>
@@ -77,9 +138,10 @@ class App extends React.Component {
       crossorigin=""/>
       
         <div className="layer" />
-        {/* ! Body */}
+       
         <a className="skip-link sr-only" href="#skip-target">Skip to content</a>
-        <div className="page-flex" style={{ backgroundImage: 'url(img/connection.png)' }}>
+        <div className="page-flex">
+
           {/* ! Sidebar */}
           <aside className="sidebar">
             <div className="sidebar-start">
@@ -95,7 +157,7 @@ class App extends React.Component {
                     <a className="active" href="/"><span className="icon home" aria-hidden="true" />Dashboard</a>
                   </li>
                   <li>
-                    <a href="#export"><span className="icon edit" aria-hidden="true" />Export</a>
+                    <a href="#export" onClick={() => {this.export()}}><span className="icon edit" aria-hidden="true" />Export</a>
                   </li>
                   <li>
                     <a class="show-cat-btn" href="##">
@@ -135,10 +197,13 @@ class App extends React.Component {
                     </a>
                     <ul class="cat-sub-menu">
                         <li>
-                            <a href="#" onClick={() => {this.handleDbChange("Db1")}}>Db1</a>
+                            <a href="#" onClick={() => {this.handleDbChange("aTweets")}}>aTweets</a>
                         </li>
                         <li>
-                            <a href="##" onClick={() => {this.handleDbChange("Db2")}}>Db2</a>
+                            <a href="##" onClick={() => {this.handleDbChange("Renzi")}}>Renzi</a>
+                        </li>
+                        <li>
+                            <a href="##" onClick={() => {this.handleDbChange("CentoTweet")}}>Cento Tweet</a>
                         </li>
                     </ul>
                 </li>
@@ -162,6 +227,7 @@ class App extends React.Component {
               </ul>
             </div>
           </aside>
+          {/*<PreLoader />*/}
           {renderContent()}
         
 
@@ -171,7 +237,9 @@ class App extends React.Component {
         {/* Custom scripts */}
         {/* partial */}
 
+
         </div>
+        
 
     );
   }

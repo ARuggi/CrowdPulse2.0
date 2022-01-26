@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactWordcloud from 'react-wordcloud';
 import Filters from './Filters/Filters'
+import PreLoader from "./preloader";
 
-class TweetList extends React.Component {
+class WordCloud extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
@@ -10,19 +11,25 @@ class TweetList extends React.Component {
           words:[{
             text:null,
             value:null
-          }]
+          }],
+          flag:0
 
       }
 
     }
-
-
+    componentDidUpdate(prevProps) {
+      if(prevProps.db!==this.props.db){
+        this.setState({flag:0})
+      }
+      
+    }
 handleQuery = (data) => {
     
     this.setState({data:data})
     this.state.data = data
     this.query()
-  
+
+
   }
 
  
@@ -42,46 +49,51 @@ handleQuery = (data) => {
         var arrayWords = []
 
         var flag = false
-
+        
         while(i<this.state.data.length){
           j=0
-          while(j<this.state.data[i].spacy.processed_text.length){
-            temp=this.state.data[i].spacy.processed_text[j].split(" ")[0]
-
-            if(this.checkWord(temp)===false&&this.state.data[i].spacy.processed_text[j].split(" ")[3]!=='CCONJ'
-            ){
-              k=0
-            flag = false
-            while(k<arrayWords.length){
-              if(arrayWords[k]===temp){
-                flag=true
-                break
-              }
-              k++
-            }
-            if(flag===true){
-              words[k].value++
-            }else{
-              arrayWords.push(temp)
-
-              words.push({
-                text:temp,
-                value:1
-              })
-                
-            }
-            }
+         
+          if(this.state.data[i].spacy!==undefined){
+            while(j<this.state.data[i].spacy.processed_text.length){
+              temp=this.state.data[i].spacy.processed_text[j].split(" ")[0]
             
- 
+             if(this.checkWord(temp)===false&&this.state.data[i].spacy.processed_text[j].split(" ")[3]!=='CCONJ'
+              ){
+                k=0
+              flag = false
+              while(k<arrayWords.length){
+                if(arrayWords[k]===temp){
+                  flag=true
+                  break
+                }
+                k++
+              }
+              if(flag===true){
+                words[k].value++
+              }else{
+                arrayWords.push(temp)
+  
+                words.push({
+                  text:temp,
+                  value:1
+                })
+                  
+              }
+              }
               
-            j++
+   
+                
+              j++
+            }
           }
+
          i++
          
         }
         this.state.words=words
         this.setState({words:words})
 
+        this.setState({flag:1})
 
       }
    
@@ -99,6 +111,8 @@ handleQuery = (data) => {
         
         //check if string is a url
 
+        //controllo url rimosso per migliorare le
+        /*
         var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
           '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
           '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
@@ -109,12 +123,34 @@ handleQuery = (data) => {
         if(pattern.test(temp)){
           return true
         }
+        */
 
         return false
         
       }
     
       render () {
+        var body;
+        if(this.state.flag>0){
+          body =<div className="row">
+          <div className="col-lg-12">
+            <div className="chart" id="wordChart">
+            <ReactWordcloud words={this.state.words}       options={{
+        fontFamily: 'monospace',
+        fontSizes: [20, 50],
+      }} />
+            </div>
+          </div>
+
+        </div>
+        }else{
+          body=
+          <div className="row">
+            <div className="col-lg-12">
+            <div className="chart"> <PreLoader/></div>
+          </div>
+          </div>
+        }
           return(
         <div className="main-wrapper">
         {/* ! Main */}
@@ -124,17 +160,10 @@ handleQuery = (data) => {
             <br/>
             <h3>Word Cloud - {this.props.db} </h3>
             <br/>
-            <Filters parentCallback = {this.handleQuery.bind(this)}/>
+            <Filters parentCallback = {this.handleQuery.bind(this)} db = {this.props.db}/>
             <br/>
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="chart">
-                <ReactWordcloud words={this.state.words} />
-                </div>
-              </div>
 
-            </div>
-
+            {body}
           </div>
         </main>
         {/* ! Footer */}
@@ -150,4 +179,4 @@ handleQuery = (data) => {
       }
 
 }
-export default TweetList
+export default WordCloud

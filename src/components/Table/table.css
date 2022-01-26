@@ -50,8 +50,16 @@
     background-color: #f9f9f9;
   }
   
+    
+  .darkmode .tableRowItems:nth-child(odd) {
+    background-color: #161624;
+  }
   .tableCell {
     padding: 12px;
     font-size: 14px;
     color: grey;
+    max-width: 50vh;
+    word-break:break-all;
   }
+
+  

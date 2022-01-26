@@ -13,6 +13,10 @@
     justify-content: center;
   }
   
+.darkmode .tableFooter{
+  background-color: #161624;
+}
+
   .button {
     border: none;
     padding: 7px 14px;
@@ -25,6 +29,11 @@
   .activeButton {
     color: white;
     background: #185adb;
+  }
+
+  .darkmode .activeButton{
+    background: white;
+    color:black;
   }
   
   .inactiveButton {

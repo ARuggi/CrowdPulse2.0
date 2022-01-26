@@ -4,12 +4,14 @@ import useTable from "../../hooks/useTable.js";
 import "./table.css";
 import TableFooter from "./TableFooter";
 
+
 const printTags = (data) =>{
   var i = 0
   var temp 
    const tags = []
   
-  while(i<data.tags.tag_me.length){
+   if(data.tags!==undefined){
+    while(i<data.tags.tag_me.length){
       temp = data.tags.tag_me[i].split(" : ")
       tags[i] = {
         name : temp[0],
@@ -22,6 +24,12 @@ const printTags = (data) =>{
     tags.map(item=>(<a href={item.link} className="tag">{item.name}</a>))
    
     )
+   }else{
+     return(
+       ""
+     )
+   }
+
   
 }
 
@@ -49,6 +57,7 @@ const Table = ({ data, rowsPerPage }) => {
           ))}
         </tbody>
       </table>
+
       <TableFooter range={range} slice={slice} setPage={setPage} page={page} />
     </>
   );

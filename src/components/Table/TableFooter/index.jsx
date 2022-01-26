@@ -8,8 +8,20 @@ const TableFooter = ({ range, setPage, page, slice }) => {
       setPage(page - 1);
     }
   }, [slice, page, setPage]);
+
+
   return (
-    <div className='tableFooter'>
+    <div className='tableFooter'>     
+    
+    <button className={`button ${
+            page -1 === 0 ? 'noClickButton' : 'activeButton'
+          }`} onClick={() => setPage(page-1)}> Previous </button>
+              Page {page} of {range.length}
+        <button className={`button ${
+            page +1 === range.length+1 ? 'noClickButton' : 'activeButton'
+          }`} onClick={() => setPage(page+1)}> Next </button>
+
+     {/* ! Paginator 
       {range.map((el, index) => (
         <button
           key={index}
@@ -21,6 +33,7 @@ const TableFooter = ({ range, setPage, page, slice }) => {
           {el}
         </button>
       ))}
+      */}
     </div>
   );
 };

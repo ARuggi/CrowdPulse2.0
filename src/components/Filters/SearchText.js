@@ -6,8 +6,8 @@ import axios from 'axios';
 
 //https://www.npmjs.com/package/react-tag-autocomplete
 class SearchText extends React.Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.sendData = this.sendData.bind(this)
     this.state = {
       text: [     
@@ -19,7 +19,11 @@ class SearchText extends React.Component {
   
 
 
-    axios.get('/tweet/getText')
+    axios.get('/tweet/getText',{
+      params: {
+        db: this.props.db
+      }
+    })
         .then((response) => {
           var i = 0
           var j = 0
@@ -56,7 +60,49 @@ class SearchText extends React.Component {
     this.reactTags = React.createRef()
   }
 
+  componentDidUpdate(prevProps) {
+    if(prevProps.db!==this.props.db){
+      axios.get('/tweet/getText',{
+        params: {
+          db: this.props.db
+        }
+      })
+          .then((response) => {
+            var i = 0
+            var j = 0
   
+            const data = response.data
+            var temp =data[0].processed_text[0].split(" ")
+            var tempSuggestion = []
+            while(i<data.length){
+              j=0
+              while(j<data[i].processed_text.length){
+                temp=data[i].processed_text[j].split(" ")
+                tempSuggestion.push({
+                  id:0,
+                  name: temp[0]              
+                })
+                j++
+              }
+  
+                i++
+            }
+            
+           
+  
+            this.setState({suggestions: tempSuggestion})
+           
+             
+        })
+        .catch((error) => {
+            console.log('error: ', error)
+        });
+      
+        
+  
+      this.reactTags = React.createRef()
+    }
+  }
 
   sendData = (text) =>{
     this.props.parentCallback(text);

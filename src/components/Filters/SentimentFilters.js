@@ -27,11 +27,23 @@ class Filters extends React.Component{
         this.getSentimentData(this.props.db)
     }
 
+    componentDidUpdate(prevProps) {
+      if(prevProps.db!==this.props.db){
+        this.getSentimentData(this.props.db)
+      }
+      
+    }
+
     getSentimentData = (db) => {
 
       //TODO selezione db
-        axios.get('/tweet/getDataSortByDate')
+        axios.get('/tweet/getAnalyzedData', {
+          params: {
+            db: db
+          }
+        })
         .then((response) => {
+          
           const data = response.data;
           var negative = 0
           var positive = 0
@@ -39,23 +51,33 @@ class Filters extends React.Component{
           var i=0
           this.state.totalTweets = data.length
           while(i<data.length){
-              if (data[i].sentiment['sent-it'].sentiment==='negative')
+            if(data[i].sentiment!==undefined){
+              if(data[i].sentiment['sent-it']!==undefined){
+                if (data[i].sentiment['sent-it'].sentiment==='negative')
                   negative++
-              else if (data[i].sentiment['sent-it'].sentiment==='positive')
+                else if (data[i].sentiment['sent-it'].sentiment==='positive')
                   positive ++
-              else
-                  neutral ++
-    
+                else
+                neutral ++
+              }
+            }
+   
               i++
           }
           i=0
           while(i<data.length){
-            if (data[i].sentiment['feel-it'].sentiment==='negative')
-                negative++
-            else if (data[i].sentiment['feel-it'].sentiment==='positive')
-                positive ++
-            else
+            if(data[i].sentiment!==undefined){
+              if(data[i].sentiment['feel-it']!==undefined){
+                if (data[i].sentiment['feel-it'].sentiment==='negative')
+                  negative++
+                else if (data[i].sentiment['feel-it'].sentiment==='positive')
+                  positive ++
+                else
                 neutral ++
+              }
+
+            }
+
     
             i++
         }
@@ -72,54 +94,63 @@ class Filters extends React.Component{
           this.setState({oldData : data})
 
           
-         
 
-      var dataGroupByDates=[{
-        id:null,
-        counterPositive:null,
-        counterNegative:null,
-        counterNeutral:null,
-      }]
-
-      var i = 0
-      var j = 0
-      
-      if(this.state.data.length!==0){
-        var dt = this.state.data[0].created_at.substring(0, 10)
-        dataGroupByDates[0].id=dt
-
-        while(i<this.state.data.length){
-
-          if(dataGroupByDates[j].id===this.state.data[i].created_at.substring(0, 10)){
-            if( this.state.data[i].sentiment['sent-it'].sentiment==='positive'){
-              dataGroupByDates[j].counterPositive++
-            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='negative'){
-              dataGroupByDates[j].counterNegative++
-            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='neutral'){
-              dataGroupByDates[j].counterNeutral++
-            }
-
-
-          }else{
-            j++
-            dataGroupByDates[j].id=this.state.data[i].created_at.substring(0, 10)
-            if( this.state.data[i].sentiment['sent-it'].sentiment==='positive'){
-              dataGroupByDates[j].counterPositive++
-            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='negative'){
-              dataGroupByDates[j].counterNegative++
-            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='neutral'){
-              dataGroupByDates[j].counterNeutral++
+          var dataGroupByDates=[{
+            id:null,
+            counterPositive:null,
+            counterNegative:null,
+            counterNeutral:null,
+          }]
+    
+          
+          var j = 0
+          
+          if(this.state.data.length!==0){
+            var i =this.state.data.length-1
+            var dt = this.state.data[i].created_at.substring(0, 10)
+            dataGroupByDates[0].id=dt
+            i--
+            while(i>-1){
+              if(this.state.data[i].sentiment!==undefined){
+                if(this.state.data[i].sentiment['feel-it']!==undefined){
+              
+              if(dataGroupByDates[j].id===this.state.data[i].created_at.substring(0, 10)){
+                if( this.state.data[i].sentiment['feel-it'].sentiment==='positive'){
+                  dataGroupByDates[j].counterPositive++
+                }else if( this.state.data[i].sentiment['feel-it'].sentiment==='negative'){
+                  dataGroupByDates[j].counterNegative++
+                }else if( this.state.data[i].sentiment['feel-it'].sentiment==='neutral'){
+                  dataGroupByDates[j].counterNeutral++
+                }
+    
+    
+              }else{
+                j++
+    
+                dataGroupByDates.push({
+                  id:this.state.data[i].created_at.substring(0, 10),
+                  counterPositive:0,
+                  counterNegative:0,
+                  counterNeutral:0,
+                })
+                if( this.state.data[i].sentiment['feel-it'].sentiment==='positive'){
+                  dataGroupByDates[j].counterPositive++
+                }else if( this.state.data[i].sentiment['feel-it'].sentiment==='negative'){
+                  dataGroupByDates[j].counterNegative++
+                }else if( this.state.data[i].sentiment['feel-it'].sentiment==='neutral'){
+                  dataGroupByDates[j].counterNeutral++
+                }
+              }
             }
           }
-          i++
-        }
-        
-      }
-
-      this.setState({dataGroupByDates : dataGroupByDates})
-      this.state.dataGroupByDates=dataGroupByDates     
-
-
+              i--
+            }
+            
+          }
+    
+          this.setState({dataGroupByDates : dataGroupByDates})
+          this.state.dataGroupByDates=dataGroupByDates     
+                      
           this.sendData()
       })
       .catch((error) => {
@@ -278,25 +309,28 @@ class Filters extends React.Component{
         
         while(i<this.state.data.length){
           j=0
-          while(j<this.state.data[i].tags.tag_me.length){
-            temp=this.state.data[i].tags.tag_me[j].split(" : ")
-            
-            while(k<tags.length){
-              if(temp.some(a => a.includes(tags[k].name))===true){
-                flag = true               
-              }else{
-                flag = false
+          if(this.state.data[i].tags!==undefined){
+            while(j<this.state.data[i].tags.tag_me.length){
+              temp=this.state.data[i].tags.tag_me[j].split(" : ")
+              
+              while(k<tags.length){
+                if(temp.some(a => a.includes(tags[k].name))===true){
+                  flag = true               
+                }else{
+                  flag = false
+                }
+                k++
               }
-              k++
+  
+              if(flag===true){
+                tempData[z]= this.state.data[i]
+                z++
+              }
+              k=0
+              j++
             }
-
-            if(flag===true){
-              tempData[z]= this.state.data[i]
-              z++
-            }
-            k=0
-            j++
           }
+
           i++
         }
 
@@ -334,25 +368,28 @@ filterByText = (text) => {
   
   while(i<this.state.data.length){
     j=0
-    while(j<this.state.data[i].spacy.processed_text.length){
-      temp=this.state.data[i].spacy.processed_text[j].split(" ")
-      
-      while(k<text.length){
-        if(temp.some(a => a.includes(text[k].name))===true){
-          flag = true               
-        }else{
-          flag = false
+    if(this.state.data[i].spacy!==undefined){
+      while(j<this.state.data[i].spacy.processed_text.length){
+        temp=this.state.data[i].spacy.processed_text[j].split(" ")
+        
+        while(k<text.length){
+          if(temp.some(a => a.includes(text[k].name))===true){
+            flag = true               
+          }else{
+            flag = false
+          }
+          k++
         }
-        k++
+  
+        if(flag===true){
+          tempData[z]= this.state.data[i]
+          z++
+        }
+        k=0
+        j++
       }
-
-      if(flag===true){
-        tempData[z]= this.state.data[i]
-        z++
-      }
-      k=0
-      j++
     }
+
     i++
   }
 
@@ -387,6 +424,7 @@ filterByHashtags = (hashtags) => {
 
   while(i<this.state.data.length){
     j=0
+    if(this.state.data[i].twitter_entities!==undefined){
     if(this.state.data[i].twitter_entities.hashtags!==undefined){
       while(j<this.state.data[i].twitter_entities.hashtags.length){
         temp=this.state.data[i].twitter_entities.hashtags[j]
@@ -408,6 +446,7 @@ filterByHashtags = (hashtags) => {
         j++
       }
     }
+  }
 
     i++
   }
@@ -445,11 +484,10 @@ handleQuery = () => {
         var i=0
         var tempCounter 
         
-        if (this.state.flagType===0 || this.state.flagType==='0') {
-        
-          
-         
+        if (this.state.flagType===0 || this.state.flagType==='0') {               
           while(i<this.state.data.length){
+            if(this.state.data[i].sentiment!==undefined){
+              if(this.state.data[i].sentiment['sent-it']!==undefined){
             
             if (this.state.data[i].sentiment['sent-it'].sentiment==='negative')
               negative++
@@ -457,16 +495,21 @@ handleQuery = () => {
               positive ++
             else
               neutral ++
+              }
+            }
             i++
           }
           i=0
           while(i<this.state.data.length){
+            if(this.state.data[i].sentiment!==undefined){
+              if(this.state.data[i].sentiment['feel-it']!==undefined){
             if (this.state.data[i].sentiment['feel-it'].sentiment==='negative')
               negative++
             else if (this.state.data[i].sentiment['feel-it'].sentiment==='positive')
               positive ++
             else
               neutral ++
+              }}
             i++
           }
     
@@ -477,13 +520,21 @@ handleQuery = () => {
          }
 
         }else if(this.state.flagType===1 || this.state.flagType==='1'){
+        
           while(i<this.state.data.length){
+              if(this.state.data[i].sentiment!==undefined){
+                if(this.state.data[i].sentiment['sent-it']!==undefined){
+
             if (this.state.data[i].sentiment['sent-it'].sentiment==='negative')
               negative++
             else if (this.state.data[i].sentiment['sent-it'].sentiment==='positive')
               positive ++
             else
               neutral ++
+            
+
+              }
+            }
             i++
           }
           tempCounter = {
@@ -495,12 +546,16 @@ handleQuery = () => {
         }else{
           
           while(i<this.state.data.length){
+            if(this.state.data[i].sentiment!==undefined){
+              if(this.state.data[i].sentiment['feel-it']!==undefined){
             if (this.state.data[i].sentiment['feel-it'].sentiment==='negative')
               negative++
             else if (this.state.data[i].sentiment['feel-it'].sentiment==='positive')
               positive ++
             else
               neutral ++
+              }
+            }
             i++
           }
           tempCounter = {
@@ -514,54 +569,65 @@ handleQuery = () => {
 
          
 
-      var dataGroupByDates=[{
-        id:null,
-        counterPositive:null,
-        counterNegative:null,
-        counterNeutral:null,
-      }]
+          
 
-      var i = 0
-      var j = 0
-      
-      if(this.state.data.length!==0){
-        var dt = this.state.data[0].created_at.substring(0, 10)
-        dataGroupByDates[0].id=dt
-
-        while(i<this.state.data.length){
-
-          if(dataGroupByDates[j].id===this.state.data[i].created_at.substring(0, 10)){
-            if( this.state.data[i].sentiment['sent-it'].sentiment==='positive'){
-              dataGroupByDates[j].counterPositive++
-            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='negative'){
-              dataGroupByDates[j].counterNegative++
-            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='neutral'){
-              dataGroupByDates[j].counterNeutral++
-            }
-
-
-          }else{
-            j++
-            dataGroupByDates[j].id=this.state.data[i].created_at.substring(0, 10)
-            if( this.state.data[i].sentiment['sent-it'].sentiment==='positive'){
-              dataGroupByDates[j].counterPositive++
-            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='negative'){
-              dataGroupByDates[j].counterNegative++
-            }else if( this.state.data[i].sentiment['sent-it'].sentiment==='neutral'){
-              dataGroupByDates[j].counterNeutral++
+        var dataGroupByDates=[{
+          id:null,
+          counterPositive:null,
+          counterNegative:null,
+          counterNeutral:null,
+        }]
+  
+        
+        var j = 0
+        
+        if(this.state.data.length!==0){
+          var i =this.state.data.length-1
+          var dt = this.state.data[i].created_at.substring(0, 10)
+          dataGroupByDates[0].id=dt
+          i--
+          while(i>-1){
+            if(this.state.data[i].sentiment!==undefined){
+              if(this.state.data[i].sentiment['feel-it']!==undefined){
+            
+            if(dataGroupByDates[j].id===this.state.data[i].created_at.substring(0, 10)){
+              if( this.state.data[i].sentiment['feel-it'].sentiment==='positive'){
+                dataGroupByDates[j].counterPositive++
+              }else if( this.state.data[i].sentiment['feel-it'].sentiment==='negative'){
+                dataGroupByDates[j].counterNegative++
+              }else if( this.state.data[i].sentiment['feel-it'].sentiment==='neutral'){
+                dataGroupByDates[j].counterNeutral++
+              }
+  
+  
+            }else{
+              j++
+  
+              dataGroupByDates.push({
+                id:this.state.data[i].created_at.substring(0, 10),
+                counterPositive:0,
+                counterNegative:0,
+                counterNeutral:0,
+              })
+              if( this.state.data[i].sentiment['feel-it'].sentiment==='positive'){
+                dataGroupByDates[j].counterPositive++
+              }else if( this.state.data[i].sentiment['feel-it'].sentiment==='negative'){
+                dataGroupByDates[j].counterNegative++
+              }else if( this.state.data[i].sentiment['feel-it'].sentiment==='neutral'){
+                dataGroupByDates[j].counterNeutral++
+              }
             }
           }
-          i++
         }
-        
-      }
-
-      this.setState({dataGroupByDates : dataGroupByDates})
-      this.state.dataGroupByDates=dataGroupByDates     
-
-
-
-        this.sendData()  
+            i--
+          }
+          
+        }
+  
+        this.setState({dataGroupByDates : dataGroupByDates})
+        this.state.dataGroupByDates=dataGroupByDates     
+                    
+        this.sendData()
       }
 
 
@@ -678,7 +744,7 @@ handleQuery = () => {
                   <div className="col-md-12 col-xl-12">
                     <div className="stat-cards-info">
                       <center><h4>Tags</h4><br />
-                      <SearchFilters parentCallback = {this.handleTags.bind(this)}/>
+                      <SearchFilters parentCallback = {this.handleTags.bind(this)} db = {this.props.db}/>
                         
                       </center>
                     </div>
@@ -697,7 +763,7 @@ handleQuery = () => {
                   <div className="col-md-12 col-xl-12">
                     <div className="stat-cards-info">
                       <center><h4>Processed Text</h4><br />
-                      <SearchText parentCallback = {this.handleText.bind(this)}/>
+                      <SearchText parentCallback = {this.handleText.bind(this)} db = {this.props.db}/>
                         
                       </center>
                     </div>
@@ -716,7 +782,7 @@ handleQuery = () => {
                   <div className="col-md-12 col-xl-12">
                     <div className="stat-cards-info">
                       <center><h4>Hashtags</h4><br />
-                      <SearchHashtag parentCallback = {this.handleHashtags.bind(this)}/>
+                      <SearchHashtag parentCallback = {this.handleHashtags.bind(this)} db = {this.props.db}/>
                         
                       </center>
                     </div>

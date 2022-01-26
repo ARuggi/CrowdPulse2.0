@@ -19,6 +19,8 @@ const MultiLineChart = (props) =>{
         i++
         
     }
+
+    
     
     const data = {
         labels:  labels,

@@ -1,25 +1,63 @@
 const express = require('express')
+var mongoose = require('mongoose')
 const router = express.Router()
-const AnalyzedTweetTemplateCopy = require('../models/AnalyzedtwettModels')
 
-router.post('/analyzed',function(request, response) {
-    const AnalyzedTweet = new AnalyzedTweetTemplateCopy({
-        campo:request.body.campo,
-        nome:request.body.nome,
-    })
-    AnalyzedTweet.save()
-    .then( data =>{
-        response.json(data)
-    } )
-   .catch(error =>{
-       response.json(error)
-   })
-
+const AnalyzedTweetTemplate = new mongoose.Schema({
+    raw_text:{
+        type:String
+    },
+    author_id:{
+        type:String
+    },
+    author_name:{
+        type:String
+    },
+    author_username:{
+        type:String
+    },
+    created_at:{
+        type:String
+    },
+    possibly_sensitive:{
+        type:Boolean
+    },
+    complete_text:{
+        type:Boolean
+    },
+    twitter_context_annotations:{
+        type:Array
+    },
+    referenced_tweets:{
+        type:Array
+    },
+    twitter_entities:{
+        type:Object
+    },
+    metrics:{
+        type:Object
+    },
+    processed:{
+        type:Boolean
+    },
+    sentiment:{
+        type:Object
+    },
+    tags:{
+        type:Object
+    },
+    spacy:{
+        type:Object
+    },
 })
+
+
 
 router.get('/getAnalyzedData', (req, res) => {
 
-    AnalyzedTweetTemplateCopy.find({  })
+    let db = req.query.db;
+
+    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    Test.find({  })
         .then((data) => {
             
             res.json(data);
@@ -31,8 +69,9 @@ router.get('/getAnalyzedData', (req, res) => {
 
 router.get('/getTags', (req, res) => {
 
-    
-    AnalyzedTweetTemplateCopy.find().distinct('tags')
+    let db = req.query.db;
+    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    Test.find().distinct('tags')
         .then((data) => {
             res.json(data);
         })
@@ -43,8 +82,10 @@ router.get('/getTags', (req, res) => {
 
 router.get('/getHashtags', (req, res) => {
 
-    
-    AnalyzedTweetTemplateCopy.find().distinct('twitter_entities')
+    let db = req.query.db;
+
+    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    Test.find().distinct('twitter_entities')
         .then((data) => {
             res.json(data);
         })
@@ -56,8 +97,10 @@ router.get('/getHashtags', (req, res) => {
 
 router.get('/getText', (req, res) => {
 
-    
-    AnalyzedTweetTemplateCopy.find().distinct('spacy')
+    let db = req.query.db;
+
+    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    Test.find().distinct('spacy')
         .then((data) => {
             res.json(data);
         })
@@ -70,8 +113,10 @@ router.get('/getText', (req, res) => {
 
 router.get('/getDataSortByDate', (req, res) => {
 
-    
-    AnalyzedTweetTemplateCopy.find().sort('created_at')
+    let db = req.query.db;
+
+    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    Test.find().sort('created_at')
         .then((data) => {
             res.json(data);
         })
@@ -82,9 +127,9 @@ router.get('/getDataSortByDate', (req, res) => {
 
 
 router.get('/getDataTimelines', (req, res) => {
-
-    
-    AnalyzedTweetTemplateCopy.aggregate(
+    let db = req.query.db;
+    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    Test.aggregate(
         [
           {
             $group: {
@@ -107,8 +152,9 @@ router.get('/getDataTimelines', (req, res) => {
 });
 
 router.get('/getAnalyzedSentiment', (req, res) => {
-
-    AnalyzedTweetTemplateCopy.find({  })
+    let db = req.query.db;
+    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    Test.find({  })
         .then((data) => {
             negative = 0
             positive = 0
@@ -140,8 +186,9 @@ router.get('/getAnalyzedSentiment', (req, res) => {
 });
 
 router.get('/getAnalyzedSentimentDates', (req, res) => {
-
-    AnalyzedTweetTemplateCopy.find({  })
+    let db = req.query.db;
+    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    Test.find({  })
         .then((data) => {
             negative = 0
             positive = 0

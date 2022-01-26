@@ -28,11 +28,21 @@ class Filters extends React.Component{
       this.getData(this.props.db)
     }
 
+    componentDidUpdate(prevProps) {
+      if(prevProps.db!==this.props.db){
+        this.getData(this.props.db)
+      }
+      
+    }
 
     getData = (db) => {
-
+ 
       //TODO selezione db
-        axios.get('/tweet/getAnalyzedData')
+        axios.get('/tweet/getAnalyzedData', {
+          params: {
+            db: db
+          }
+        })
         .then((response) => {
           const data = response.data;
           this.setState({data : data})
@@ -187,24 +197,26 @@ class Filters extends React.Component{
         
         while(i<this.state.data.length){
           j=0
-          while(j<this.state.data[i].tags.tag_me.length){
-            temp=this.state.data[i].tags.tag_me[j].split(" : ")
+          if(this.state.data[i].tags!==undefined){
+            while(j<this.state.data[i].tags.tag_me.length){
+              temp=this.state.data[i].tags.tag_me[j].split(" : ")
             
-            while(k<tags.length){
-              if(temp.some(a => a.includes(tags[k].name))===true){
-                flag = true               
-              }else{
-                flag = false
+              while(k<tags.length){
+                if(temp.some(a => a.includes(tags[k].name))===true){
+                  flag = true               
+                }else{
+                  flag = false
+                }
+                k++
               }
-              k++
-            }
 
-            if(flag===true){
-              tempData[z]= this.state.data[i]
-              z++
+              if(flag===true){
+                tempData[z]= this.state.data[i]
+                z++
+              }
+              k=0
+              j++
             }
-            k=0
-            j++
           }
           i++
         }
@@ -242,24 +254,26 @@ handleText = (text) => {
         
         while(i<this.state.data.length){
           j=0
-          while(j<this.state.data[i].spacy.processed_text.length){
-            temp=this.state.data[i].spacy.processed_text[j].split(" ")
+          if(this.state.data[i].spacy!==undefined){
+            while(j<this.state.data[i].spacy.processed_text.length){
+              temp=this.state.data[i].spacy.processed_text[j].split(" ")
             
-            while(k<text.length){
-              if(temp.some(a => a.includes(text[k].name))===true){
-                flag = true               
-              }else{
-                flag = false
+              while(k<text.length){
+                if(temp.some(a => a.includes(text[k].name))===true){
+                  flag = true               
+                }else{
+                  flag = false
+                }
+                k++
               }
-              k++
-            }
 
-            if(flag===true){
-              tempData[z]= this.state.data[i]
-              z++
+              if(flag===true){
+                tempData[z]= this.state.data[i]
+                z++
+              }
+              k=0
+              j++
             }
-            k=0
-            j++
           }
           i++
         }
@@ -294,28 +308,29 @@ handleText = (text) => {
 
         while(i<this.state.data.length){
           j=0
-          if(this.state.data[i].twitter_entities.hashtags!==undefined){
-            while(j<this.state.data[i].twitter_entities.hashtags.length){
-              temp=this.state.data[i].twitter_entities.hashtags[j]
-             
-              while(k<hashtags.length){
-                if(temp===hashtags[k].name){
-                  flag = true               
-                }else{
-                  flag = false
+          if(this.state.data[i].twitter_entities!==undefined){
+            if(this.state.data[i].twitter_entities.hashtags!==undefined){
+              while(j<this.state.data[i].twitter_entities.hashtags.length){
+                temp=this.state.data[i].twitter_entities.hashtags[j]
+               
+                while(k<hashtags.length){
+                  if(temp===hashtags[k].name){
+                    flag = true               
+                  }else{
+                    flag = false
+                  }
+                  k++
                 }
-                k++
+    
+                if(flag===true){
+                  tempData[z]= this.state.data[i]
+                  z++
+                }
+                k=0
+                j++
               }
-  
-              if(flag===true){
-                tempData[z]= this.state.data[i]
-                z++
-              }
-              k=0
-              j++
             }
           }
-
           i++
         }
 
@@ -433,7 +448,7 @@ handleText = (text) => {
               <div className="col-md-12 col-xl-12">
                 <div className="stat-cards-info">
                   <center><h4>Tags</h4><br />
-                  <SearchFilters parentCallback = {this.handleTags.bind(this)}/>
+                  <SearchFilters parentCallback = {this.handleTags.bind(this)} db = {this.props.db}/>
                     
                   </center>
                 </div>
@@ -452,7 +467,7 @@ handleText = (text) => {
               <div className="col-md-12 col-xl-12">
                 <div className="stat-cards-info">
                   <center><h4>Processed Text</h4><br />
-                  <SearchText parentCallback = {this.handleText.bind(this)}/>
+                  <SearchText parentCallback = {this.handleText.bind(this)} db = {this.props.db}/>
                     
                   </center>
                 </div>
@@ -471,7 +486,7 @@ handleText = (text) => {
               <div className="col-md-12 col-xl-12">
                 <div className="stat-cards-info">
                   <center><h4>Hashtags</h4><br />
-                  <SearchHashtag parentCallback = {this.handleHashtags.bind(this)}/>
+                  <SearchHashtag parentCallback = {this.handleHashtags.bind(this)} db = {this.props.db}/>
                     
                   </center>
                 </div>
