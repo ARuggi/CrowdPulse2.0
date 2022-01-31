@@ -50,9 +50,21 @@ const AnalyzedTweetTemplate = new mongoose.Schema({
     },
 })
 
-router.get('/prova', (req, res) => {
-    console.log('ciao');
+router.get('/collections', (req, res) => {
     
+    mongoose.connection.db.listCollections().toArray(function (err, names) {
+
+        module.exports.Collection = names;
+        res.json(names);        
+    });
+
+    
+    /*
+    while(i<names.length){
+        collection[i] = names[i].name;
+        i++
+    }
+    return collection;*/
 });
 
 router.get('/getAnalyzedData', (req, res) => {
