@@ -5,13 +5,13 @@ const dotenv = require('dotenv')
 const routes = require('./routes/routes')
 const cors = require('cors')
 
-dotenv.config()
+dotenv.config();
 
-mongoose.connect(process.env.DATABASE_ACCES, () => console.log("DB connesso"))
+mongoose.connect(process.env.DATABASE_ACCES, () => console.log("DB connesso"));
 
-app.use(express.json())
-app.use(cors())
-app.use('/tweet',routes)
-app.listen(4000, () => console.log("server is running"))
+app.use(express.json());
+app.use(cors());
+app.use('/tweet',routes);
+app.listen(process.env.PORT || 4000, () => console.log("server is running"));
 
 //DATABASE_ACCES = "mongodb+srv://js:js539@jsmongodb.ayrge.mongodb.net/prova?retryWrites=true&w=majority"

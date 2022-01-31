@@ -50,7 +50,10 @@ const AnalyzedTweetTemplate = new mongoose.Schema({
     },
 })
 
-
+router.get('/prova', (req, res) => {
+    console.log('ciao');
+    
+});
 
 router.get('/getAnalyzedData', (req, res) => {
 
@@ -58,8 +61,7 @@ router.get('/getAnalyzedData', (req, res) => {
 
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
     Test.find({  })
-        .then((data) => {
-            
+        .then((data) => {            
             res.json(data);
         })
         .catch((error) => {
