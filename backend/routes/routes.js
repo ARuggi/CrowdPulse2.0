@@ -2,6 +2,8 @@ const express = require('express')
 var mongoose = require('mongoose')
 const router = express.Router()
 
+mongoose.pluralize(null);
+
 const AnalyzedTweetTemplate = new mongoose.Schema({
     raw_text:{
         type:String
@@ -66,7 +68,7 @@ router.get('/getAnalyzedData', (req, res) => {
     let db = req.query.db;
 
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
-    Test.find({  })
+    Test.find({  },{ timeout: false }).lean()
         .then((data) => {            
             res.json(data);
         })
@@ -75,17 +77,40 @@ router.get('/getAnalyzedData', (req, res) => {
         });
 });
 
+
 router.get('/getTags', (req, res) => {
 
     let db = req.query.db;
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
-    Test.find().distinct('tags')
+    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    Test.aggregate(
+        [
+          {
+            $group: {
+              _id: "$tags",
+            }
+          }
+        ],
+    
+        function(err, data) {
+          if (err) {
+            console.log(err)
+            res.send(err);
+          } else {
+            //console.log(data)
+            res.json(data);
+          }
+        }
+      );
+      /*
+    Test.find().lean().distinct('tags')
         .then((data) => {
             res.json(data);
         })
         .catch((error) => {
             console.log('error: ', error);
         });
+        */
 });
 
 router.get('/getHashtags', (req, res) => {
@@ -93,13 +118,35 @@ router.get('/getHashtags', (req, res) => {
     let db = req.query.db;
 
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
-    Test.find().distinct('twitter_entities')
+    Test.aggregate(
+        [
+          {
+            $group: {
+              _id: "$twitter_entities",
+            }
+          }
+        ],
+    
+        function(err, data) {
+          if (err) {
+            //console.log(err)
+            res.send(err);
+          } else {
+            //console.log(data)
+            res.json(data);
+          }
+        },
+        { allowDiskUse: true } 
+      );
+      /*
+    Test.find().lean().distinct('twitter_entities')
         .then((data) => {
             res.json(data);
         })
         .catch((error) => {
             console.log('error: ', error);
         });
+        */
 });
 
 
@@ -108,13 +155,37 @@ router.get('/getText', (req, res) => {
     let db = req.query.db;
 
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
-    Test.find().distinct('spacy')
+
+    Test.aggregate(
+        [
+          {
+            $group: {
+              _id: "$spacy",
+            }
+          }
+        ],
+    
+        function(err, data) {
+          if (err) {
+            //console.log(err)
+            res.send(err);
+          } else {
+            console.log(data)
+            res.json(data);
+          }
+        },
+        { allowDiskUse: true } 
+      );
+      /*
+
+    Test.find().lean().distinct('spacy')
         .then((data) => {
             res.json(data);
         })
         .catch((error) => {
             console.log('error: ', error);
         });
+        */
 });
 
 
@@ -124,7 +195,7 @@ router.get('/getDataSortByDate', (req, res) => {
     let db = req.query.db;
 
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
-    Test.find().sort('created_at')
+    Test.find().lean().sort('created_at')
         .then((data) => {
             res.json(data);
         })
@@ -151,10 +222,11 @@ router.get('/getDataTimelines', (req, res) => {
             console.log(err)
             res.send(err);
           } else {
-            console.log(result)
+            //console.log(result)
             res.json(result);
           }
-        }
+        },
+        { allowDiskUse: true } 
       );
    
 });
@@ -162,7 +234,7 @@ router.get('/getDataTimelines', (req, res) => {
 router.get('/getAnalyzedSentiment', (req, res) => {
     let db = req.query.db;
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
-    Test.find({  })
+    Test.find({  },{ timeout: false }).lean()
         .then((data) => {
             negative = 0
             positive = 0
@@ -196,7 +268,7 @@ router.get('/getAnalyzedSentiment', (req, res) => {
 router.get('/getAnalyzedSentimentDates', (req, res) => {
     let db = req.query.db;
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
-    Test.find({  })
+    Test.find({  },{ timeout: false }).lean()
         .then((data) => {
             negative = 0
             positive = 0
@@ -219,7 +291,7 @@ router.get('/getAnalyzedSentimentDates', (req, res) => {
                 neutral: neutral,
              }
 
-            console.log('sent: ', sentCounter);
+            //console.log('sent: ', sentCounter);
             res.json(sentCounter);
         })
         .catch((error) => {

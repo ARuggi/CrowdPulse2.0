@@ -9,6 +9,11 @@ dotenv.config();
 
 mongoose.connect(process.env.DATABASE_ACCES, () => console.log("DB connesso")); //connect to mongodb using .env
 
+// If the connection throws an error
+mongoose.connection.on('error',function (err) {  
+    console.log('Mongoose default connection error: ' + err);
+  }); 
+
 app.use(express.json());
 app.use(cors());
 app.use('/tweet',routes); // set the routes
