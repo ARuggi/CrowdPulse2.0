@@ -59,12 +59,6 @@ router.get('/collections', (req, res) => {
     });
 
     
-    /*
-    while(i<names.length){
-        collection[i] = names[i].name;
-        i++
-    }
-    return collection;*/
 });
 
 router.get('/getAnalyzedData', (req, res) => {

@@ -7,11 +7,11 @@ const cors = require('cors')
 
 dotenv.config();
 
-mongoose.connect(process.env.DATABASE_ACCES, () => console.log("DB connesso"));
+mongoose.connect(process.env.DATABASE_ACCES, () => console.log("DB connesso")); //connect to mongodb using .env
 
 app.use(express.json());
 app.use(cors());
-app.use('/tweet',routes);
-app.listen(process.env.PORT || 4000, () => console.log("server is running"));
+app.use('/tweet',routes); // set the routes
+app.listen(process.env.PORT || 4000, () => console.log("server is running")); //listen on port 4000
 
 //DATABASE_ACCES = "mongodb+srv://js:js539@jsmongodb.ayrge.mongodb.net/prova?retryWrites=true&w=majority"
