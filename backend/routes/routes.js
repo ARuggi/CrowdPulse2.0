@@ -66,7 +66,7 @@ router.get('/collections', (req, res) => {
 router.get('/getAnalyzedData', (req, res) => {
 
     let db = req.query.db;
-
+    
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
     Test.find({  },{ timeout: false }).lean()
         .then((data) => {            
@@ -82,9 +82,10 @@ router.get('/getTags', (req, res) => {
 
     let db = req.query.db;
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
-    
+   
     Test.aggregate(
         [
+          {$unwind : "$tags"},
           {
             $group: {
               _id: "$tags",
@@ -117,6 +118,7 @@ router.get('/getTags', (req, res) => {
 router.get('/getHashtags', (req, res) => {
 
     let db = req.query.db;
+    
 
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
     Test.aggregate(
@@ -130,7 +132,7 @@ router.get('/getHashtags', (req, res) => {
     
         function(err, data) {
           if (err) {
-            //console.log(err)
+            console.log(err)
             res.send(err);
           } else {
             //console.log(data)
@@ -155,6 +157,7 @@ router.get('/getText', (req, res) => {
 
     let db = req.query.db;
 
+   
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
 
     Test.aggregate(
@@ -168,7 +171,7 @@ router.get('/getText', (req, res) => {
     
         function(err, data) {
           if (err) {
-            //console.log(err)
+            console.log(err)
             res.send(err);
           } else {
             //console.log(data)
@@ -196,7 +199,7 @@ router.get('/getDataSortByDate', (req, res) => {
     let db = req.query.db;
 
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
-    Test.find().lean().sort('created_at')
+    Test.find().lean().sort('created_at').allowDiskUse(true)
         .then((data) => {
             res.json(data);
         })
