@@ -82,7 +82,7 @@ router.get('/getTags', (req, res) => {
 
     let db = req.query.db;
     var Test = mongoose.model(db, AnalyzedTweetTemplate);
-    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    
     Test.aggregate(
         [
           {
@@ -100,8 +100,9 @@ router.get('/getTags', (req, res) => {
             //console.log(data)
             res.json(data);
           }
-        }
-      );
+        },
+        
+      ).allowDiskUse(true);
       /*
     Test.find().lean().distinct('tags')
         .then((data) => {
@@ -136,8 +137,8 @@ router.get('/getHashtags', (req, res) => {
             res.json(data);
           }
         },
-        { allowDiskUse: true } 
-      );
+       
+      ).allowDiskUse(true);
       /*
     Test.find().lean().distinct('twitter_entities')
         .then((data) => {
@@ -170,12 +171,12 @@ router.get('/getText', (req, res) => {
             //console.log(err)
             res.send(err);
           } else {
-            console.log(data)
+            //console.log(data)
             res.json(data);
           }
         },
-        { allowDiskUse: true } 
-      );
+       
+      ).allowDiskUse(true);
       /*
 
     Test.find().lean().distinct('spacy')
@@ -225,9 +226,9 @@ router.get('/getDataTimelines', (req, res) => {
             //console.log(result)
             res.json(result);
           }
-        },
-        { allowDiskUse: true } 
-      );
+        }
+        
+      ).allowDiskUse(true);
    
 });
 
