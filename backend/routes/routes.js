@@ -1,8 +1,26 @@
 const express = require('express')
 var mongoose = require('mongoose')
 const router = express.Router()
+Admin = mongoose.mongo.Admin;
+
+const dotenv = require('dotenv');
+dotenv.config();
 
 mongoose.pluralize(null);
+
+var mongodb;
+
+var conn = mongoose.connect(process.env.DATABASE_ACCES).then(
+  () => {
+      console.info(`Connected to database`)
+      return 1;
+  },
+  error => {
+      console.error(`Connection error: ${error.stack}`)
+      process.exit(1)
+  }
+)
+
 
 const AnalyzedTweetTemplate = new mongoose.Schema({
     raw_text:{
@@ -53,15 +71,46 @@ const AnalyzedTweetTemplate = new mongoose.Schema({
 })
 
 router.get('/collections', (req, res) => {
+
     
     mongoose.connection.db.listCollections().toArray(function (err, names) {
 
         module.exports.Collection = names;
         res.json(names);        
+
     });
 
     
 });
+
+
+router.get('/setDbs', (req, res) => {
+
+  let db = req.query.mongodb;
+  
+  mongodb = conn.useDb(db);
+  
+ });
+
+router.get('/dbs', (req, res) => {
+
+   var url = process.env.DATABASE_ACCES + 'admin';
+
+var adminConn = mongoose.createConnection(url, () => console.log("DB connesso")); //connect to mongodb using .env
+
+console.log(adminConn)
+
+adminConn.on('open', function() {
+  // connection established
+  new Admin(adminConn.db).listDatabases(function(err, result) {
+    
+    // database list stored in result.databases
+    var allDatabases = result.databases;  
+    res.json(result);
+});  
+});
+});
+
 
 router.get('/getAnalyzedData', (req, res) => {
 
