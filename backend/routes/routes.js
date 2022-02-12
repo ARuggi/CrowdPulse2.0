@@ -9,6 +9,8 @@ dotenv.config();
 mongoose.pluralize(null);
 
 
+
+
 var mongodb;
 
 var conn = mongoose.createConnection(process.env.DATABASE_ACCES ,function(err, db) {
@@ -65,17 +67,20 @@ const AnalyzedTweetTemplate = new mongoose.Schema({
     spacy:{
         type:Object
     },
-})
+},
+{synchronize: false})
 
 router.get('/collections', (req, res) => {
 
-    
+
   mongodb.db.listCollections().toArray(function (err, names) {
 
         module.exports.Collection = names;
         res.json(names);        
 
     });
+
+    
 
     
 });
