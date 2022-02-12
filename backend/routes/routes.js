@@ -10,7 +10,6 @@ mongoose.pluralize(null);
 
 var mongodb;
 
-
 var conn = mongoose.createConnection(process.env.DATABASE_ACCES ,function(err, db) {
   if(err) {
     console.log(err)
@@ -84,16 +83,18 @@ router.get('/collections', (req, res) => {
 router.get('/setDbs', (req, res) => {
 
   let db = req.query.mongodb;
-
+  //TODO fix bug switch db
   mongodb = conn.useDb(db);
  
  });
 
 router.get('/dbs', (req, res) => {
 
+
   var url = process.env.DATABASE_ACCES + 'admin';
 
-  var adminConn = mongoose.createConnection(url, () => console.log("DB connesso")); //connect to mongodb using .env
+  var adminConn = mongoose.createConnection(url, () => console.log("DB admin connesso")); //connect to mongodb using .env
+
   var allDatabases;
 
   adminConn.on('open', function() {
