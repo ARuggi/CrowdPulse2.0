@@ -10,17 +10,14 @@ mongoose.pluralize(null);
 
 var mongodb;
 
-var conn = mongoose.connect(process.env.DATABASE_ACCES).then(
-  () => {
-      console.info(`Connected to database`)
-      return 1;
-  },
-  error => {
-      console.error(`Connection error: ${error.stack}`)
-      process.exit(1)
-  }
-)
 
+var conn = mongoose.createConnection(process.env.DATABASE_ACCES ,function(err, db) {
+  if(err) {
+    console.log(err)
+  } else {
+    console.log("connected to Database");
+  }
+});
 
 const AnalyzedTweetTemplate = new mongoose.Schema({
     raw_text:{
@@ -73,7 +70,7 @@ const AnalyzedTweetTemplate = new mongoose.Schema({
 router.get('/collections', (req, res) => {
 
     
-    mongoose.connection.db.listCollections().toArray(function (err, names) {
+    mongodb.db.listCollections().toArray(function (err, names) {
 
         module.exports.Collection = names;
         res.json(names);        
@@ -87,28 +84,30 @@ router.get('/collections', (req, res) => {
 router.get('/setDbs', (req, res) => {
 
   let db = req.query.mongodb;
-  
+
   mongodb = conn.useDb(db);
-  
+ 
  });
 
 router.get('/dbs', (req, res) => {
 
-   var url = process.env.DATABASE_ACCES + 'admin';
+  var url = process.env.DATABASE_ACCES + 'admin';
 
-var adminConn = mongoose.createConnection(url, () => console.log("DB connesso")); //connect to mongodb using .env
+  var adminConn = mongoose.createConnection(url, () => console.log("DB connesso")); //connect to mongodb using .env
+  var allDatabases;
 
-console.log(adminConn)
-
-adminConn.on('open', function() {
-  // connection established
-  new Admin(adminConn.db).listDatabases(function(err, result) {
+  adminConn.on('open', function() {
+    // connection established
+    new Admin(adminConn.db).listDatabases(function(err, result) {
     
-    // database list stored in result.databases
-    var allDatabases = result.databases;  
-    res.json(result);
-});  
-});
+      // database list stored in result.databases
+      allDatabases = result.databases;  
+      res.json(result);
+    });  
+  });
+
+  
+  
 });
 
 
@@ -116,7 +115,7 @@ router.get('/getAnalyzedData', (req, res) => {
 
     let db = req.query.db;
     
-    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    var Test = mongodb.model(db, AnalyzedTweetTemplate);
     Test.find({  },{ timeout: false }).lean()
         .then((data) => {            
             res.json(data);
@@ -130,7 +129,7 @@ router.get('/getAnalyzedData', (req, res) => {
 router.get('/getTags', (req, res) => {
 
     let db = req.query.db;
-    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    var Test = mongodb.model(db, AnalyzedTweetTemplate);
    
     Test.aggregate(
         [
@@ -169,7 +168,7 @@ router.get('/getHashtags', (req, res) => {
     let db = req.query.db;
     
 
-    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    var Test = mongodb.model(db, AnalyzedTweetTemplate);
     Test.aggregate(
         [
           {
@@ -207,7 +206,7 @@ router.get('/getText', (req, res) => {
     let db = req.query.db;
 
    
-    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    var Test = mongodb.model(db, AnalyzedTweetTemplate);
 
     Test.aggregate(
         [
@@ -247,7 +246,7 @@ router.get('/getDataSortByDate', (req, res) => {
 
     let db = req.query.db;
 
-    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    var Test = mongodb.model(db, AnalyzedTweetTemplate);
     Test.find().lean().sort('created_at').allowDiskUse(true)
         .then((data) => {
             res.json(data);
@@ -260,7 +259,7 @@ router.get('/getDataSortByDate', (req, res) => {
 
 router.get('/getDataTimelines', (req, res) => {
     let db = req.query.db;
-    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    var Test = mongodb.model(db, AnalyzedTweetTemplate);
     Test.aggregate(
         [
           {
@@ -286,7 +285,7 @@ router.get('/getDataTimelines', (req, res) => {
 
 router.get('/getAnalyzedSentiment', (req, res) => {
     let db = req.query.db;
-    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    var Test = mongodb.model(db, AnalyzedTweetTemplate);
     Test.find({  },{ timeout: false }).lean()
         .then((data) => {
             negative = 0
@@ -320,7 +319,7 @@ router.get('/getAnalyzedSentiment', (req, res) => {
 
 router.get('/getAnalyzedSentimentDates', (req, res) => {
     let db = req.query.db;
-    var Test = mongoose.model(db, AnalyzedTweetTemplate);
+    var Test = mongodb.model(db, AnalyzedTweetTemplate);
     Test.find({  },{ timeout: false }).lean()
         .then((data) => {
             negative = 0
