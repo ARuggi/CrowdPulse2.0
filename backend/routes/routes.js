@@ -86,6 +86,8 @@ router.get('/setDbs', (req, res) => {
   let db = req.query.mongodb;
   //TODO fix bug switch db
   mongodb = conn.useDb(db);
+
+  res.json(true);
  
  });
 
