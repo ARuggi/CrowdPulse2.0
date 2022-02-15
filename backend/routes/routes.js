@@ -91,6 +91,7 @@ router.get('/setDbs', (req, res) => {
   let db = req.query.mongodb;
   //TODO fix bug switch db
   mongodb = conn.useDb(db);
+  
 
   res.json(true);
  
@@ -122,10 +123,12 @@ router.get('/dbs', (req, res) => {
 
 
 router.get('/getAnalyzedData', (req, res) => {
-
+  
     let db = req.query.db;
     
     var Test = mongodb.model(db, AnalyzedTweetTemplate);
+    
+    
     Test.find({  },{ timeout: false }).lean()
         .then((data) => {            
             res.json(data);
@@ -133,10 +136,12 @@ router.get('/getAnalyzedData', (req, res) => {
         .catch((error) => {
             console.log('error: ', error);
         });
+
 });
 
 
 router.get('/getTags', (req, res) => {
+  
 
     let db = req.query.db;
     var Test =   mongodb.model(db, AnalyzedTweetTemplate);
