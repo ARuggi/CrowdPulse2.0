@@ -21,6 +21,15 @@ var conn = mongoose.createConnection(process.env.DATABASE_ACCES ,function(err, d
   }
 });
 
+
+
+var url = process.env.DATABASE_ACCES + 'admin';
+
+var adminConn = mongoose.createConnection(url, () => console.log("DB admin connesso")); //connect to mongodb using .env
+
+
+
+
 const AnalyzedTweetTemplate = new mongoose.Schema({
     raw_text:{
         type:String
@@ -100,22 +109,14 @@ router.get('/setDbs', (req, res) => {
 router.get('/dbs', (req, res) => {
 
 
-  var url = process.env.DATABASE_ACCES + 'admin';
+  
 
-  var adminConn = mongoose.createConnection(url, () => console.log("DB admin connesso")); //connect to mongodb using .env
-
-  var allDatabases;
-
-  adminConn.on('open', function() {
     // connection established
     new Admin(adminConn.db).listDatabases(function(err, result) {
     
       // database list stored in result.databases
-      allDatabases = result.databases;
-      
       res.json(result);
     });  
-  });
 
   
   
@@ -123,7 +124,7 @@ router.get('/dbs', (req, res) => {
 
 
 router.get('/getAnalyzedData', (req, res) => {
-  
+
     let db = req.query.db;
     
     var Test = mongodb.model(db, AnalyzedTweetTemplate);
@@ -216,7 +217,7 @@ router.get('/getHashtags', (req, res) => {
 });
 
 
-router.get('/getText', (req, res) => {
+router.get('/getUsers', (req, res) => {
 
     let db = req.query.db;
 
@@ -227,7 +228,7 @@ router.get('/getText', (req, res) => {
         [
           {
             $group: {
-              _id: "$spacy",
+              _id: "$author_name",
             }
           }
         ],
@@ -253,6 +254,45 @@ router.get('/getText', (req, res) => {
             console.log('error: ', error);
         });
         */
+});
+
+router.get('/getText', (req, res) => {
+
+  let db = req.query.db;
+
+ 
+  var Test =  mongodb.model(db, AnalyzedTweetTemplate);
+
+  Test.aggregate(
+      [
+        {
+          $group: {
+            _id: "$spacy",
+          }
+        }
+      ],
+  
+      function(err, data) {
+        if (err) {
+          console.log(err)
+          res.send(err);
+        } else {
+          //console.log(data)
+          res.json(data);
+        }
+      },
+     
+    ).allowDiskUse(true);
+    /*
+
+  Test.find().lean().distinct('spacy')
+      .then((data) => {
+          res.json(data);
+      })
+      .catch((error) => {
+          console.log('error: ', error);
+      });
+      */
 });
 
 
@@ -299,6 +339,7 @@ router.get('/getDataTimelines', (req, res) => {
 });
 
 router.get('/getAnalyzedSentiment', (req, res) => {
+    
     let db = req.query.db;
     var Test =   mongodb.model(db, AnalyzedTweetTemplate);
     Test.find({  },{ timeout: false }).lean()

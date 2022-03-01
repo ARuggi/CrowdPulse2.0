@@ -3,6 +3,7 @@ const app = express()
 
 const routes = require('./routes/routes')
 const cors = require('cors')
+const { Mongoose } = require('mongoose')
 
 
 
@@ -12,4 +13,3 @@ app.use(cors());
 app.use('/tweet',routes); // set the routes
 app.listen(process.env.PORT || 4000, () => console.log("server is running")); //listen on port 4000
 
-//DATABASE_ACCES = "mongodb+srv://js:js539@jsmongodb.ayrge.mongodb.net/prova?retryWrites=true&w=majority"
