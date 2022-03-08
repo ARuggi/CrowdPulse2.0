@@ -788,8 +788,8 @@ filterByUser = (users) => {
                 <div className="stat-cards-info">
                           <center><h4>Type</h4><br />
                             <select id="sel1" onChange={this.handleTypeWord} >
-                              <option value="1">Tags</option>
                               <option value="0">Text</option>
+                              <option value="1">Tags</option>
                               <option value="2">Hashtags</option>
                             </select>
   
