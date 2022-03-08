@@ -46,12 +46,12 @@ Use the [npm forever](https://www.npmjs.com/package/forever) to runs continuousl
 # Start frontend 
 cd frontend
 sudo npm install forever -g
-$ forever start -c “npm start”./
+forever start -c "npm start" ./
 
 # Start backend 
 cd backend
 sudo npm install forever -g
-$ forever start -c “npm start”./
+forever start -c "npm start" ./
 
 ```
 
