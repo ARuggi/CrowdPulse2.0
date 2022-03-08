@@ -46,7 +46,7 @@ npm start
 ```
 
 ## Forever Run
-Use the [npm forever](https://www.npmjs.com/package/forever) to runs continuously the sofwtare.
+Use the [npm forever](https://www.npmjs.com/package/forever) to runs continuously the software.
 ```bash
 
 # Start frontend 
