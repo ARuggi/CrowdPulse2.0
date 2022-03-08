@@ -64,6 +64,3 @@ forever start -c "npm start" ./
 ## Test
 The software is now reachable on http://localhost:3000/
 
-## License
-Software developed by Giovanni Tempesta and Phd. Cataldo Musto during the thesis project "
-Design and Implementation of a Social Content Analytics platform " for the University of Bari (Uniba)
