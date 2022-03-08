@@ -16,7 +16,7 @@ class Filters extends React.Component{
           totalTweets: 0,
           flagType: 0,
           flagSentiment : 0,
-          flagTypeWord:1,
+          flagTypeWord:0,
           counter : [],
           oldData : [],
           data: [],

@@ -11,6 +11,8 @@ Use the package manager [npm](https://www.npmjs.com/) to install the sofwtare.
 cd frontend 
 npm install
 npm run build
+# if run build fails due to permission denied
+npm install react-scripts --save
 ```
 
 ## Installation Backend
@@ -18,7 +20,7 @@ npm run build
 Use the package manager [npm](https://www.npmjs.com/) to install the sofwtare.
 
 ```bash
-cd frontend 
+cd backend 
 npm install
 
 ```
@@ -31,7 +33,7 @@ npm install
 cd frontend
 npm start 
 
-# Start frontend 
+# Start backend 
 cd backend
 npm start 
 
@@ -46,7 +48,7 @@ cd frontend
 sudo npm install forever -g
 $ forever start -c “npm start”./
 
-# Start frontend 
+# Start backend 
 cd backend
 sudo npm install forever -g
 $ forever start -c “npm start”./
