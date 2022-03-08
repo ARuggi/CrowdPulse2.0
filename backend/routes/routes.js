@@ -167,7 +167,7 @@ router.get('/getTags', (req, res) => {
           }
         },
         
-      );//.allowDiskUse(true);
+      ).allowDiskUse(true);
       /*
     Test.find().lean().distinct('tags')
         .then((data) => {
@@ -204,7 +204,7 @@ router.get('/getHashtags', (req, res) => {
           }
         },
        
-      );//.allowDiskUse(true);
+      ).allowDiskUse(true);
       /*
     Test.find().lean().distinct('twitter_entities')
         .then((data) => {
@@ -243,7 +243,7 @@ router.get('/getUsers', (req, res) => {
           }
         },
        
-      );//.allowDiskUse(true);
+      ).allowDiskUse(true);
       /*
 
     Test.find().lean().distinct('spacy')
@@ -282,7 +282,7 @@ router.get('/getText', (req, res) => {
         }
       },
      
-    );//.allowDiskUse(true);
+    ).allowDiskUse(true);
     /*
 
   Test.find().lean().distinct('spacy')
@@ -302,7 +302,7 @@ router.get('/getDataSortByDate', (req, res) => {
     let db = req.query.db;
 
     var Test =   mongodb.model(db, AnalyzedTweetTemplate);
-    Test.find().lean().sort('created_at')//.allowDiskUse(true)
+    Test.find().lean().sort('created_at').allowDiskUse(true)
         .then((data) => {
             res.json(data);
         })
@@ -334,7 +334,7 @@ router.get('/getDataTimelines', (req, res) => {
           }
         }
         
-      );//.allowDiskUse(true);
+      ).allowDiskUse(true);
    
 });
 
