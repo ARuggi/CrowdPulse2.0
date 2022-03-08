@@ -3,6 +3,12 @@
 The software is divided into two macro-components, the "Frontend" package and the "Backend" package. Both will need to be launched at the same time to run correctly the software.
 The Frontend component will be reachable at port 3000. The Backend component will be reachable at port 4000.
 
+# Dependencies
+MongoDB : 5.0 -
+Node.js : 14.18.0 -
+Npm : 6.14.15 
+
+
 ## Installation Frontend
 
 Use the package manager [npm](https://www.npmjs.com/) to install the sofwtare.
