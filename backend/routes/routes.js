@@ -166,8 +166,8 @@ router.get('/getTags', (req, res) => {
             res.json(data);
           }
         },
-        
-      ).allowDiskUse(true);
+       
+      ).option({ allowDiskUse: true });//.allowDiskUse(true);
       /*
     Test.find().lean().distinct('tags')
         .then((data) => {
@@ -203,8 +203,8 @@ router.get('/getHashtags', (req, res) => {
             res.json(data);
           }
         },
-       
-      ).allowDiskUse(true);
+        { allowDiskUse: true },
+      ).option({ allowDiskUse: true });//.allowDiskUse(true);
       /*
     Test.find().lean().distinct('twitter_entities')
         .then((data) => {
@@ -243,7 +243,8 @@ router.get('/getUsers', (req, res) => {
           }
         },
        
-      ).allowDiskUse(true);
+       
+      ).option({ allowDiskUse: true });//.allowDiskUse(true);
       /*
 
     Test.find().lean().distinct('spacy')
@@ -281,8 +282,8 @@ router.get('/getText', (req, res) => {
           res.json(data);
         }
       },
-     
-    ).allowDiskUse(true);
+      
+    ).option({ allowDiskUse: true });//.allowDiskUse(true);
     /*
 
   Test.find().lean().distinct('spacy')
@@ -302,7 +303,7 @@ router.get('/getDataSortByDate', (req, res) => {
     let db = req.query.db;
 
     var Test =   mongodb.model(db, AnalyzedTweetTemplate);
-    Test.find().lean().sort('created_at').allowDiskUse(true)
+    Test.find({ allowDiskUse: true }).lean().sort('created_at').allowDiskUse(true)
         .then((data) => {
             res.json(data);
         })
@@ -332,9 +333,10 @@ router.get('/getDataTimelines', (req, res) => {
             //console.log(result)
             res.json(result);
           }
-        }
+        },
+        { allowDiskUse: true },
         
-      ).allowDiskUse(true);
+      ).option({ allowDiskUse: true });//.allowDiskUse(true);
    
 });
 
