@@ -68,10 +68,11 @@ class Maps extends React.Component {
              
             }else{
 
-              //trasformare luoghi in coordinate
+              
               j=0;
               flag=false;
-              
+              //Get coordinates from city name
+              //Tollegno is the last city of the file "it.json"
               while(citta[j].city!=='Tollegno'){
                 if(citta[j].city === this.state.data[i].geo.user_location){
                   flag=true;

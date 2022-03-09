@@ -270,12 +270,14 @@ class WordCloud extends React.Component {
         //chek if word is a stopword
         var i =0;
         //'zr' is the last word of stopwords.json
+        /*
         while(stopWords[i]!=='zr'){
           if(temp===stopWords[i]){
             return true;
           }
           i++;
         }
+        */
 
         //Check if word startsm with https
         

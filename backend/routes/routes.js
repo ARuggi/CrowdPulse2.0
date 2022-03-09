@@ -3,16 +3,16 @@ var mongoose = require('mongoose')
 const router = express.Router()
 Admin = mongoose.mongo.Admin;
 
+//Require and config credentials
 const dotenv = require('dotenv');
 dotenv.config();
 
+//Disable auto-pluralize Moongose
 mongoose.pluralize(null);
-
-
-
 
 var mongodb;
 
+//Create User connection
 var conn = mongoose.createConnection(process.env.DATABASE_ACCES ,function(err, db) {
   if(err) {
     console.log(err)
@@ -22,13 +22,14 @@ var conn = mongoose.createConnection(process.env.DATABASE_ACCES ,function(err, d
 });
 
 
-
+//Create admin Connection
 var url = process.env.DATABASE_ACCES + 'admin';
-
 var adminConn = mongoose.createConnection(url, () => console.log("DB admin connesso")); //connect to mongodb using .env
 
 
-
+/*
+Data Schema
+*/
 
 const AnalyzedTweetTemplate = new mongoose.Schema({
     raw_text:{
@@ -79,6 +80,10 @@ const AnalyzedTweetTemplate = new mongoose.Schema({
 },
 {synchronize: false})
 
+/*
+Route: '/tweet/collection'
+Description: Extract all collections from a pre-selected Db
+*/
 router.get('/collections', (req, res) => {
 
 
@@ -94,7 +99,10 @@ router.get('/collections', (req, res) => {
     
 });
 
-
+/*
+Route: '/tweet/setDbs'
+Description: Set var mongodb 
+*/
 router.get('/setDbs', (req, res) => {
     
   let db = req.query.mongodb;
@@ -106,11 +114,13 @@ router.get('/setDbs', (req, res) => {
  
  });
 
+ /*
+Route: '/tweet/dbs'
+Description: Get all dbs 
+*/
+
 router.get('/dbs', (req, res) => {
-
-
-  
-
+ 
     // connection established
     new Admin(adminConn.db).listDatabases(function(err, result) {
     
@@ -122,6 +132,10 @@ router.get('/dbs', (req, res) => {
   
 });
 
+ /*
+Route: '/tweet/getAnalyzedData'
+Description: Get all Data 
+*/
 
 router.get('/getAnalyzedData', (req, res) => {
 
@@ -140,6 +154,10 @@ router.get('/getAnalyzedData', (req, res) => {
 
 });
 
+ /*
+Route: '/tweet/getTags'
+Description: Get all Tags 
+*/
 
 router.get('/getTags', (req, res) => {
   
@@ -179,6 +197,11 @@ router.get('/getTags', (req, res) => {
         */
 });
 
+ /*
+Route: '/tweet/getHashtags'
+Description: Get all Hashtags 
+*/
+
 router.get('/getHashtags', (req, res) => {
 
     let db = req.query.db;
@@ -216,7 +239,10 @@ router.get('/getHashtags', (req, res) => {
         */
 });
 
-
+ /*
+Route: '/tweet/getUsers'
+Description: Get all Users 
+*/
 router.get('/getUsers', (req, res) => {
 
     let db = req.query.db;
@@ -256,6 +282,10 @@ router.get('/getUsers', (req, res) => {
         */
 });
 
+ /*
+Route: '/tweet/getText'
+Description: Get all Text 
+*/
 router.get('/getText', (req, res) => {
 
   let db = req.query.db;
@@ -296,6 +326,10 @@ router.get('/getText', (req, res) => {
 });
 
 
+ /*
+Route: '/tweet/getDataSortByDate'
+Description: Get all Data sorted by Date 
+*/
 
 router.get('/getDataSortByDate', (req, res) => {
 
@@ -311,6 +345,10 @@ router.get('/getDataSortByDate', (req, res) => {
         });
 });
 
+ /*
+Route: '/tweet/getDataTimelines'
+Description: Get all Data group by Date 
+*/
 
 router.get('/getDataTimelines', (req, res) => {
     let db = req.query.db;
@@ -338,6 +376,10 @@ router.get('/getDataTimelines', (req, res) => {
    
 });
 
+ /*
+Route: '/tweet/getAnalyzedSentiment'
+Description: Get all Sentiment info 
+*/
 router.get('/getAnalyzedSentiment', (req, res) => {
     
     let db = req.query.db;
@@ -373,6 +415,10 @@ router.get('/getAnalyzedSentiment', (req, res) => {
         });
 });
 
+ /*
+Route: '/tweet/getAnalyzedSentimentDates'
+Description: Get all Sentiment info group by Date
+*/
 router.get('/getAnalyzedSentimentDates', (req, res) => {
     let db = req.query.db;
     var Test =   mongodb.model(db, AnalyzedTweetTemplate);

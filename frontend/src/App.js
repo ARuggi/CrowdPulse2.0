@@ -26,9 +26,11 @@ class App extends React.Component {
     collections:[],
     dbs:[],
     allTweetsData:[],  };
+
   constructor(props){
     super(props)
     this.getData()
+    
  
     
   }
@@ -44,7 +46,8 @@ class App extends React.Component {
     .then((response) => {
       var i =0;
       var dbs = [];
-      
+
+      //Filter Db
       while(i<response.data.databases.length){
         if(response.data.databases[i].name!=='admin'&&response.data.databases[i].name!=='config'
         &&response.data.databases[i].name!=='test'&&response.data.databases[i].name!=='local'){
@@ -163,31 +166,9 @@ class App extends React.Component {
   }
 
   getCollection = () => {
-    axios.get('/tweet/collections', {
-        
-    })
-    .then((response) => {
-      var i =0;
-      var collections = [];
-      while(i<response.data.length){
-        
-          collections.push(response.data[i].name);
-               
-        i++;
-      }
-      this.state.collections = collections;
-      
-      this.setState({db_selected:null});
-      this.setState({db_selected:'Message'});
-      this.setState({collections:collections});
-      this.setState({content:6}); //set loading screen
-
-  })
-  .catch((error) => {
-    
-      console.log('error: ', error)
-  });
-
+    this.setState({db_selected:null});
+    this.setState({db_selected:'Message'});
+    this.setState({content:6}); //set loading screen
   }
 
 
@@ -390,10 +371,6 @@ class App extends React.Component {
         
 
         </div>
-        {/* Chart library */}
-        {/* Icons library */}
-        {/* Custom scripts */}
-        {/* partial */}
 
 
         </div>
