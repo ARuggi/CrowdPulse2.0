@@ -8,6 +8,8 @@ MongoDB : 5.0 -
 Node.js : 14.18.0 -
 Npm : 6.14.15 
 
+# Tweet cleaning
+Before launching to use the software it is recommended to launch the stopwords cleaning script. The script can be cloned [here](https://github.com/GiovTemp/clearTextTweet).
 
 ## Installation Frontend
 
