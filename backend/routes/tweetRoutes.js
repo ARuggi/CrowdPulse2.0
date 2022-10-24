@@ -1,42 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+const {getMongoConnection, getAdminConnection} = require("../database");
 
 const router = express.Router();
 let selectedDatabase;
-
-// Require and config credentials
-dotenv.config();
-// Disable auto-pluralize Mongoose
-mongoose.pluralize(null);
-
-// Create the database connection.
-let mongoConnection;
-let adminConnection;
-
-mongoose.createConnection(
-    process.env.DATABASE_ACCESS,
-    {},
-    (error, connection) => {
-        if (error) {
-            console.log(error);
-            return;
-        }
-        console.log("Connected to MongoDB");
-        mongoConnection = connection;
-    });
-
-mongoose.createConnection(
-    process.env.DATABASE_ACCESS + "admin",
-    {},
-    (error, connection) => {
-        if (error) {
-            console.log(error);
-            return;
-        }
-        console.log("Connected to the MongoDB admin database")
-        adminConnection = connection;
-    });
 
 /*
  * Data Schemas.
@@ -66,7 +33,7 @@ const AnalyzedTweetTemplate = new mongoose.Schema({
 //TODO fix bug switch db
 router.get("/setDbs", (req, res) => {
     let dbName = req.query.mongodb;
-    selectedDatabase = mongoConnection.useDb(dbName);
+    selectedDatabase = getMongoConnection().useDb(dbName);
     res.json(true);
 });
 
@@ -87,7 +54,7 @@ router.get("/collections", (req, res) => {
  */
 router.get("/dbs", (req, res) => {
     // connection established
-    adminConnection.db.admin().listDatabases((err, result) => {
+    getAdminConnection().db.admin().listDatabases((err, result) => {
         // database list stored in result.databases
         res.json(result);
     });
