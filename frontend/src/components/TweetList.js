@@ -32,7 +32,6 @@ class TweetList extends React.Component {
   render () {
     let body;
     if (this.state.flag > 0) {
-
       body = (
           <div className="row">
             <div className="col-lg-12">
@@ -51,6 +50,7 @@ class TweetList extends React.Component {
           </div>
       );
     }
+
     return (
         <div className="main-wrapper">
           {/* ! Main */}
@@ -75,8 +75,8 @@ class TweetList extends React.Component {
             </div>
           </footer>
         </div>
-    )
+    );
   }
-
 }
-export default TweetList
+
+export default TweetList;

@@ -12,16 +12,16 @@ class WordCloud extends React.Component {
     this.state = {
       data:[],
       words:[{
-        text:null,
-        value:null
+        text: null,
+        value: null
       }],
-      flag:0,
-      flagWord:0
+      flag: 0,
+      flagWord: 0
     }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.db === this.props.db) {
+    if (prevProps.db !== this.props.db) {
       this.setState({flag: 0});
     }
   }
