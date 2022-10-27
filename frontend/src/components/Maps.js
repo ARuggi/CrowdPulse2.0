@@ -1,13 +1,12 @@
-import Filters from './Filters/Filters'
 import React from 'react';
+
+import Filters from './Filters/Filters'
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css'
+
 import PreLoader from "./preloader";
-import HeatmapLayer from '../HeatmapLayer';
-
-import citta from "../it.json" 
-
- 
-
+import citta from "../it.json"
+import HeatmapLayer from "react-leaflet-heatmap-layer/lib/HeatmapLayer";
 
 class Maps extends React.Component {
   constructor(props){

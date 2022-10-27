@@ -8,8 +8,6 @@
  * 2. Prevent adjustments of font size after orientation changes in iOS.
  */
 
-
-
 html {
   line-height: 1.15;
   /* 1 */
@@ -4303,8 +4301,7 @@ color: #EFF0F6;
   pointer-events: none;
 }
 
-.how{
-  background: white;
+.how {
   text-align: center;
   font-family: monospace, monospace;
   /* 1 */
@@ -4329,3 +4326,6 @@ color: #EFF0F6;
   margin-top: 2%;
 }
 
+iframe {
+  display: none;
+}
