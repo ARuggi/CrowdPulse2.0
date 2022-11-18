@@ -10,8 +10,8 @@ import queryImg from '../img/3.jpg';
 class Home extends React.Component {
 
     constructor (props) {
-        super(props)
-        this.sendData = this.sendData.bind(this)
+        super(props);
+        this.sendData = this.sendData.bind(this);
         this.state = {
             dataTags: [],
             dataText: [],
@@ -20,8 +20,8 @@ class Home extends React.Component {
             dataSortByDate: [],
             users: [],
             flag: 0
-        }
-        //this.getAllData(this.props.db)
+        };
+        //this.getAllData(this.props.db);
     }
 
     componentDidMount() {
@@ -66,15 +66,15 @@ class Home extends React.Component {
 
             // All requests are now complete
 
-            this.setState({dataSortByDate});
+            this.setState({dataSortByDate: dataSortByDate});
             //this.state.dataSortByDate = dataSortByDate;
-            this.setState({dataHashtags});
+            this.setState({dataHashtags: dataHashtags});
             //this.state.dataHashtags = dataHashtags;
-            this.setState({dataText});
+            this.setState({dataText: dataText});
             //this.state.dataText = dataText;
-            this.setState({dataTags});
+            this.setState({dataTags: dataTags});
             //this.state.dataTags = dataTags;
-            this.setState({users});
+            this.setState({users: users});
             //this.state.users = users;
             this.setState({flag: 1});
             this.sendData();

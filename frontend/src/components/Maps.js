@@ -79,7 +79,7 @@ class Maps extends React.Component {
             author: data.author_username,
           });
 
-          heatPoints.push([citta[j].lat,citta[j].lng,100]);
+          heatPoints.push([c.lat, c.lng, 100]);
           break;
         }
       }
