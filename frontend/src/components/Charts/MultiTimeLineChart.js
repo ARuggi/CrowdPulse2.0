@@ -1,9 +1,6 @@
 import React from "react";
 import {Line} from 'react-chartjs-2';
 
-
-
-
 const MultiLineChart = (props) =>{
     var i=0
     var labels=[]
@@ -62,4 +59,4 @@ const MultiLineChart = (props) =>{
     )
 }
 
-export default MultiLineChart
+export default MultiLineChart;
