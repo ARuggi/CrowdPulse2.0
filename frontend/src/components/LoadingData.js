@@ -6,8 +6,7 @@ import PreLoader from "./preloader";
 import dataImg from '../img/2.jpg';
 import queryImg from '../img/3.jpg';
 
-//TODO: Rename this class name.
-class Home extends React.Component {
+class LoadingData extends React.Component {
 
     constructor (props) {
         super(props);
@@ -155,4 +154,4 @@ class Home extends React.Component {
     }
 }
 
-export default Home;
+export default LoadingData;
