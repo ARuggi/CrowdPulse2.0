@@ -1,5 +1,8 @@
+import * as http from "http";
 import express, {Request, Response} from 'express';
+import dotenv from "dotenv";
 import cors from 'cors';
+import {loadDatabase} from "./database/database"
 import {IRoute} from "./routes/IRoute";
 import {TweetSetDatabaseRoute} from "./routes/tweets/TweetSetDatabaseRoute";
 import {TweetCollectionsRoute} from "./routes/tweets/TweetCollectionsRoute";
@@ -32,23 +35,50 @@ class App {
     ];
 
     express: express.Application;
-    port: number = 4000;
+    server: http.Server;
+    port: number = 3000;
 
     constructor() {
-        this.express = express();
-        this.express.use(express.json());
-        this.express.use(cors());
 
-        this.registerRoutes();
+        dotenv.config();
+        loadDatabase()
+            .then(() => {
 
-        this.express.listen(this.port, () => {
-            return console.log(`Server is listening at http://localhost:${this.port}`);
-        });
+                this.port = parseInt(process.env.SERVER_PORT);
+                this.express = express();
+                this.express.use(express.json());
+                this.express.use(cors());
+                this.registerRoutes();
+
+                this.server = this.express.listen(this.port, () => {
+                    return console.log(`Server is listening at http://localhost:${this.port}`);
+                });
+
+            })
+            .catch((error) => {
+                app.stop(error.message);
+            });
+    }
+
+    public stop(stopMessage: string = undefined) {
+        if (this.server) {
+            this.server.close(() => {
+                stopMessage
+                    ? console.log(`Server is stopping due to the following error: ${stopMessage}`)
+                    : console.log(`Server is stopping...`)
+            })
+        } else {
+            stopMessage
+                ? console.log(`Server is stopping due to the following error: ${stopMessage}`)
+                : console.log(`Server is stopping...`)
+        }
     }
 
     private registerRoutes() {
         App.ROUTES.forEach(route => {
-            this.express.get(route.path(), route.perform);
+            const method = Reflect.get(this.express, route.method()) as (path: string, perform: void) => {};
+            Reflect.apply(method, this.express, [route.path(), route.perform]);
+            console.log("Registered endpoint: [" + route.method().toUpperCase() + "] " + route.path());
         })
 
         // handle 404 for unknown URLs.
@@ -59,4 +89,5 @@ class App {
     }
 }
 
-export = new App();
+const app = new App();
+export {app}

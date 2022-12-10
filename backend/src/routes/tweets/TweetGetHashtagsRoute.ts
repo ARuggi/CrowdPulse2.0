@@ -5,7 +5,7 @@ export class TweetGetHashtagsRoute extends ITweetRoute {
 
     private static TWEET_PATH = "/getHashtags";
 
-    tweetPath(): String {
+    tweetPath(): string {
         return TweetGetHashtagsRoute.TWEET_PATH;
     }
 

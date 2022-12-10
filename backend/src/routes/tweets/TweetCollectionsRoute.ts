@@ -5,7 +5,7 @@ export class TweetCollectionsRoute extends ITweetRoute {
 
     private static TWEET_PATH = "/collections";
 
-    tweetPath(): String {
+    tweetPath(): string {
         return TweetCollectionsRoute.TWEET_PATH;
     }
 

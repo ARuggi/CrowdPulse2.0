@@ -5,7 +5,7 @@ export class TweetGetTagsRoute extends ITweetRoute {
 
     private static TWEET_PATH = "/getTags";
 
-    tweetPath(): String {
+    tweetPath(): string {
         return TweetGetTagsRoute.TWEET_PATH;
     }
 

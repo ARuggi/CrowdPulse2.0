@@ -5,7 +5,7 @@ export class TweetGetTextRoute extends ITweetRoute {
 
     private static TWEET_PATH = "/getUsers";
 
-    tweetPath(): String {
+    tweetPath(): string {
         return TweetGetTextRoute.TWEET_PATH;
     }
 

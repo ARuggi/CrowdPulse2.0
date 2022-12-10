@@ -5,7 +5,7 @@ export class TweetGetAnalyzedDataRoute extends ITweetRoute {
 
     private static TWEET_PATH = "/getAnalyzedData";
 
-    tweetPath(): String {
+    tweetPath(): string {
         return TweetGetAnalyzedDataRoute.TWEET_PATH;
     }
 

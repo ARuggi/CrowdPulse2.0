@@ -5,7 +5,7 @@ export class TweetGetDataTimelinesRoute extends ITweetRoute {
 
     private static TWEET_PATH = "/getDataTimelines";
 
-    tweetPath(): String {
+    tweetPath(): string {
         return TweetGetDataTimelinesRoute.TWEET_PATH;
     }
 

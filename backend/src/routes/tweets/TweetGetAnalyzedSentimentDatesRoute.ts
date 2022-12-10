@@ -5,7 +5,7 @@ export class TweetGetAnalyzedSentimentDatesRoute extends ITweetRoute {
 
     private static TWEET_PATH = "/getAnalyzedSentimentDates";
 
-    tweetPath(): String {
+    tweetPath(): string {
         return TweetGetAnalyzedSentimentDatesRoute.TWEET_PATH;
     }
 

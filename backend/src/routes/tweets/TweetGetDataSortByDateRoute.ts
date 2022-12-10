@@ -5,7 +5,7 @@ export class TweetGetDataSortByDateRoute extends ITweetRoute {
 
     private static TWEET_PATH = "/getDataSortByDate";
 
-    tweetPath(): String {
+    tweetPath(): string {
         return TweetGetDataSortByDateRoute.TWEET_PATH;
     }
 

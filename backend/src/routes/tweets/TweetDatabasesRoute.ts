@@ -5,7 +5,7 @@ export class TweetDatabasesRoute extends ITweetRoute {
 
     private static TWEET_PATH = "/dbs";
 
-    tweetPath(): String {
+    tweetPath(): string {
         return TweetDatabasesRoute.TWEET_PATH;
     }
 

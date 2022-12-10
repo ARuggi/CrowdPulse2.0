@@ -2,6 +2,8 @@ import {Request, Response} from "express";
 
 export interface IRoute {
 
+    method(): string;
+
     /**
      * @return The url path such as "/something".
      */
@@ -13,4 +15,24 @@ export interface IRoute {
      * @param res The response at the client.
      */
     perform(req: Request, res: Response): void;
+}
+
+export function createResponse(responseType: ResponseType,
+                               message?: string,
+                               data?: any) {
+
+    if (!message) {
+        message = "done";
+    }
+
+    return {
+        "type": responseType,
+        "message": message,
+        "data": data
+    }
+}
+
+export enum ResponseType {
+    OK = "OK",
+    KO = "KO"
 }
