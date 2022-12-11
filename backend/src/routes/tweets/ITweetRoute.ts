@@ -11,7 +11,13 @@ export abstract class ITweetRoute implements IRoute {
     }
 
     perform(req: Request, res: Response): void {
-        console.log(`Performing [${req.method}] '${req.url}' by '${req.ip}' with request body: ` + JSON.stringify(req.body));
+
+        if (this.method() == "get") {
+            console.log(`Performing [${req.method}] '${req.url}' by '${req.ip}'`);
+        } else {
+            console.log(`Performing [${req.method}] '${req.url}' by '${req.ip}' with request body: ` + JSON.stringify(req.body));
+        }
+        
         let result = this.checkIntegrity(req, res);
 
         if (result) {

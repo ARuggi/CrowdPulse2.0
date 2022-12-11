@@ -27,4 +27,9 @@ export class TweetDatabasesRoute extends ITweetRoute {
             res.send(createResponse(ResponseType.KO, error.message));
         }
     }
+
+    checkIntegrity(req: Request, res: Response): boolean {
+        // Nothing to do, avoid the checking.
+        return true;
+    }
 }

@@ -18,6 +18,8 @@ import PreLoader from './components/preloader';
 import './style.css';
 import './script.js';
 
+axios.defaults.baseURL = "http://localhost:4000";
+
 class App extends React.Component {
 
   state = {
@@ -37,23 +39,22 @@ class App extends React.Component {
   }
 
   getData() {
-    axios.get('/tweet/dbs', {
-      //TODO Database Selection
-    }).then((response) => {
-      let dbs = [];
-      //Filter Db
-      response.data.databases.forEach(database => {
-        let databaseName = database.name;
-        if (databaseName !== "admin"
-            && databaseName !== "config"
-            && databaseName !== "test"
-            && databaseName !== "local") {
-          dbs.push(databaseName);
-        }
-      });
+    axios.get('/tweet/dbs')
+        .then((response) => {
+          let dbs = [];
 
-      this.setState({dbs});
-    }).catch((error) => {
+          response.data.data.databases.forEach(database => {
+            let databaseName = database.name;
+            if (databaseName !== "admin"
+                && databaseName !== "config"
+                && databaseName !== "test"
+                && databaseName !== "local") {
+              dbs.push(databaseName);
+            }
+          });
+
+          this.setState({dbs});
+        }).catch((error) => {
       console.log('error: ', error)
     });
   }
@@ -137,14 +138,20 @@ class App extends React.Component {
     this.setState({content: 6}); //set loading screen
   }
 
-  handleMongoDbChange(mongodb) {
-    this.setState({mongodb_selected: mongodb});
-    axios.get('/tweet/setDbs', {params: {mongodb: mongodb}}).then(response => {
-      // TODO: capire perché non fa niente.
+  handleMongoDbChange(database) {
+    this.setState({mongodb_selected: database});
+    axios.post('/tweet/setDbs', {database: database}
+    ).then(response => {
+
+      if (response.data.type === 'OK') {
+        this.getCollection();
+      } else {
+        alert(response.data.message);
+      }
+
     }).catch((error) => {
       console.log('error: ', error)
     });
-    this.getCollection();
   }
 
   getCollection() {

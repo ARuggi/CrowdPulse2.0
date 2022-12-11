@@ -36,7 +36,7 @@ class App {
 
     express: express.Application;
     server: http.Server;
-    port: number = 3000;
+    port: number = 4000;
 
     constructor() {
 

@@ -24,60 +24,39 @@ class LoadingData extends React.Component {
     }
 
     componentDidMount() {
-        this.getAllData(this.props.db);
+        this.getAllData("Message");
     }
 
-    getAllData(db) {
+    getAllData(collection) {
         axios.all([
-            /*
-            axios.get('/tweet/getAnalyzedData', {
-              params: {
-                db: db
-              },
+            //axios.get('/tweet/getAnalyzedData', {data: {collection: db}}),
+            axios.get('/tweet/getDataSortByDate',{params: {collection: collection}}),
+            axios.get('/tweet/getHashtags',      {params: {collection: collection}}),
+            axios.get('/tweet/getText',          {params: {collection: collection}}),
+            axios.get('/tweet/getTags',          {params: {collection: collection}}),
+            axios.get('/tweet/getUsers',         {params: {collection: collection}})
+        ]).then(
+            axios.spread((
+                dataSortByDate,
+                dataHashtags,
+                dataText,
+                dataTags,
+                users) => {
 
-            }),*/
-            axios.get('/tweet/getDataSortByDate',{
-                params: {
-                    db: db
-                }
-            }),
-            axios.get('/tweet/getHashtags',{
-                params: {
-                    db: db
-                }
-            }),
-            axios.get('/tweet/getText',{
-                params: {
-                    db: db
-                }
-            }),
-            axios.get('/tweet/getTags',{
-                params: {
-                    db: db
-                }
-            }),
-            axios.get('/tweet/getUsers',{
-                params: {
-                    db: db
-                }
-            }),
-        ]).then(axios.spread((dataSortByDate, dataHashtags, dataText, dataTags, users) => {
-
-            // All requests are now complete
-
-            this.setState({dataSortByDate: dataSortByDate});
-            //this.state.dataSortByDate = dataSortByDate;
-            this.setState({dataHashtags: dataHashtags});
-            //this.state.dataHashtags = dataHashtags;
-            this.setState({dataText: dataText});
-            //this.state.dataText = dataText;
-            this.setState({dataTags: dataTags});
-            //this.state.dataTags = dataTags;
-            this.setState({users: users});
-            //this.state.users = users;
-            this.setState({flag: 1});
-            this.sendData();
-        }));
+                // All requests are now complete
+                this.setState({dataSortByDate: dataSortByDate.data});
+                //this.state.dataSortByDate = dataSortByDate;
+                this.setState({dataHashtags: dataHashtags.data});
+                //this.state.dataHashtags = dataHashtags;
+                this.setState({dataText: dataText.data});
+                //this.state.dataText = dataText;
+                this.setState({dataTags: dataTags.data});
+                //this.state.dataTags = dataTags;
+                this.setState({users: users.data});
+                //this.state.users = users;
+                this.setState({flag: 1});
+                this.sendData();
+            }));
     }
 
     sendData() {

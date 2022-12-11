@@ -17,6 +17,10 @@ export interface IRoute {
     perform(req: Request, res: Response): void;
 }
 
+export function createMissingQueryParamResponse(paramName?: string, data?: any) {
+    return createResponse(ResponseType.KO, `missing '${paramName}' as query param`, data);
+}
+
 export function createMissingBodyParamResponse(paramName?: string, data?: any) {
     return createResponse(ResponseType.KO, `missing '${paramName}' as body param`, data);
 }

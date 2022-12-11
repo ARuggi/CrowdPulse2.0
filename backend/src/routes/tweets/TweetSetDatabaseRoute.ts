@@ -4,7 +4,7 @@ import {getMongoConnection} from "../../database/database";
 import {createMissingBodyParamResponse, createResponse, ResponseType} from "../IRoute";
 
 type RequestHandler = {
-    mongodb: string;
+    database: string;
 }
 
 export class TweetSetDatabaseRoute extends ITweetRoute {
@@ -22,15 +22,15 @@ export class TweetSetDatabaseRoute extends ITweetRoute {
     performTweetRequest(req: Request, res: Response): void {
         const handler = req.body as RequestHandler;
 
-        if (!handler.mongodb) {
-            res.send(createMissingBodyParamResponse("mongodb"));
+        if (!handler.database) {
+            res.send(createMissingBodyParamResponse("database"));
             return;
         }
 
         try {
 
-            ITweetRoute.selectedDatabase = getMongoConnection().useDb(handler.mongodb);
-            res.send(createResponse(ResponseType.OK, undefined, {selected: handler.mongodb}));
+            ITweetRoute.selectedDatabase = getMongoConnection().useDb(handler.database);
+            res.send(createResponse(ResponseType.OK, undefined, {selected: handler.database}));
 
         } catch (error) {
             console.error(error);

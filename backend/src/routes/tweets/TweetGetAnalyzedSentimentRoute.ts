@@ -1,6 +1,6 @@
 import {AnalyzedTweetSchema, IAnalyzedTweetData, ITweetRoute} from "./ITweetRoute";
 import {Request, Response} from "express";
-import {createMissingBodyParamResponse, createResponse, ResponseType} from "../IRoute";
+import {createMissingQueryParamResponse, createResponse, ResponseType} from "../IRoute";
 
 type RequestHandler = {
     collection: string;
@@ -15,10 +15,10 @@ export class TweetGetAnalyzedSentimentRoute extends ITweetRoute {
     }
 
     performTweetRequest(req: Request, res: Response): void {
-        const handler = req.body as RequestHandler;
+        const handler = req.query as RequestHandler;
 
         if (!handler.collection) {
-            res.send(createMissingBodyParamResponse("collection"));
+            res.send(createMissingQueryParamResponse("collection"));
             return;
         }
 
