@@ -1,5 +1,10 @@
-import {ITweetRoute} from "./ITweetRoute";
+import {AnalyzedTweetSchema, IAnalyzedTweetData, ITweetRoute} from "./ITweetRoute";
 import {Request, Response} from "express";
+import {createMissingBodyParamResponse, createResponse, ResponseType} from "../IRoute";
+
+type RequestHandler = {
+    collection: string;
+}
 
 export class TweetGetAnalyzedDataRoute extends ITweetRoute {
 
@@ -9,8 +14,32 @@ export class TweetGetAnalyzedDataRoute extends ITweetRoute {
         return TweetGetAnalyzedDataRoute.TWEET_PATH;
     }
 
-    perform(req: Request, res: Response): void {
-        //TODO: implement...
-        res.send('Route: ' + TweetGetAnalyzedDataRoute.TWEET_PATH);
+    //TODO: check why TweetGetAnalyzedSentimentDatesRoute has the same behavior
+    performTweetRequest(req: Request, res: Response): void {
+        const handler = req.body as RequestHandler;
+
+        if (!handler.collection) {
+            res.send(createMissingBodyParamResponse("collection"));
+            return;
+        }
+
+        try {
+            const analyzedTweetModel = ITweetRoute.selectedDatabase
+                .model<IAnalyzedTweetData>(handler.collection, AnalyzedTweetSchema);
+
+            analyzedTweetModel
+                .find({}, {timeout: false})
+                .lean()
+                .catch(error => {
+                    throw error;
+                })
+                .then(result => {
+                    res.send(createResponse(ResponseType.OK, undefined, result));
+                });
+        } catch (error) {
+            console.error(error);
+            res.status(500);
+            res.send(createResponse(ResponseType.KO, error.message));
+        }
     }
 }

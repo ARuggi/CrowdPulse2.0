@@ -1,16 +1,45 @@
-import {ITweetRoute} from "./ITweetRoute";
+import {AnalyzedTweetSchema, IAnalyzedTweetData, ITweetRoute} from "./ITweetRoute";
 import {Request, Response} from "express";
+import {createMissingBodyParamResponse, createResponse, ResponseType} from "../IRoute";
+
+type RequestHandler = {
+    collection: string;
+}
 
 export class TweetGetTextRoute extends ITweetRoute {
 
-    private static TWEET_PATH = "/getUsers";
+    private static TWEET_PATH = "/getText";
 
     tweetPath(): string {
         return TweetGetTextRoute.TWEET_PATH;
     }
 
-    perform(req: Request, res: Response): void {
-        //TODO: implement...
-        res.send('Route: ' + TweetGetTextRoute.TWEET_PATH);
+    performTweetRequest(req: Request, res: Response): void {
+        const handler = req.body as RequestHandler;
+
+        if (!handler.collection) {
+            res.send(createMissingBodyParamResponse("collection"));
+            return;
+        }
+
+        try {
+            const analyzedTweetModel = ITweetRoute.selectedDatabase
+                .model<IAnalyzedTweetData>(handler.collection, AnalyzedTweetSchema);
+
+            analyzedTweetModel.aggregate([
+                {$group: {_id: "$spacy"}}
+            ], (error, result) => {
+
+                if (error) {
+                    throw error;
+                }
+
+                res.send(createResponse(ResponseType.OK, undefined, result));
+            }).allowDiskUse(true);
+        } catch (error) {
+            console.error(error);
+            res.status(500);
+            res.send(createResponse(ResponseType.KO, error.message));
+        }
     }
 }

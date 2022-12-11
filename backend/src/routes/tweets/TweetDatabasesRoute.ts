@@ -1,5 +1,7 @@
 import {ITweetRoute} from "./ITweetRoute";
 import {Request, Response} from "express";
+import {createResponse, ResponseType} from "../IRoute";
+import {getAdminConnection} from "../../database/database";
 
 export class TweetDatabasesRoute extends ITweetRoute {
 
@@ -9,8 +11,20 @@ export class TweetDatabasesRoute extends ITweetRoute {
         return TweetDatabasesRoute.TWEET_PATH;
     }
 
-    perform(req: Request, res: Response): void {
-        //TODO: implement...
-        res.send('Route: ' + TweetDatabasesRoute.TWEET_PATH);
+    performTweetRequest(req: Request, res: Response): void {
+        try {
+            getAdminConnection().db.admin().listDatabases((error, result) => {
+
+                if (error) {
+                    throw error;
+                }
+
+                res.send(createResponse(ResponseType.OK, undefined, result));
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500);
+            res.send(createResponse(ResponseType.KO, error.message));
+        }
     }
 }

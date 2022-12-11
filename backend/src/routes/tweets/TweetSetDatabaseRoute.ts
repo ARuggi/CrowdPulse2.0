@@ -1,7 +1,7 @@
 import {ITweetRoute} from "./ITweetRoute";
 import {Request, Response} from "express";
 import {getMongoConnection} from "../../database/database";
-import {createResponse, ResponseType} from "../IRoute";
+import {createMissingBodyParamResponse, createResponse, ResponseType} from "../IRoute";
 
 type RequestHandler = {
     mongodb: string;
@@ -19,11 +19,11 @@ export class TweetSetDatabaseRoute extends ITweetRoute {
         return TweetSetDatabaseRoute.TWEET_PATH;
     }
 
-    perform(req: Request, res: Response): void {
+    performTweetRequest(req: Request, res: Response): void {
         const handler = req.body as RequestHandler;
 
         if (!handler.mongodb) {
-            res.send(createResponse(ResponseType.KO,"missing 'mongodb' as query param"));
+            res.send(createMissingBodyParamResponse("mongodb"));
             return;
         }
 
@@ -34,7 +34,14 @@ export class TweetSetDatabaseRoute extends ITweetRoute {
 
         } catch (error) {
             console.error(error);
+            res.status(500);
             res.send(createResponse(ResponseType.KO, error.message));
         }
     }
+
+    checkIntegrity(req: Request, res: Response): boolean {
+        // Nothing to do, avoid the checking.
+        return true;
+    }
+
 }

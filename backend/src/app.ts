@@ -20,18 +20,18 @@ import {TweetGetAnalyzedSentimentDatesRoute} from "./routes/tweets/TweetGetAnaly
 class App {
 
     private static ROUTES: Array<IRoute> = [
-        new TweetSetDatabaseRoute(),
-        new TweetCollectionsRoute(),
-        new TweetDatabasesRoute(),
-        new TweetGetAnalyzedDataRoute(),
-        new TweetGetTagsRoute(),
-        new TweetGetHashtagsRoute(),
-        new TweetGetUsersRoute(),
-        new TweetGetTextRoute(),
-        new TweetGetDataSortByDateRoute(),
-        new TweetGetDataTimelinesRoute(),
-        new TweetGetAnalyzedSentimentRoute(),
-        new TweetGetAnalyzedSentimentDatesRoute()
+        new TweetSetDatabaseRoute(),               // ENDPOINT: /tweet/setDbs
+        new TweetDatabasesRoute(),                 // ENDPOINT: /tweet/dbs
+        new TweetCollectionsRoute(),               // ENDPOINT: /tweet/collections
+        new TweetGetAnalyzedDataRoute(),           // ENDPOINT: /tweet/getAnalyzedData
+        new TweetGetTagsRoute(),                   // ENDPOINT: /tweet/getTags
+        new TweetGetHashtagsRoute(),               // ENDPOINT: /tweet/getHashtags
+        new TweetGetUsersRoute(),                  // ENDPOINT: /tweet/getUsers
+        new TweetGetTextRoute(),                   // ENDPOINT: /tweet/getText
+        new TweetGetDataSortByDateRoute(),         // ENDPOINT: /tweet/getDataSortByDate
+        new TweetGetDataTimelinesRoute(),          // ENDPOINT: /tweet/getDataTimelines
+        new TweetGetAnalyzedSentimentRoute(),      // ENDPOINT: /tweet/getAnalyzedSentiment
+        new TweetGetAnalyzedSentimentDatesRoute(), // ENDPOINT: /tweet/getAnalyzedSentimentDates
     ];
 
     express: express.Application;
@@ -77,7 +77,7 @@ class App {
     private registerRoutes() {
         App.ROUTES.forEach(route => {
             const method = Reflect.get(this.express, route.method()) as (path: string, perform: void) => {};
-            Reflect.apply(method, this.express, [route.path(), route.perform]);
+            Reflect.apply(method, this.express, [route.path(), (req, res) => route.perform(req, res)]);
             console.log("Registered endpoint: [" + route.method().toUpperCase() + "] " + route.path());
         })
 

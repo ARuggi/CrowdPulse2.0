@@ -17,10 +17,13 @@ export interface IRoute {
     perform(req: Request, res: Response): void;
 }
 
+export function createMissingBodyParamResponse(paramName?: string, data?: any) {
+    return createResponse(ResponseType.KO, `missing '${paramName}' as body param`, data);
+}
+
 export function createResponse(responseType: ResponseType,
                                message?: string,
                                data?: any) {
-
     if (!message) {
         message = "done";
     }
