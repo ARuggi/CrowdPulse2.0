@@ -22,18 +22,10 @@ abstract class AbstractRequest<T, ResponseType> {
 
     sendRequest(data: T): Promise<ResponseType> {
         switch (this.method) {
-            case "get": return this.sendGetRequest(data);
-            case "post": return this.sendPostRequest(data);
+            case "get": return axios.get(this.url,{params: data});
+            case "post": return axios.post(this.url,{body: data});
             default: throw new Error(`${this.url} method not implemented`);
         }
-    }
-
-    private sendGetRequest(data: T): Promise<ResponseType> {
-        return axios.get(this.url,{params: data});
-    }
-
-    private sendPostRequest(data: T): Promise<ResponseType> {
-        return axios.post(this.url,{params: data});
     }
 }
 

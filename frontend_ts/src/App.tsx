@@ -29,7 +29,7 @@ class App extends React.Component<any> {
             })
             .then(response => {
                 performResponse(
-                    response?.data as unknown as Response<any>,
+                    response!.data as unknown as Response<any>,
                     (result) => {
                         const tweetDatabasesData = result?.data as TweetDatabasesData;
                         tweetDatabasesData.databases = [...tweetDatabasesData.databases]
