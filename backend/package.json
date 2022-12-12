@@ -2,7 +2,6 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "target/app.js",
   "scripts": {
     "start": "nodemon",
     "lint": "eslint . --ext .ts"
