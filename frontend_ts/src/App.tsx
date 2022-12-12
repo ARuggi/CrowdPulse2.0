@@ -22,7 +22,6 @@ class App extends React.Component<any> {
     }
 
     loadDatabases() {
-
         new TweetDatabasesRequest()
             .sendRequest({})
             .catch(error => {
@@ -39,40 +38,16 @@ class App extends React.Component<any> {
                                     case "admin":
                                     case "config":
                                     case "test":
-                                    case "local":
-                                        return true;
-                                    default:
-                                        return false;
+                                    case "local":return false;
+                                    default:return true;
                                 }
                             });
-
                         this.setState({tweetDatabasesData});
                     },
                     (error) => {
                         console.log("Error: " + error?.message);
                     })
-            })
-
-        /*axios.get('/tweet/dbs')
-            .then((response) => {
-
-                let dbs = [];
-                const {databases} = response.data.data.databases;
-
-                databases.forEach((database: { name: any; }) => {
-                    let databaseName = database.name;
-                    if (databaseName !== "admin"
-                        && databaseName !== "config"
-                        && databaseName !== "test"
-                        && databaseName !== "local") {
-                        dbs.push(databaseName);
-                    }
-                });
-
-                this.setState({dbs});
-            }).catch((error) => {
-            console.log('error: ', error)
-        });*/
+            });
     }
 
     render() {
