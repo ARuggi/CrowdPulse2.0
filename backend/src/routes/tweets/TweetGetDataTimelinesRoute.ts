@@ -1,4 +1,4 @@
-import {AnalyzedTweetSchema, IAnalyzedTweetData, ITweetRoute} from "./ITweetRoute";
+import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from "./AbstractTweetRoute";
 import {Request, Response} from "express";
 import {createMissingQueryParamResponse, createResponse, ResponseType} from "../IRoute";
 
@@ -6,7 +6,7 @@ type RequestHandler = {
     collection: string;
 }
 
-export class TweetGetDataTimelinesRoute extends ITweetRoute {
+export class TweetGetDataTimelinesRoute extends AbstractTweetRoute {
 
     private static TWEET_PATH = "/getDataTimelines";
 
@@ -23,7 +23,7 @@ export class TweetGetDataTimelinesRoute extends ITweetRoute {
         }
 
         try {
-            const analyzedTweetModel = ITweetRoute.selectedDatabase
+            const analyzedTweetModel = AbstractTweetRoute.selectedDatabase
                 .model<IAnalyzedTweetData>(handler.collection, AnalyzedTweetSchema);
 
             //TODO: Does not work

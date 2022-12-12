@@ -1,8 +1,8 @@
-import {ITweetRoute} from "./ITweetRoute";
+import {AbstractTweetRoute} from "./AbstractTweetRoute";
 import {Request, Response} from "express";
 import {createResponse, ResponseType} from "../IRoute";
 
-export class TweetCollectionsRoute extends ITweetRoute {
+export class TweetCollectionsRoute extends AbstractTweetRoute {
 
     private static TWEET_PATH = "/collections";
 
@@ -12,7 +12,7 @@ export class TweetCollectionsRoute extends ITweetRoute {
 
     performTweetRequest(req: Request, res: Response): void {
         try {
-            ITweetRoute.selectedDatabase.db.listCollections()
+            AbstractTweetRoute.selectedDatabase.db.listCollections()
                 .toArray()
                 .catch(error => {
                     throw error;

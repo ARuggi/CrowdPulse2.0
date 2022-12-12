@@ -2,7 +2,7 @@ import {createResponse, IRoute, ResponseType} from "../IRoute";
 import {Request, Response} from "express";
 import {getMongoConnection, getAdminConnection} from "../../database/database";
 import {Connection, Schema} from "mongoose";
-export abstract class ITweetRoute implements IRoute {
+export abstract class AbstractTweetRoute implements IRoute {
 
     public static selectedDatabase: Connection = undefined;
 
@@ -31,7 +31,7 @@ export abstract class ITweetRoute implements IRoute {
     abstract tweetPath(): string;
 
     protected checkIntegrity(req: Request, res: Response): boolean {
-        if (ITweetRoute.selectedDatabase) {
+        if (AbstractTweetRoute.selectedDatabase) {
             return true;
         }
         res.status(500);

@@ -1,9 +1,9 @@
-import {ITweetRoute} from "./ITweetRoute";
+import {AbstractTweetRoute} from "./AbstractTweetRoute";
 import {Request, Response} from "express";
 import {createResponse, ResponseType} from "../IRoute";
 import {getAdminConnection} from "../../database/database";
 
-export class TweetDatabasesRoute extends ITweetRoute {
+export class TweetDatabasesRoute extends AbstractTweetRoute {
 
     private static TWEET_PATH = "/dbs";
 

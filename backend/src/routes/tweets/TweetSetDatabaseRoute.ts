@@ -1,13 +1,12 @@
-import {ITweetRoute} from "./ITweetRoute";
+import {AbstractTweetRoute} from "./AbstractTweetRoute";
 import {Request, Response} from "express";
-import {getMongoConnection} from "../../database/database";
 import {createMissingBodyParamResponse, createResponse, ResponseType} from "../IRoute";
 
 type RequestHandler = {
     database: string;
 }
 
-export class TweetSetDatabaseRoute extends ITweetRoute {
+export class TweetSetDatabaseRoute extends AbstractTweetRoute {
 
     private static TWEET_PATH = "/setDbs";
 
@@ -29,7 +28,7 @@ export class TweetSetDatabaseRoute extends ITweetRoute {
 
         try {
 
-            ITweetRoute.selectedDatabase = getMongoConnection().useDb(handler.database);
+            AbstractTweetRoute.selectedDatabase = super.getMongoConnection().useDb(handler.database);
             res.send(createResponse(ResponseType.OK, undefined, {selected: handler.database}));
 
         } catch (error) {
