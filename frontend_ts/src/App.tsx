@@ -1,13 +1,14 @@
 import React from 'react';
 import axios from 'axios';
 
-import './styles/App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/App.scss';
+
 import LoadingOverlay from './components/LoadingOverlay';
 import TweetDatabasesRequest, {TweetDatabasesData} from './requests/tweet/TweetDatabasesRequest';
 import {Response} from './requests/AbstractRequest';
 import {performResponse} from './util/RequestUtil';
 import DatabaseSelection from "./components/DatabaseSelection";
+import {withTranslation, WithTranslation} from "react-i18next";
 
 axios.defaults.baseURL = "http://localhost:4000";
 
@@ -15,7 +16,7 @@ type AppState = {
     tweetDatabasesData: TweetDatabasesData | undefined;
 }
 
-class App extends React.Component<any> {
+class App extends React.Component<WithTranslation> {
 
     state: AppState = {
         tweetDatabasesData: undefined
@@ -56,9 +57,14 @@ class App extends React.Component<any> {
             this.loadDatabases();
         }
 
+        const {t} = this.props;
+
         return (
             <div className="App">
                 <header className="App-content">
+                    <div>
+                        <p>text: {t('language')}</p>
+                    </div>
                     {!this.state.tweetDatabasesData && <LoadingOverlay message={"Connecting to the server..."}/>}
                     {this.state.tweetDatabasesData && <DatabaseSelection tweetDatabasesData={this.state.tweetDatabasesData}/>}
                 </header>
@@ -67,4 +73,4 @@ class App extends React.Component<any> {
     }
 }
 
-export default App;
+export default withTranslation()(App);
