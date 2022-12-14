@@ -1,40 +1,56 @@
 @import "node_modules/bootstrap/scss/bootstrap";
 
+$background: #282c35;
+$container_background: #161624;
+$container_border_color: #fff;
+
+#root {
+  background-color: $background;
+}
+
 .App {
   text-align: center;
-  background-color: #282c35;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-content {
   min-height: 100vh;
-  display: flex;
+  //display: flex; //center
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+h1, h2, h3, h4, h5, h6, a, p {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+div.container {
+  background-color: $container_background;
+  text-align: start;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+#loading_overlay {
+  margin-top: 50vh;
+  animation-name: fade-in;
+  animation-fill-mode: both;
+  animation-duration: .5s;
+}
+
+#welcome {
+  h1 {
+    margin-top: 20vh;
   }
-  to {
-    transform: rotate(360deg);
+  .container {
+    margin-top: 10vh;
+    h2 {
+      text-align: center;
+    }
+    .card {
+      background-color: #333354;
+    }
   }
+  animation-name: fade-in;
+  animation-fill-mode: both;
+  animation-duration: .5s;
+}
+
+@keyframes fade-in {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
 }

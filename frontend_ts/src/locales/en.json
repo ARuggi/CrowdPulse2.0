@@ -2,6 +2,8 @@
     "common": {
         "language": "English",
         "countryCode": "GB",
-        "projectName": "CrowdPulse"
+        "projectName": "CrowdPulse",
+        "welcome": "Welcome to CrowdPulse!",
+        "welcomeSelectDatabase": "Select a database"
     }
 }
