@@ -3,6 +3,8 @@
         "language": "English",
         "countryCode": "GB",
         "projectName": "CrowdPulse",
+        "loading": "Loading",
+        "connectingToServer": "Connecting to the server...",
         "welcome": "Welcome to CrowdPulse!",
         "welcomeSelectDatabase": "Select a database"
     }

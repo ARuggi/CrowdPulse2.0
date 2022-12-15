@@ -57,9 +57,11 @@ class App extends React.Component<WithTranslation> {
             this.loadDatabases();
         }
 
+        const {t} = this.props;
+
         return (
             <div className="App">
-                {!this.state.tweetDatabasesData && <LoadingOverlay message={"Connecting to the server..."}/>}
+                {!this.state.tweetDatabasesData && <LoadingOverlay message={t('connectingToServer')}/>}
                 {this.state.tweetDatabasesData && <Welcome tweetDatabasesData={this.state.tweetDatabasesData}/>}
             </div>
         );

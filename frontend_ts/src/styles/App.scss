@@ -3,6 +3,7 @@
 $background: #282c35;
 $container_background: #161624;
 $container_border_color: #fff;
+$item_color: #333354;
 
 #root {
   background-color: $background;
@@ -25,11 +26,24 @@ div.container {
   text-align: start;
 }
 
-#loading_overlay {
+// Loading modal
+.modal-dialog {
   margin-top: 50vh;
   animation-name: fade-in;
   animation-fill-mode: both;
   animation-duration: .5s;
+  .modal-content {
+    background-color: $container_background;
+    --bs-modal-header-border-color: black; // header bottom border
+    .modal-header {
+      background-color: $item_color;
+    }
+    .modal-body {
+      display: flex; //center
+      flex-direction: column;
+      align-items: center;
+    }
+  }
 }
 
 #welcome {
@@ -42,7 +56,7 @@ div.container {
       text-align: center;
     }
     .card {
-      background-color: #333354;
+      background-color: $item_color;
     }
   }
   animation-name: fade-in;
