@@ -37,6 +37,11 @@ div.container {
   animation-name: fade-in;
   animation-fill-mode: both;
   animation-duration: .5s;
+
+  @media (max-width: $breakpoint-tablet) {
+    margin-right: 1vh;
+    margin-left: 1vh;
+  }
 }
 
 // Loading modal
@@ -64,6 +69,10 @@ div.container {
 #welcomeMessage {
   margin-top: 20vh;
   margin-bottom: 5vh;
+  @media (max-width: $breakpoint-tablet) {
+    margin-top: 3vh;
+    margin-bottom: 2vh;
+  }
 }
 
 #welcomeCard {
@@ -85,7 +94,6 @@ div.container {
       @media (max-width: $breakpoint-tablet) {
         display: none;
       }
-
       @media (min-width: $breakpoint-tablet) {
         display: flex;
         flex: auto;
