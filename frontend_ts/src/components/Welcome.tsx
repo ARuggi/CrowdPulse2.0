@@ -31,7 +31,7 @@ function Welcome(content: Content) {
                                     <Col key={i}>
                                         <Card className="welcome-card-item" bg="dark" border="dark">
 
-                                            <Card.Body>
+                                            <Card.Body className="welcome-card-item-body">
                                                 <div className="row g-0">
                                                     <div className="col-md-4">
                                                         <Database className="img-fluid rounded-start col-md-4"/>

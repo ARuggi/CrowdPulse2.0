@@ -4,6 +4,7 @@ $text_color: white;
 $main_bg_color: #282c35;
 $container_bg_color: #161624;
 $item_bg_color: #333354;
+$item_bg_hover_color: #827c96;
 $item_bg_icon_color: #3e3e66;
 $item_br_color: #fff;
 $item_title_bg_color: #3e3e66;
@@ -87,6 +88,16 @@ div.container {
     margin-right: 1vh;
     margin-left: 1vh;
     margin-bottom: 2vh;
+
+    .welcome-card-item-body {
+      .row {
+        margin: -10px;
+      }
+    }
+
+    .welcome-card-item-body:hover {
+      background-color: $item_bg_hover_color;
+    }
 
     .col-md-4 {
       background-color: $item_bg_icon_color;
