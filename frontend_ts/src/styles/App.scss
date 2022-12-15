@@ -1,12 +1,21 @@
 @import "node_modules/bootstrap/scss/bootstrap";
 
-$background: #282c35;
-$container_background: #161624;
-$container_border_color: #fff;
-$item_color: #333354;
+$text_color: white;
+$main_bg_color: #282c35;
+$container_bg_color: #161624;
+$item_bg_color: #333354;
+$item_bg_icon_color: #3e3e66;
+$item_br_color: #fff;
+$item_title_bg_color: #3e3e66;
+
+$breakpoint-phone: 600px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 992px;
+$breakpoint-l-desktop: 1200px;
 
 #root {
-  background-color: $background;
+  color: $text_color;
+  background-color: $main_bg_color;
 }
 
 .App {
@@ -17,13 +26,17 @@ $item_color: #333354;
   align-items: center;
 }
 
-h1, h2, h3, h4, h5, h6, a, p {
-  color: white;
+div.container {
+  background-color: $container_bg_color;
+  text-align: start;
 }
 
-div.container {
-  background-color: $container_background;
-  text-align: start;
+.card {
+  margin-right: 10vh;
+  margin-left: 10vh;
+  animation-name: fade-in;
+  animation-fill-mode: both;
+  animation-duration: .5s;
 }
 
 // Loading modal
@@ -33,10 +46,10 @@ div.container {
   animation-fill-mode: both;
   animation-duration: .5s;
   .modal-content {
-    background-color: $container_background;
+    background-color: $container_bg_color;
     --bs-modal-header-border-color: black; // header bottom border
     .modal-header {
-      background-color: $item_color;
+      background-color: $item_bg_color;
     }
     .modal-body {
       display: flex; //center
@@ -46,22 +59,55 @@ div.container {
   }
 }
 
-#welcome {
-  h1 {
-    margin-top: 20vh;
+// Welcome page
+
+#welcomeMessage {
+  margin-top: 20vh;
+  margin-bottom: 5vh;
+}
+
+#welcomeCard {
+  .card-header {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: $container_bg_color;
+    border-top-right-radius: 7px;
+    border-top-left-radius: 7px;
   }
-  .container {
-    margin-top: 10vh;
-    h2 {
-      text-align: center;
+  .welcome-card-item {
+    margin-right: 1vh;
+    margin-left: 1vh;
+    margin-bottom: 2vh;
+
+    .col-md-4 {
+      background-color: $item_bg_icon_color;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: none;
+      }
+
+      @media (min-width: $breakpoint-tablet) {
+        display: flex;
+        flex: auto;
+        align-items: center;
+      }
+      @media (min-width: $breakpoint-l-desktop) {
+        display: flex;
+        flex: auto;
+        align-items: center;
+        svg {
+          width: 100px;
+          height: 100px;
+        }
+      }
     }
-    .card {
-      background-color: $item_color;
+    .card-body {
+      background-color: $item_bg_color;
+      .card-title {
+        background-color: $item_title_bg_color;
+      }
     }
   }
-  animation-name: fade-in;
-  animation-fill-mode: both;
-  animation-duration: .5s;
 }
 
 @keyframes fade-in {

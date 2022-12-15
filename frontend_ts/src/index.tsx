@@ -4,6 +4,7 @@ import reportWebVitals from './reportWebVitals';
 
 import 'bootstrap';
 import 'react-bootstrap';
+import 'react-bootstrap-icons'
 import './styles/index.scss';
 import './i18n';
 
