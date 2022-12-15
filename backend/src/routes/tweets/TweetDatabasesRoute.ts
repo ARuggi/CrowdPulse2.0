@@ -51,7 +51,6 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
                             });
                     });
 
-                    console.log(result);
                     res.send(createResponse(ResponseType.OK, undefined, result));
                 });
 
