@@ -14,7 +14,7 @@ export class TweetGetAnalyzedSentimentRoute extends AbstractTweetRoute {
         return TweetGetAnalyzedSentimentRoute.TWEET_PATH;
     }
 
-    performTweetRequest(req: Request, res: Response): void {
+    async performTweetRequest(req: Request, res: Response): Promise<void> {
         const handler = req.query as RequestHandler;
 
         if (!handler.collection) {

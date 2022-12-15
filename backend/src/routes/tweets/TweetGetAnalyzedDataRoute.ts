@@ -15,7 +15,7 @@ export class TweetGetAnalyzedDataRoute extends AbstractTweetRoute {
     }
 
     //TODO: check why TweetGetAnalyzedSentimentDatesRoute has the same behavior
-    performTweetRequest(req: Request, res: Response): void {
+    async performTweetRequest(req: Request, res: Response): Promise<void> {
         const handler = req.query as RequestHandler;
 
         if (!handler.collection) {

@@ -10,7 +10,7 @@ export abstract class AbstractTweetRoute implements IRoute {
         return '/tweet' + this.tweetPath();
     }
 
-    perform(req: Request, res: Response): void {
+    async perform(req: Request, res: Response): Promise<void> {
 
         if (this.method() == "get") {
             console.log(`Performing [${req.method}] '${req.url}' by '${req.ip}'`);
@@ -21,12 +21,11 @@ export abstract class AbstractTweetRoute implements IRoute {
         let result = this.checkIntegrity(req, res);
 
         if (result) {
-            this.performTweetRequest(req, res);
+            return await this.performTweetRequest(req, res).then(result => {return result});
         }
-
     }
 
-    abstract performTweetRequest(req: Request, res: Response): void;
+    abstract performTweetRequest(req: Request, res: Response): Promise<void>;
 
     abstract tweetPath(): string;
 

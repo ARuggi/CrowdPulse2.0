@@ -33,16 +33,6 @@ class App extends React.Component<WithTranslation> {
                     response!.data as unknown as Response<any>,
                     (result) => {
                         const tweetDatabasesData = result?.data as TweetDatabasesData;
-                        tweetDatabasesData.databases = [...tweetDatabasesData.databases]
-                            .filter(database => {
-                                switch (database.name) {
-                                    case "admin":
-                                    case "config":
-                                    case "test":
-                                    case "local":return false;
-                                    default:return true;
-                                }
-                            });
                         this.setState({tweetDatabasesData});
                     },
                     (error) => {

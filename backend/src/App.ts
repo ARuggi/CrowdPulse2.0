@@ -77,7 +77,7 @@ class App {
     private registerRoutes() {
         App.ROUTES.forEach(route => {
             const method = Reflect.get(this.express, route.method()) as (path: string, perform: void) => {};
-            Reflect.apply(method, this.express, [route.path(), (req, res) => route.perform(req, res)]);
+            Reflect.apply(method, this.express, [route.path(), async (req, res) => route.perform(req, res)]);
             console.log("Registered endpoint: [" + route.method().toUpperCase() + "] " + route.path());
         })
 

@@ -10,7 +10,7 @@ export class TweetCollectionsRoute extends AbstractTweetRoute {
         return TweetCollectionsRoute.TWEET_PATH;
     }
 
-    performTweetRequest(req: Request, res: Response): void {
+    async performTweetRequest(req: Request, res: Response): Promise<void> {
         try {
             AbstractTweetRoute.selectedDatabase.db.listCollections()
                 .toArray()

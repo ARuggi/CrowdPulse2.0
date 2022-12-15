@@ -18,7 +18,7 @@ export class TweetSetDatabaseRoute extends AbstractTweetRoute {
         return TweetSetDatabaseRoute.TWEET_PATH;
     }
 
-    performTweetRequest(req: Request, res: Response): void {
+    async performTweetRequest(req: Request, res: Response): Promise<void> {
         const handler = req.body as RequestHandler;
 
         if (!handler.database) {
