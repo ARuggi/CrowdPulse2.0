@@ -6,9 +6,17 @@ import {asyncFilter} from '../../util/AsyncUtil';
 
 type ResultType = {
     databases: Array<{
-        name: string,
-        sizeOnDisk: number,
-        empty: boolean
+        name: string,       // Database name
+        sizeOnDisk: number, // Size in Kbps
+        empty: boolean      // True if it is an empty database
+        info: {
+            version: string,         // The data version
+            targetVersion: number,   // 0 for legacy twitter database, 1+ for newer
+            releaseDate: Date,       // The release date YYYY-MM-DD
+            lastUpdateDate: Date,    // The last update date YYYY-MM-DD
+            htmlDescription: string, // Html description
+            icon: string,            // Base64 icon
+        }
     }>
 }
 
@@ -33,23 +41,22 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
 
                     result.databases = await asyncFilter(result.databases, async (database) => {
 
-                        switch (database.name) {
-                            case "admin":
-                            case "config":
-                            case "local":
-                                return false;
-                            default:
-                                break;
+                        if (!this.isCrowdPulseDatabaseName(database.name)) {
+                            return false;
                         }
 
                         return await this.getDatabaseCollections(database)
                             .then((result) => {
                                 return !result
                                     .filter(r => {
-                                        return r!.name == "Message" && r!.type == "collection";
+                                        return r.name == "Message" && r.type == "collection";
                                     }).empty;
                             });
                     });
+
+                    for (const database of result.databases) {
+                        database.info = await this.getCollectionInfo(database);
+                    }
 
                     res.send(createResponse(ResponseType.OK, undefined, result));
                 });
@@ -67,7 +74,7 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
     }
 
     private async getDatabaseCollections(database): Promise<any> {
-        let collection = super.getMongoConnection()
+        const collection = super.getMongoConnection()
             .useDb(database.name)
             .db
             .listCollections();
@@ -76,5 +83,46 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
             .toArray()
             .catch(() => {return [];})
             .then((result) => {return result;});
+    }
+
+    private async getCollectionInfo(database): Promise<any> {
+
+        const collection = super.getMongoConnection()
+            .useDb(database.name)
+            .collection("Info");
+
+        return await collection.findOne()
+            .then(result => {
+                if (result) {
+                    return {
+                        version: result.version,
+                        targetVersion: result.targetVersion,
+                        releaseDate: result.releaseDate,
+                        lastUpdateDate: result.lastUpdateDate,
+                        htmlDescription: result.htmlDescription,
+                        icon: result.icon
+                    };
+                } else {
+                    return {
+                        version: "",
+                        targetVersion: 0,
+                        releaseDate: undefined,
+                        lastUpdateDate: undefined,
+                        htmlDescription: "",
+                        icon: ""
+                    };
+                }
+            })
+    }
+
+    private isCrowdPulseDatabaseName(name: string) {
+        switch (name) {
+            case "admin":
+            case "config":
+            case "local":
+                return false;
+            default:
+                return true;
+        }
     }
 }

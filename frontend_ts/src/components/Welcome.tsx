@@ -10,7 +10,7 @@ export type Content = {
     tweetDatabasesData: TweetDatabasesData;
 }
 
-function Welcome(content: Content) {
+function Welcome(props: Content) {
     const {t} = useTranslation();
 
     return (
@@ -24,26 +24,31 @@ function Welcome(content: Content) {
                 <Col>
                     <Card bg="dark" border="dark">
                         <Card.Header>{t('welcomeSelectDatabase')}</Card.Header>
-                        <Card.Body>
+                        <Card.Body className="d-flex justify-content-center align-items-center">
 
                             <Row xs={1} md={2} className="g-0">
-                                {content.tweetDatabasesData.databases.map((database: DatabaseType, i: number) => (
+                                {props.tweetDatabasesData.databases.map((database: DatabaseType, i: number) => (
                                     <Col key={i}>
-                                        <Card className="welcome-card-item" bg="dark" border="dark">
+                                        <Card className="welcome-card-item h-100 gy-3" bg="dark" border="dark">
 
                                             <Card.Body className="welcome-card-item-body">
                                                 <div className="row g-0">
                                                     <div className="col-md-4">
-                                                        <Database className="img-fluid rounded-start col-md-4"/>
+                                                        {!database.info.icon && <Database className="img-fluid rounded-start col-md-4"/>}
+                                                        {database.info.icon && <img src={`data:image/jpeg;base64,${database.info.icon}`} alt="Icon"/>}
                                                     </div>
                                                     <div className="col-md-8">
                                                         <div className="card-body">
                                                             <h5 className="card-title">{database.name}</h5>
-                                                            <p className="card-text">This is a wider card with
-                                                                supporting text below as a natural lead-in to additional
-                                                                content. This content is a little bit longer.</p>
-                                                            <p className="card-text"><small className="text-muted">Last
-                                                                updated 3 mins ago</small></p>
+                                                            <div className="card-text" dangerouslySetInnerHTML={{__html: database.info.htmlDescription}}></div>
+                                                            <div className="card-text footer">
+                                                                {}
+                                                                <small className="text-muted">Release update: {database.info.releaseDate ? database.info.releaseDate.toString() : "undefined"}</small>
+                                                                <br/>
+                                                                <small className="text-muted">Last update: {database.info.lastUpdateDate ? database.info.lastUpdateDate.toString() : "undefined"}</small>
+                                                                <br/>
+                                                                <small className="text-muted">Version: {database.info.version ? database.info.version : "undefined"}</small>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

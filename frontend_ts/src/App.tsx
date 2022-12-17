@@ -30,7 +30,7 @@ class App extends React.Component<WithTranslation> {
             })
             .then(response => {
                 performResponse(
-                    response!.data as unknown as Response<any>,
+                    response?.data as unknown as Response<any>,
                     (result) => {
                         const tweetDatabasesData = result?.data as TweetDatabasesData;
                         this.setState({tweetDatabasesData});

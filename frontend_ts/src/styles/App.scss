@@ -90,8 +90,10 @@ div.container {
     margin-bottom: 2vh;
 
     .welcome-card-item-body {
+      padding: 5px;
+
       .row {
-        margin: -10px;
+        height: 100%;
       }
     }
 
@@ -109,6 +111,12 @@ div.container {
         display: flex;
         flex: auto;
         align-items: center;
+        img {
+          display: inline;
+          margin-left: 10px;
+          width: 75px;
+          height: 75px;
+        }
       }
       @media (min-width: $breakpoint-l-desktop) {
         display: flex;
@@ -118,12 +126,24 @@ div.container {
           width: 100px;
           height: 100px;
         }
+        img {
+          display: inline;
+          margin-left: 25px;
+          width: 100px;
+          height: 100px;
+        }
       }
     }
+
     .card-body {
       background-color: $item_bg_color;
+      height: 100%;
+
       .card-title {
         background-color: $item_title_bg_color;
+      }
+      .footer {
+        text-align: start;
       }
     }
   }
