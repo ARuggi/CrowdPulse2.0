@@ -6,6 +6,6 @@
     "loading": "Caricamento",
     "connectingToServer": "Connessione al server in corso...",
     "welcome": "Benvenuto su CrowdPulse!",
-    "welcomeSelectDatabase": "Seleziona il database che vuoi analizzare"
+    "selectDatabase": "Seleziona il database che vuoi analizzare"
   }
 }

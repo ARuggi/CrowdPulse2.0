@@ -7,8 +7,10 @@ import LoadingOverlay from './components/LoadingOverlay';
 import TweetDatabasesRequest, {TweetDatabasesData} from './requests/tweet/TweetDatabasesRequest';
 import {Response} from './requests/AbstractRequest';
 import {performResponse} from './util/RequestUtil';
-import Welcome from "./components/Welcome";
+import DatabaseSelectionBox from "./components/DatabaseSelectionBox";
 import {withTranslation, WithTranslation} from "react-i18next";
+import {Col, Row} from "react-bootstrap";
+import Container from "react-bootstrap/Container";
 
 axios.defaults.baseURL = "http://localhost:4000";
 
@@ -52,7 +54,19 @@ class App extends React.Component<WithTranslation> {
         return (
             <div className="App">
                 {!this.state.tweetDatabasesData && <LoadingOverlay message={t('connectingToServer')}/>}
-                {this.state.tweetDatabasesData && <Welcome tweetDatabasesData={this.state.tweetDatabasesData}/>}
+                {this.state.tweetDatabasesData &&
+                    <>
+                        <Container fluid>
+                            <Row id="welcome-message">
+                                <Col>
+                                    <h1>{t('welcome')}</h1>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <DatabaseSelectionBox tweetDatabasesData={this.state.tweetDatabasesData}/>
+                            </Row>
+                        </Container>
+                    </>}
             </div>
         );
     }
