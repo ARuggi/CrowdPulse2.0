@@ -45,6 +45,16 @@ div.container {
   }
 }
 
+// not found (404)
+#not-found {
+  text-align: center;
+  min-height: 100vh;
+  display: flex; //center
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20vh;
+}
+
 // Loading modal
 .modal-dialog {
   margin-top: 50vh;

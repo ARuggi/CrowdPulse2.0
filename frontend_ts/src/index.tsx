@@ -1,15 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
+import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import NotFound from './components/NotFound'
 
 import 'bootstrap';
 import 'react-bootstrap';
 import 'react-bootstrap-icons'
 import './styles/index.scss';
-import './i18n';
 
+import './i18n';
 import App from './App';
 import Navbar from "./components/Navbar";
+
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <App/>,
+        errorElement: <NotFound/>
+    }
+]);
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -17,7 +27,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <Navbar/>
-        <App/>
+        <RouterProvider router={router} />
     </React.StrictMode>
 );
 
