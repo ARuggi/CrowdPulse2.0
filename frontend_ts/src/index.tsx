@@ -12,12 +12,17 @@ import './styles/index.scss';
 import './i18n';
 import App from './App';
 import Navbar from "./components/Navbar";
+import Analysis from "./components/Analysis";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <App/>,
         errorElement: <NotFound/>
+    },
+    {
+        path: "/analysis",
+        element: <Analysis/>
     }
 ]);
 

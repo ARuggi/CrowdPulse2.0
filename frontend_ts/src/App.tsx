@@ -66,7 +66,8 @@ class App extends React.Component<WithTranslation> {
                                 <DatabaseSelectionBox tweetDatabasesData={this.state.tweetDatabasesData}/>
                             </Row>
                         </Container>
-                    </>}
+                    </>
+                }
             </div>
         );
     }

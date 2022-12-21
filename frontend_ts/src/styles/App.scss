@@ -14,7 +14,7 @@ $breakpoint-tablet: 768px;
 $breakpoint-desktop: 992px;
 $breakpoint-l-desktop: 1200px;
 
-#root {
+html, body, footer {
   color: $text_color;
   background-color: $main_bg_color;
 }
