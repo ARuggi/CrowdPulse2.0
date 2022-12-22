@@ -4,8 +4,10 @@
     "countryCode": "IT",
     "projectName": "CrowdPulse",
     "loading": "Caricamento",
+    "error": "Errore",
     "connectingToServer": "Connessione al server in corso...",
     "welcome": "Benvenuto su CrowdPulse!",
-    "selectDatabase": "Seleziona il database che vuoi analizzare"
+    "selectDatabase": "Seleziona il database che vuoi analizzare",
+    "serverNotRespondingError": "Il server non risponde"
   }
 }

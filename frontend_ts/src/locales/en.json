@@ -4,8 +4,10 @@
         "countryCode": "GB",
         "projectName": "CrowdPulse",
         "loading": "Loading",
+        "error": "Error",
         "connectingToServer": "Connecting to the server...",
         "welcome": "Welcome to CrowdPulse!",
-        "selectDatabase": "Select a database"
+        "selectDatabase": "Select a database",
+        "serverNotRespondingError": "Server is not responding"
     }
 }
