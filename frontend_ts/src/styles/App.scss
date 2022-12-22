@@ -19,6 +19,20 @@ html, body, footer {
   background-color: $main_bg_color;
 }
 
+.navbar {
+  a, p {
+    color: $text_color;
+  }
+
+  // Fix lang selection box position.
+  @media (max-width: $breakpoint-desktop) {
+    .dropdown-menu {
+      margin-right: 60px !important;
+      margin-top: -40px !important;
+    }
+  }
+}
+
 .App {
   text-align: center;
   min-height: 100vh;
