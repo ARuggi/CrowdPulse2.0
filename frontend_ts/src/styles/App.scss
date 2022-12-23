@@ -173,6 +173,24 @@ div.container {
   }
 }
 
+// Analysis
+
+#analysis-container {
+  margin-top: 5vh;
+
+  #filters {
+    margin-bottom: 1vh;
+  }
+
+  .card-header {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: $container_bg_color;
+    border-top-right-radius: 7px;
+    border-top-left-radius: 7px;
+  }
+}
+
 @keyframes fade-in {
   0% {opacity: 0;}
   100% {opacity: 1;}

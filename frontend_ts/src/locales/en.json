@@ -8,6 +8,7 @@
         "connectingToServer": "Connecting to the server...",
         "welcome": "Welcome to CrowdPulse!",
         "selectDatabase": "Select a database",
-        "serverNotRespondingError": "Server is not responding"
+        "serverNotRespondingError": "Server is not responding",
+        "analysisOfDbs": "Analysis of %dbs%"
     }
 }
