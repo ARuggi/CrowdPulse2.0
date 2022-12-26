@@ -29,7 +29,7 @@ function ErrorOverlay(content: Content) {
             className="modal show"
             style={{display: 'block', position: 'initial'}}>
 
-            <Modal show={true} onHide={() => {}}>
+            <Modal show={true} onHide={undefined}>
                 <Modal.Header>
                     <Modal.Title>{getErrorIcon(content.type)} {t('error')}</Modal.Title>
                 </Modal.Header>

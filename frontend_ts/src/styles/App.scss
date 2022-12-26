@@ -43,6 +43,7 @@ html, body, footer {
   #welcome-message {
     margin-top: 20vh;
     margin-bottom: 5vh;
+
     @media (max-width: $breakpoint-tablet) {
       margin-top: 3vh;
       margin-bottom: 2vh;
@@ -99,7 +100,6 @@ div.container {
 }
 
 // DatabaseSelectionBox
-
 #databases-container {
   .card-header {
     padding-top: 10px;
@@ -174,12 +174,34 @@ div.container {
 }
 
 // Analysis
-
 #analysis-container {
   margin-top: 5vh;
 
+  .bg-dark {
+    color: white;
+  }
+
+  .form-select, .form-control {
+    background: $item_bg_color;
+    color: white;
+  }
+
   #filters {
     margin-bottom: 1vh;
+  }
+
+  .row {
+    margin: 0 10vh 2vh;
+
+    .card {
+      margin-right: 0;
+      margin-left: 0;
+    }
+  }
+
+  .input-group-text {
+    background: $item_bg_color;
+    color: $text_color;
   }
 
   .card-header {
@@ -188,6 +210,41 @@ div.container {
     background-color: $container_bg_color;
     border-top-right-radius: 7px;
     border-top-left-radius: 7px;
+  }
+
+  .container {
+
+  }
+
+  .card-body {
+    //padding: 0;
+
+    button.nav-link {
+      background: $item_bg_color;
+      color: white;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    button.nav-link.active {
+      background: $item_bg_color;
+      color: white;
+    }
+  }
+
+  #content {
+    --bs-card-border-radius: 0rem;
+
+    @media (max-width: $breakpoint-tablet) {
+      margin-right: 10vh;
+      margin-left: 10vh;
+    }
+
+    .card-body {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 
