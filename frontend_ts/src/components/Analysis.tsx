@@ -12,7 +12,7 @@ import {Funnel, Search} from "react-bootstrap-icons";
 enum AnalysisState {
     INIT,
     LOADING,
-    DONE
+    READY
 }
 
 enum AnalysisTab {
@@ -175,7 +175,7 @@ function Analysis() {
 
             switch (analysisState) {
                 case AnalysisState.INIT:    setAnalysisState(AnalysisState.LOADING); break;
-                case AnalysisState.LOADING: setAnalysisState(AnalysisState.DONE); break;
+                case AnalysisState.LOADING: setAnalysisState(AnalysisState.READY); break;
                 default: break;
             }
 

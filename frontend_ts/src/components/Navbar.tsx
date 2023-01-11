@@ -49,8 +49,7 @@ function Navbar() {
                                                       style={{width: '2em', height: '2em'}}
                                                       onClick={() => handleLanguageChange(i18n, lang)}
                                     />
-                                    <div className="dropdown-item"
-                                         style={{marginRight: "10px"}}
+                                    <div style={{marginLeft: "10px", marginTop: "3px"}}
                                          onClick={() => handleLanguageChange(i18n, lang)}>{title}</div>
                                 </NavDropdown.Item>
                             );

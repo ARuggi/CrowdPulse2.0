@@ -5,13 +5,13 @@ export enum ResponseType {
     KO = "KO"
 }
 
-export type Response<D extends object> = {
+export type Response<Data extends object> = {
     type: ResponseType,
     message: string,
-    data: D
+    data: Data
 }
 
-abstract class AbstractRequest<T, ResponseType> {
+abstract class AbstractRequest<T, ResponseType extends object> {
     readonly method: string;
     readonly url: string;
 
@@ -20,10 +20,10 @@ abstract class AbstractRequest<T, ResponseType> {
         this.url = url;
     }
 
-    sendRequest(data: T): Promise<ResponseType> {
+    sendRequest(data: T): Promise<Response<ResponseType>> {
         switch (this.method) {
-            case "get": return axios.get(this.url,{params: data});
-            case "post": return axios.post(this.url,{body: data});
+            case "get": return axios.get(this.url,{params: data}).then(response => response.data);
+            case "post": return axios.post(this.url,{body: data}).then(response => response.data);
             default: throw new Error(`${this.url} method not implemented`);
         }
     }

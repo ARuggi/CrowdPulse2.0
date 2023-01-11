@@ -17,12 +17,21 @@ $breakpoint-l-desktop: 1200px;
 html, body, footer {
   color: $text_color;
   background-color: $main_bg_color;
+  color-scheme: dark; // chrome flag for dark mode.
 }
 
 .navbar {
   a, p {
     color: $text_color;
   }
+
+  .dropdown-item:active {
+    background-color: #ffffff12;
+  }
+
+  //.dropdown-item:hover {
+  //  background-color: inherit;
+  //}
 
   // Fix lang selection box position.
   @media (max-width: $breakpoint-desktop) {

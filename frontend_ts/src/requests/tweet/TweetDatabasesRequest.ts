@@ -1,4 +1,4 @@
-import AbstractRequest, {Response} from "../AbstractRequest";
+import AbstractRequest from "../AbstractRequest";
 
 export type DatabaseType = {
     name: string,       // Database name
@@ -18,7 +18,7 @@ export type TweetDatabasesData = {
     databases: DatabaseType[]
 }
 
-class TweetDatabasesRequest extends AbstractRequest<{}, Response<TweetDatabasesData>> {
+class TweetDatabasesRequest extends AbstractRequest<{}, TweetDatabasesData> {
 
     constructor() {
         super("get", "/tweet/dbs");

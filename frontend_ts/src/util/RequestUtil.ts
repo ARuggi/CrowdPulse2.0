@@ -1,12 +1,19 @@
 import {Response, ResponseType} from '../requests/AbstractRequest'
 
-export function performResponse(response: Response<any>,
-                                okCallback: (response: Response<any>) => void,
-                                koCallback: (response: Response<any>) => void) {
+export async function filterResponse<T extends object>(response: Response<T>): Promise<Response<T>> {
 
-    switch (response?.type) {
-        case ResponseType.OK: okCallback(response); break;
-        case ResponseType.KO: koCallback(response); break;
-        default: throw new Error("Response type doesn't exist");
+    if (response.type === ResponseType.OK) {
+        return response;
+    }
+
+    throw new KOResponseError(response);
+}
+
+export class KOResponseError extends Error {
+    private readonly response;
+
+    constructor(response: Response<any>) {
+        super("KO: " + response.message);
+        this.response = response;
     }
 }
