@@ -3,7 +3,11 @@ import {Request, Response} from 'express';
 import {createResponse, ResponseType} from '../IRoute';
 import {getAdminConnection} from '../../database/database';
 import {asyncFilter} from '../../util/AsyncUtil';
-import {isReservedDatabase} from '../../util/DatabaseUtil';
+import {
+    isCrowdPulseCollection,
+    getDatabaseCollectionsInfo,
+    isReservedDatabase
+} from '../../util/DatabaseUtil';
 
 type ResultType = {
     databases: Array<{
@@ -39,12 +43,11 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
                             return false;
                         }
 
-                        return await this.getDatabaseCollections(database)
+                        return await getDatabaseCollectionsInfo(database.name)
                             .then((result) => {
                                 return !result
-                                    .filter(r => {
-                                        return r.name == "Message" && r.type == "collection";
-                                    }).empty;
+                                    .filter(r => {return isCrowdPulseCollection(r)})
+                                    .empty;
                             });
                     });
 
@@ -61,17 +64,5 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
     checkIntegrity(req: Request, res: Response): boolean {
         // Nothing to do, avoid the checking.
         return true;
-    }
-
-    private async getDatabaseCollections(database): Promise<any> {
-        const collection = super.getMongoConnection()
-            .useDb(database.name)
-            .db
-            .listCollections();
-
-        return await collection
-            .toArray()
-            .catch(() => {return [];})
-            .then((result) => {return result;});
     }
 }
