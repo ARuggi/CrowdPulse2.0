@@ -1,6 +1,6 @@
-import {AbstractTweetRoute} from "./AbstractTweetRoute";
-import {Request, Response} from "express";
-import {createMissingBodyParamResponse, createResponse, ResponseType} from "../IRoute";
+import {AbstractTweetRoute} from './AbstractTweetRoute';
+import {Request, Response} from 'express';
+import {createMissingBodyParamResponse, createResponse, ResponseType} from '../IRoute';
 
 type RequestHandler = {
     database: string;
@@ -10,7 +10,7 @@ export class TweetSetDatabaseRoute extends AbstractTweetRoute {
 
     private static TWEET_PATH = "/setDbs";
 
-    method(): string {
+    getMethod(): string {
         return "post";
     }
 

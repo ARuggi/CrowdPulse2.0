@@ -1,6 +1,6 @@
-import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from "./AbstractTweetRoute";
-import {Request, Response} from "express";
-import {createMissingQueryParamResponse, createResponse, ResponseType} from "../IRoute";
+import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from './AbstractTweetRoute';
+import {Request, Response} from 'express';
+import {createMissingQueryParamResponse, createResponse, ResponseType} from '../IRoute';
 
 type RequestHandler = {
     collection: string;

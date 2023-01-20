@@ -1,17 +1,17 @@
-import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from "./AbstractTweetRoute";
-import {Request, Response} from "express";
-import {createMissingQueryParamResponse, createResponse, ResponseType} from "../IRoute";
+import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from './AbstractTweetRoute';
+import {Request, Response} from 'express';
+import {createMissingQueryParamResponse, createResponse, ResponseType} from '../IRoute';
 
 type RequestHandler = {
     collection: string;
 }
 
-export class TweetGetTagsRoute extends AbstractTweetRoute {
+export class TweetGetHashtagsRoute extends AbstractTweetRoute {
 
-    private static TWEET_PATH = "/getTags";
+    private static TWEET_PATH = "/getHashtags";
 
     tweetPath(): string {
-        return TweetGetTagsRoute.TWEET_PATH;
+        return TweetGetHashtagsRoute.TWEET_PATH;
     }
 
     async performTweetRequest(req: Request, res: Response): Promise<void> {
@@ -27,8 +27,7 @@ export class TweetGetTagsRoute extends AbstractTweetRoute {
                 .model<IAnalyzedTweetData>(handler.collection, AnalyzedTweetSchema);
 
             analyzedTweetModel.aggregate([
-                {$unwind: "$tags"},
-                {$group: {_id: "$tags"}}
+                {$group: {_id: "$twitter_entities"}}
             ], (error, result) => {
 
                 if (error) {

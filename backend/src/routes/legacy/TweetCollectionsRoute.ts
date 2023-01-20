@@ -1,6 +1,6 @@
-import {AbstractTweetRoute} from "./AbstractTweetRoute";
-import {Request, Response} from "express";
-import {createResponse, ResponseType} from "../IRoute";
+import {AbstractTweetRoute} from './AbstractTweetRoute';
+import {Request, Response} from 'express';
+import {createResponse, ResponseType} from '../IRoute';
 
 export class TweetCollectionsRoute extends AbstractTweetRoute {
 

@@ -1,8 +1,9 @@
-import {AbstractTweetRoute} from "./AbstractTweetRoute";
-import {Request, Response} from "express";
-import {createResponse, ResponseType} from "../IRoute";
-import {getAdminConnection} from "../../database/database";
+import {AbstractRoute} from './AbstractRoute';
+import {Request, Response} from 'express';
 import {asyncFilter} from '../../util/AsyncUtil';
+import {createResponse, ResponseType} from '../IRoute';
+import {getMongoConnection, getAdminConnection} from '../../database/database';
+import {isReservedDatabase} from '../../util/DatabaseUtil';
 
 type ResultType = {
     databases: Array<{
@@ -20,15 +21,10 @@ type ResultType = {
     }>
 }
 
-export class TweetDatabasesRoute extends AbstractTweetRoute {
+// noinspection DuplicatedCode
+export class DatabasesRoute extends AbstractRoute {
 
-    private static TWEET_PATH = "/dbs";
-
-    tweetPath(): string {
-        return TweetDatabasesRoute.TWEET_PATH;
-    }
-
-    async performTweetRequest(req: Request, res: Response): Promise<void> {
+    async performRequest(req: Request, res: Response): Promise<void> {
         try {
             getAdminConnection()
                 .db
@@ -41,7 +37,7 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
 
                     result.databases = await asyncFilter(result.databases, async (database) => {
 
-                        if (!this.isCrowdPulseDatabaseName(database.name)) {
+                        if (isReservedDatabase(database.name)) {
                             return false;
                         }
 
@@ -68,13 +64,16 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
         }
     }
 
-    checkIntegrity(req: Request, res: Response): boolean {
-        // Nothing to do, avoid the checking.
-        return true;
+    protected path(): string {
+        return "/databases";
+    }
+
+    getMethod(): string {
+        return "get";
     }
 
     private async getDatabaseCollections(database): Promise<any> {
-        const collection = super.getMongoConnection()
+        const collection = getMongoConnection()
             .useDb(database.name)
             .db
             .listCollections();
@@ -87,7 +86,7 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
 
     private async getCollectionInfo(database): Promise<any> {
 
-        const collection = super.getMongoConnection()
+        const collection = getMongoConnection()
             .useDb(database.name)
             .collection("Info");
 
@@ -113,16 +112,5 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
                     };
                 }
             })
-    }
-
-    private isCrowdPulseDatabaseName(name: string) {
-        switch (name) {
-            case "admin":
-            case "config":
-            case "local":
-                return false;
-            default:
-                return true;
-        }
     }
 }

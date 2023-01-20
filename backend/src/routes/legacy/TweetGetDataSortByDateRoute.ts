@@ -1,20 +1,19 @@
-import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from "./AbstractTweetRoute";
-import {Request, Response} from "express";
-import {createMissingQueryParamResponse, createResponse, ResponseType} from "../IRoute";
+import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from './AbstractTweetRoute';
+import {Request, Response} from 'express';
+import {createMissingQueryParamResponse, createResponse, ResponseType} from '../IRoute';
 
 type RequestHandler = {
     collection: string;
 }
 
-export class TweetGetAnalyzedDataRoute extends AbstractTweetRoute {
+export class TweetGetDataSortByDateRoute extends AbstractTweetRoute {
 
-    private static TWEET_PATH = "/getAnalyzedData";
+    private static TWEET_PATH = "/getDataSortByDate";
 
     tweetPath(): string {
-        return TweetGetAnalyzedDataRoute.TWEET_PATH;
+        return TweetGetDataSortByDateRoute.TWEET_PATH;
     }
 
-    //TODO: check why TweetGetAnalyzedSentimentDatesRoute has the same behavior
     async performTweetRequest(req: Request, res: Response): Promise<void> {
         const handler = req.query as RequestHandler;
 
@@ -28,8 +27,10 @@ export class TweetGetAnalyzedDataRoute extends AbstractTweetRoute {
                 .model<IAnalyzedTweetData>(handler.collection, AnalyzedTweetSchema);
 
             analyzedTweetModel
-                .find({}, {timeout: false})
+                .find()
                 .lean()
+                .sort("created_at")
+                .allowDiskUse(true)
                 .catch(error => {
                     throw error;
                 })

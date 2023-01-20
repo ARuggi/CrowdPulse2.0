@@ -1,37 +1,42 @@
-import * as http from "http";
+import * as http from 'http';
 import express, {Request, Response} from 'express';
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 import cors from 'cors';
-import {loadDatabase} from "./database/database"
-import {IRoute} from "./routes/IRoute";
-import {TweetSetDatabaseRoute} from "./routes/tweets/TweetSetDatabaseRoute";
-import {TweetCollectionsRoute} from "./routes/tweets/TweetCollectionsRoute";
-import {TweetDatabasesRoute} from "./routes/tweets/TweetDatabasesRoute";
-import {TweetGetAnalyzedDataRoute} from "./routes/tweets/TweetGetAnalyzedDataRoute";
-import {TweetGetTagsRoute} from "./routes/tweets/TweetGetTagsRoute";
-import {TweetGetHashtagsRoute} from "./routes/tweets/TweetGetHashtagsRoute";
-import {TweetGetUsersRoute} from "./routes/tweets/TweetGetUsersRoute";
-import {TweetGetTextRoute} from "./routes/tweets/TweetGetTextRoute";
-import {TweetGetDataSortByDateRoute} from "./routes/tweets/TweetGetDataSortByDateRoute";
-import {TweetGetDataTimelinesRoute} from "./routes/tweets/TweetGetDataTimelinesRoute";
-import {TweetGetAnalyzedSentimentRoute} from "./routes/tweets/TweetGetAnalyzedSentimentRoute";
-import {TweetGetAnalyzedSentimentDatesRoute} from "./routes/tweets/TweetGetAnalyzedSentimentDatesRoute";
+import {loadDatabase} from './database/database'
+import {IRoute} from './routes/IRoute';
+import {TweetSetDatabaseRoute} from './routes/legacy/TweetSetDatabaseRoute';
+import {TweetCollectionsRoute} from './routes/legacy/TweetCollectionsRoute';
+import {TweetDatabasesRoute} from './routes/legacy/TweetDatabasesRoute';
+import {TweetGetAnalyzedDataRoute} from './routes/legacy/TweetGetAnalyzedDataRoute';
+import {TweetGetTagsRoute} from './routes/legacy/TweetGetTagsRoute';
+import {TweetGetHashtagsRoute} from './routes/legacy/TweetGetHashtagsRoute';
+import {TweetGetUsersRoute} from './routes/legacy/TweetGetUsersRoute';
+import {TweetGetTextRoute} from './routes/legacy/TweetGetTextRoute';
+import {TweetGetDataSortByDateRoute} from './routes/legacy/TweetGetDataSortByDateRoute';
+import {TweetGetDataTimelinesRoute} from './routes/legacy/TweetGetDataTimelinesRoute';
+import {TweetGetAnalyzedSentimentRoute} from './routes/legacy/TweetGetAnalyzedSentimentRoute';
+import {TweetGetAnalyzedSentimentDatesRoute} from './routes/legacy/TweetGetAnalyzedSentimentDatesRoute';
+import {DatabasesRoute} from './routes/v1/DatabasesRoute';
 
 class App {
 
     private static ROUTES: Array<IRoute> = [
-        new TweetSetDatabaseRoute(),               // ENDPOINT: /tweet/setDbs
-        new TweetDatabasesRoute(),                 // ENDPOINT: /tweet/dbs
-        new TweetCollectionsRoute(),               // ENDPOINT: /tweet/collections
-        new TweetGetAnalyzedDataRoute(),           // ENDPOINT: /tweet/getAnalyzedData
-        new TweetGetTagsRoute(),                   // ENDPOINT: /tweet/getTags
-        new TweetGetHashtagsRoute(),               // ENDPOINT: /tweet/getHashtags
-        new TweetGetUsersRoute(),                  // ENDPOINT: /tweet/getUsers
-        new TweetGetTextRoute(),                   // ENDPOINT: /tweet/getText
-        new TweetGetDataSortByDateRoute(),         // ENDPOINT: /tweet/getDataSortByDate
-        new TweetGetDataTimelinesRoute(),          // ENDPOINT: /tweet/getDataTimelines
-        new TweetGetAnalyzedSentimentRoute(),      // ENDPOINT: /tweet/getAnalyzedSentiment
-        new TweetGetAnalyzedSentimentDatesRoute(), // ENDPOINT: /tweet/getAnalyzedSentimentDates
+        // Legacy endpoints
+        new TweetSetDatabaseRoute(),               // POST - /tweet/setDbs
+        new TweetDatabasesRoute(),                 // GET  - /tweet/dbs
+        new TweetCollectionsRoute(),               // GET  - /tweet/collections
+        new TweetGetAnalyzedDataRoute(),           // GET  - /tweet/getAnalyzedData
+        new TweetGetTagsRoute(),                   // GET  - /tweet/getTags
+        new TweetGetHashtagsRoute(),               // GET  - /tweet/getHashtags
+        new TweetGetUsersRoute(),                  // GET  - /tweet/getUsers
+        new TweetGetTextRoute(),                   // GET  - /tweet/getText
+        new TweetGetDataSortByDateRoute(),         // GET  - /tweet/getDataSortByDate
+        new TweetGetDataTimelinesRoute(),          // GET  - /tweet/getDataTimelines
+        new TweetGetAnalyzedSentimentRoute(),      // GET  - /tweet/getAnalyzedSentiment
+        new TweetGetAnalyzedSentimentDatesRoute(), // GET  - /tweet/getAnalyzedSentimentDates
+
+        // new endpoints
+        new DatabasesRoute(), // GET - /v1/databases
     ];
 
     express: express.Application;
@@ -76,9 +81,9 @@ class App {
 
     private registerRoutes() {
         App.ROUTES.forEach(route => {
-            const method = Reflect.get(this.express, route.method()) as (path: string, perform: void) => {};
-            Reflect.apply(method, this.express, [route.path(), async (req, res) => route.perform(req, res)]);
-            console.log("Registered endpoint: [" + route.method().toUpperCase() + "] " + route.path());
+            const method = Reflect.get(this.express, route.getMethod()) as (path: string, perform: void) => {};
+            Reflect.apply(method, this.express, [route.getPath(), async (req, res) => route.perform(req, res)]);
+            console.log("Registered endpoint: [" + route.getMethod().toUpperCase() + "] " + route.getPath());
         })
 
         // handle 404 for unknown URLs.

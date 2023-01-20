@@ -1,17 +1,17 @@
-import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from "./AbstractTweetRoute";
-import {Request, Response} from "express";
-import {createMissingQueryParamResponse, createResponse, ResponseType} from "../IRoute";
+import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from './AbstractTweetRoute';
+import {Request, Response} from 'express';
+import {createMissingQueryParamResponse, createResponse, ResponseType} from '../IRoute';
 
 type RequestHandler = {
     collection: string;
 }
 
-export class TweetGetDataTimelinesRoute extends AbstractTweetRoute {
+export class TweetGetUsersRoute extends AbstractTweetRoute {
 
-    private static TWEET_PATH = "/getDataTimelines";
+    private static TWEET_PATH = "/getUsers";
 
     tweetPath(): string {
-        return TweetGetDataTimelinesRoute.TWEET_PATH;
+        return TweetGetUsersRoute.TWEET_PATH;
     }
 
     async performTweetRequest(req: Request, res: Response): Promise<void> {
@@ -26,17 +26,9 @@ export class TweetGetDataTimelinesRoute extends AbstractTweetRoute {
             const analyzedTweetModel = AbstractTweetRoute.selectedDatabase
                 .model<IAnalyzedTweetData>(handler.collection, AnalyzedTweetSchema);
 
-            //TODO: Does not work
-            analyzedTweetModel.aggregate([{
-                $group: {
-                    _id: {
-                        $dateToString: {
-                            format: "%Y-%m-%d",
-                            date: 'ISODATE("$created_at")'
-                        }
-                    }
-                }
-            }], (error, result) => {
+            analyzedTweetModel.aggregate([
+                {$group: {_id: "$author_name"}}
+            ], (error, result) => {
 
                 if (error) {
                     throw error;

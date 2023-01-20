@@ -1,13 +1,16 @@
-import {Request, Response} from "express";
+import {Request, Response} from 'express';
 
 export interface IRoute {
 
-    method(): string;
+    /**
+     * The method TYPE: GET, POST, PUT, ...
+     */
+    getMethod(): string;
 
     /**
      * @return The url path such as "/something".
      */
-    path(): any;
+    getPath(): string;
 
     /**
      * The call request and response implementation.

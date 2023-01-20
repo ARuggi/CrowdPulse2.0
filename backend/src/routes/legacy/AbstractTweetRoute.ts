@@ -1,18 +1,16 @@
-import {createResponse, IRoute, ResponseType} from "../IRoute";
-import {Request, Response} from "express";
-import {getMongoConnection, getAdminConnection} from "../../database/database";
-import {Connection, Schema} from "mongoose";
+import {createResponse, IRoute, ResponseType} from '../IRoute';
+import {Request, Response} from 'express';
+import {getMongoConnection, getAdminConnection} from '../../database/database';
+import {Connection, Schema} from 'mongoose';
+
 export abstract class AbstractTweetRoute implements IRoute {
 
     public static selectedDatabase: Connection = undefined;
 
-    path(): any {
-        return '/tweet' + this.tweetPath();
-    }
-
     async perform(req: Request, res: Response): Promise<void> {
+        let method = this.getMethod().toLowerCase();
 
-        if (this.method() == "get") {
+        if (method === "get") {
             console.log(`Performing [${req.method}] '${req.url}' by '${req.ip}'`);
         } else {
             console.log(`Performing [${req.method}] '${req.url}' by '${req.ip}' with request body: ` + JSON.stringify(req.body));
@@ -28,6 +26,14 @@ export abstract class AbstractTweetRoute implements IRoute {
     abstract performTweetRequest(req: Request, res: Response): Promise<void>;
 
     abstract tweetPath(): string;
+
+    getMethod(): string {
+        return "get";
+    }
+
+    getPath(): string {
+        return '/tweet' + this.tweetPath();
+    }
 
     protected checkIntegrity(req: Request, res: Response): boolean {
         if (AbstractTweetRoute.selectedDatabase) {
@@ -45,11 +51,6 @@ export abstract class AbstractTweetRoute implements IRoute {
     protected getAdminConnection() {
         return getAdminConnection();
     }
-
-    method(): string {
-        return "get";
-    }
-
 }
 
 export interface IAnalyzedTweetData {

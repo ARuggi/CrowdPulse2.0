@@ -1,19 +1,20 @@
-import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from "./AbstractTweetRoute";
-import {Request, Response} from "express";
-import {createMissingQueryParamResponse, createResponse, ResponseType} from "../IRoute";
+import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from './AbstractTweetRoute';
+import {Request, Response} from 'express';
+import {createMissingQueryParamResponse, createResponse, ResponseType} from '../IRoute';
 
 type RequestHandler = {
     collection: string;
 }
 
-export class TweetGetAnalyzedSentimentRoute extends AbstractTweetRoute {
+export class TweetGetAnalyzedSentimentDatesRoute extends AbstractTweetRoute {
 
-    private static TWEET_PATH = "/getAnalyzedSentiment";
+    private static TWEET_PATH = "/getAnalyzedSentimentDates";
 
     tweetPath(): string {
-        return TweetGetAnalyzedSentimentRoute.TWEET_PATH;
+        return TweetGetAnalyzedSentimentDatesRoute.TWEET_PATH;
     }
 
+    //TODO: check why TweetGetAnalyzedDataRoute has the same behavior
     async performTweetRequest(req: Request, res: Response): Promise<void> {
         const handler = req.query as RequestHandler;
 
