@@ -11,6 +11,8 @@
     "serverNotRespondingError": "Il server non risponde",
     "analysisOfDbs": "Analisi di %dbs%",
     "filters": "Filtri",
-    "search": "Ricerca"
+    "search": "Ricerca",
+    "noDatabaseSelected": "Nessun database selezionato",
+    "loadingDatabases": "Attendere il caricamento dei database"
   }
 }

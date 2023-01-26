@@ -1,13 +1,14 @@
 import {useSearchParams} from 'react-router-dom';
-import {NotFoundGeneric} from "./NotFound";
+import {NotFoundGeneric} from "../NotFound";
 import React, {useEffect, useState} from "react";
-import LoadingOverlay from "./LoadingOverlay";
+import LoadingOverlay from "../LoadingOverlay";
 import {wait} from "@testing-library/user-event/dist/utils";
-import {Button, Col, Form, InputGroup, Nav, Navbar, Row, Tab, Table, Tabs} from "react-bootstrap";
+import {Button, Col, Form, InputGroup, Nav, Navbar, Row, Tab, Tabs} from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import {useTranslation} from "react-i18next";
 import Container from "react-bootstrap/Container";
 import {Funnel, Search} from "react-bootstrap-icons";
+import DatabasesRequest from "../../requests/v1/DatabasesRequest";
 
 enum AnalysisState {
     INIT,
@@ -16,7 +17,7 @@ enum AnalysisState {
 }
 
 enum AnalysisTab {
-    INFO = "INFO",
+    OVERVIEW = "OVERVIEW",
     SENTIMENT = "SENTIMENT",
     WORD = "WORD",
     TIMELINE = "TIMELINE",
@@ -24,11 +25,15 @@ enum AnalysisTab {
     MAP = "MAP"
 }
 
-function Data(props: {tab: AnalysisTab, dbs: string[]}) {
-    const {tab, dbs} = props;
+function Overview(dbsInfo: any) {
+    return <>{JSON.stringify(dbsInfo)}</>;
+}
+
+function Data(props: {tab: AnalysisTab, values: any}) {
+    const {tab, values} = props;
     return (
         <>
-            {tab === AnalysisTab.INFO && <a>Info</a>}
+            {tab === AnalysisTab.OVERVIEW && <Overview dbsInfo={values}/>}
             {tab === AnalysisTab.SENTIMENT && <a>Sentiment</a>}
             {tab === AnalysisTab.WORD && <a>Word</a>}
             {tab === AnalysisTab.TIMELINE && <a>Timeline</a>}
@@ -157,83 +162,83 @@ function FiltersBox(props: {dbs: string[]}) {
     );
 }
 
-function setActiveAnalysisTab(tab: AnalysisTab) {
+function handleTabClick(tab: any) {
+    tab = tab as AnalysisTab;
     alert(tab);
 }
 
 function Analysis() {
 
     const [analysisState, setAnalysisState] = useState(AnalysisState.INIT);
+    const [dbsInfo, setDbsInfo] = useState({});
+    const {t} = useTranslation();
 
-    const [searchParams] = useSearchParams();
-    const dbs: string[] | null = searchParams.getAll("db");
+    const [query] = useSearchParams();
+    const queryDbs: string[] | undefined = query.getAll("db");
     //const filters: string[] | null = searchParams.getAll("filter");
 
     useEffect(() => {
 
-        wait(1000).then(() => {
+        switch (analysisState) {
+            case AnalysisState.INIT:
+                setAnalysisState(AnalysisState.LOADING); break;
+            case AnalysisState.LOADING:
 
-            switch (analysisState) {
-                case AnalysisState.INIT:    setAnalysisState(AnalysisState.LOADING); break;
-                case AnalysisState.LOADING: setAnalysisState(AnalysisState.READY); break;
-                default: break;
-            }
+                new DatabasesRequest()
+                    .sendRequest({dbs: queryDbs})
+                    .then(result => {
+                        wait(1000).then(() => {
+                            setDbsInfo(result.data.databases);
+                            setAnalysisState(AnalysisState.READY);
+                        });
+                    });
+                //setDbsInfo();
+                 break;
+            default: break;
+        }
 
-        });
     }, [analysisState]);
 
-    if (!dbs || dbs.length === 0) {
-        return <NotFoundGeneric errorMessage={"No database selected"}/>;
+    if (!queryDbs || queryDbs.length === 0) {
+        return <NotFoundGeneric errorMessage={t('noDatabaseSelected', {defaultValue: ""})!}/>;
     }
 
     switch (analysisState) {
-        case AnalysisState.INIT: return <LoadingOverlay message={"Loading 1"}/>;
-        case AnalysisState.LOADING: return <LoadingOverlay message={"Loading 2"}/>;
+        case AnalysisState.INIT: return <LoadingOverlay message={""}/>;
+        case AnalysisState.LOADING: return <LoadingOverlay message={t('loadingDatabases')}/>;
         default: break;
     }
 
     return (
         <div id={"analysis-container"}>
-            <FiltersBox dbs={dbs}/>
+            <FiltersBox dbs={queryDbs}/>
 
             <Card id={"content"}
                   bg="dark"
                   border="dark">
                 <Card.Body>
-                    <Tabs defaultActiveKey={AnalysisTab.INFO}
+                    <Tabs defaultActiveKey={AnalysisTab.OVERVIEW}
                           id="content-box-tab"
                           className="mb-3"
-                          onSelect={(k) => setActiveAnalysisTab(k as AnalysisTab)}
+                          onSelect={handleTabClick}
                           justify>
-                        <Tab eventKey={AnalysisTab.INFO}
-                             title={"Info"}>
-                            <Data tab={AnalysisTab.INFO}
-                                  dbs={dbs}/>
+                        <Tab eventKey={AnalysisTab.OVERVIEW} title={"Info"}>
+                            <Data tab={AnalysisTab.OVERVIEW} values={dbsInfo}/>
                         </Tab>
-                        <Tab eventKey={AnalysisTab.SENTIMENT}
-                             title={"Sentiment"}>
-                            <Data tab={AnalysisTab.SENTIMENT}
-                                  dbs={dbs}/>
+                        <Tab eventKey={AnalysisTab.SENTIMENT} title={"Sentiment"}>
+                            <Data tab={AnalysisTab.SENTIMENT} values={queryDbs}/>
                         </Tab>
-                        <Tab eventKey={AnalysisTab.WORD}
-                             title={"Word"}>
-                            <Data tab={AnalysisTab.WORD}
-                                  dbs={dbs}/>
+                        <Tab eventKey={AnalysisTab.WORD} title={"Word"}>
+                            <Data tab={AnalysisTab.WORD} values={queryDbs}/>
                         </Tab>
-                        <Tab eventKey={AnalysisTab.TIMELINE}
-                             title={"Timeline"}>
-                            <Data tab={AnalysisTab.TIMELINE}
-                                  dbs={dbs}/>
+                        <Tab eventKey={AnalysisTab.TIMELINE} title={"Timeline"}>
+                            <Data tab={AnalysisTab.TIMELINE} values={queryDbs}/>
                         </Tab>
-                        <Tab eventKey={AnalysisTab.TWEET_LIST}
-                             title={"Tweet list"}>
-                            <Data tab={AnalysisTab.TWEET_LIST}
-                                  dbs={dbs}/>
+                        <Tab eventKey={AnalysisTab.TWEET_LIST} title={"Tweet list"}>
+                            <Data tab={AnalysisTab.TWEET_LIST} values={queryDbs}/>
                         </Tab>
-                        <Tab eventKey={AnalysisTab.MAP}
-                             title={"Map"}>
-                            <Data tab={AnalysisTab.MAP}
-                                  dbs={dbs}/>
+                        <Tab eventKey={AnalysisTab.MAP} title={"Map"}>
+                            <Data tab={AnalysisTab.MAP} values={queryDbs}/>
                         </Tab>
                     </Tabs>
                 </Card.Body>

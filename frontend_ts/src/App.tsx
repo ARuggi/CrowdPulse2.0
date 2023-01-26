@@ -4,10 +4,10 @@ import axios from 'axios';
 import './styles/App.scss';
 
 import LoadingOverlay from './components/LoadingOverlay';
-import DatabasesRequest, {TweetDatabasesData} from './requests/v1/DatabasesRequest';
+import DatabasesRequest, {DatabasesData} from './requests/v1/DatabasesRequest';
 import {Response} from './requests/AbstractRequest';
 import {filterResponse} from './util/RequestUtil';
-import DatabaseSelectionBox from "./components/DatabaseSelectionBox";
+import DatabaseSelectionBox from "./components/databaseSelection/DatabaseSelectionBox";
 import {useTranslation} from "react-i18next";
 import {Col, Row} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
@@ -21,17 +21,17 @@ enum AppState {
     READY
 }
 
-function loadDatabases(): Promise<TweetDatabasesData> {
+function loadDatabases(): Promise<DatabasesData> {
     return new DatabasesRequest()
-        .sendRequest({})
-        .then(response => filterResponse(response as Response<TweetDatabasesData>))
+        .sendRequest()
+        .then(response => filterResponse(response as Response<DatabasesData>))
         .then(response => response.data);
 }
 
 function App() {
     const {t} = useTranslation();
     const [appState, setAppState] = useState(AppState.UNITIALIZED);
-    const [databasesData, setDatabasesData] = useState<TweetDatabasesData>({databases: []});
+    const [databasesData, setDatabasesData] = useState<DatabasesData>({databases: []});
 
     useEffect(() => {
         loadDatabases()
@@ -64,7 +64,7 @@ function App() {
                     </Col>
                 </Row>
                 <Row>
-                    <DatabaseSelectionBox tweetDatabasesData={databasesData}/>
+                    <DatabaseSelectionBox databasesData={databasesData}/>
                 </Row>
             </Container>
         </div>

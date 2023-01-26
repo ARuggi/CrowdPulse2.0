@@ -20,7 +20,7 @@ abstract class AbstractRequest<T, ResponseType extends object> {
         this.url = url;
     }
 
-    sendRequest(data: T): Promise<Response<ResponseType>> {
+    sendRequest(data: T | undefined = undefined): Promise<Response<ResponseType>> {
         switch (this.method) {
             case "get": return axios.get(this.url,{params: data}).then(response => response.data);
             case "post": return axios.post(this.url,{body: data}).then(response => response.data);

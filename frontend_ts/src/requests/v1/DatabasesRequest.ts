@@ -14,11 +14,15 @@ export type DatabaseType = {
     }
 }
 
-export type TweetDatabasesData = {
+export type DatabaseRequestType = {
+    dbs: string[]
+}
+
+export type DatabasesData = {
     databases: DatabaseType[]
 }
 
-class DatabasesRequest extends AbstractRequest<{}, TweetDatabasesData> {
+class DatabasesRequest extends AbstractRequest<DatabaseRequestType, DatabasesData> {
 
     constructor() {
         super("get", "/v1/databases");

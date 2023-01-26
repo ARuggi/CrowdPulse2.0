@@ -12,7 +12,7 @@ import './styles/index.scss';
 import './i18n';
 import App from './App';
 import Navbar from "./components/Navbar";
-import Analysis from "./components/Analysis";
+import Analysis from "./components/analysis/Analysis";
 
 const router = createBrowserRouter([
     {

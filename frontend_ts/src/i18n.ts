@@ -19,6 +19,7 @@ i18n
         resources,
         defaultNS: "common",
         fallbackLng: "it",
+        returnNull: false
     })
     .then(() => {
         // nothing to do.
