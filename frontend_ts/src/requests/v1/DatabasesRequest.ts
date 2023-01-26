@@ -18,12 +18,12 @@ export type TweetDatabasesData = {
     databases: DatabaseType[]
 }
 
-class TweetDatabasesRequest extends AbstractRequest<{}, TweetDatabasesData> {
+class DatabasesRequest extends AbstractRequest<{}, TweetDatabasesData> {
 
     constructor() {
-        super("get", "/tweet/dbs");
+        super("get", "/v1/databases");
     }
 
 }
 
-export default TweetDatabasesRequest;
+export default DatabasesRequest;

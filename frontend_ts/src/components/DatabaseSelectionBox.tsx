@@ -1,5 +1,5 @@
 import React from 'react';
-import {TweetDatabasesData, DatabaseType} from '../requests/tweet/TweetDatabasesRequest';
+import {TweetDatabasesData, DatabaseType} from '../requests/v1/DatabasesRequest';
 import {useTranslation} from "react-i18next";
 import Card from 'react-bootstrap/Card';
 import {Col, Row} from "react-bootstrap";

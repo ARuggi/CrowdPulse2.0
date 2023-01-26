@@ -4,7 +4,7 @@ import axios from 'axios';
 import './styles/App.scss';
 
 import LoadingOverlay from './components/LoadingOverlay';
-import TweetDatabasesRequest, {TweetDatabasesData} from './requests/tweet/TweetDatabasesRequest';
+import DatabasesRequest, {TweetDatabasesData} from './requests/v1/DatabasesRequest';
 import {Response} from './requests/AbstractRequest';
 import {filterResponse} from './util/RequestUtil';
 import DatabaseSelectionBox from "./components/DatabaseSelectionBox";
@@ -22,7 +22,7 @@ enum AppState {
 }
 
 function loadDatabases(): Promise<TweetDatabasesData> {
-    return new TweetDatabasesRequest()
+    return new DatabasesRequest()
         .sendRequest({})
         .then(response => filterResponse(response as Response<TweetDatabasesData>))
         .then(response => response.data);
