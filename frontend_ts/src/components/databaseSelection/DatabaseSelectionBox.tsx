@@ -51,14 +51,16 @@ function DatabaseSelectionBox(props: {databasesData: DatabasesData}) {
                             {props
                                 .databasesData
                                 .databases
-                                .map((database: DatabaseType, i: number) => {
-                                    return {index: i, database: database};
-                                })
+                                .map((database: DatabaseType) => {
+                                    return {
+                                        database: database,
+                                        onClick: () => handleSelection(database)
+                                    }})
                                 .map((wrapper) => (
-                                    <Col key={wrapper.index}>
+                                    <Col key={wrapper.database.name}>
                                         <DatabaseCard
                                             database={wrapper.database}
-                                            selectionCallback={handleSelection}/>
+                                            onClick={wrapper.onClick}/>
                                     </Col>
                                 ))}
 

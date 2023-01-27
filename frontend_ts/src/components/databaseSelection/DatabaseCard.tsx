@@ -1,30 +1,17 @@
 import {DatabaseType} from "../../requests/v1/DatabasesRequest";
 import Card from "react-bootstrap/Card";
 import {Database} from "react-bootstrap-icons";
-import React, {useEffect, useState} from "react";
+import React from "react";
 
-let handleSelectionCallback: React.MouseEventHandler<HTMLDivElement>;
-
-function DatabaseCard(props: {database: DatabaseType, selectionCallback: (database: DatabaseType) => void}) {
-
-    const [init, setInit] = useState(false);
-    const {database, selectionCallback} = props;
-
-    useEffect(() => {
-
-        handleSelectionCallback = () => {
-            selectionCallback(database);
-        }
-
-        setInit(true);
-    }, [init]);
+function DatabaseCard(props: {database: DatabaseType, onClick: any}) {
+    const {database, onClick} = props;
 
     return (
         <Card className="database-card-item h-100 gy-3"
               bg="dark"
               border="dark">
             <Card.Body className="database-card-item-body"
-                       onClick={handleSelectionCallback}>
+                       onClick={onClick}>
 
                 <div className="row g-0">
                     <div className="col-md-4">
