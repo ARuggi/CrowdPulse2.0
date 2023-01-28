@@ -10,23 +10,56 @@ function handleLanguageChange(i18n: any, lang: string) {
     i18n.changeLanguage(lang).then(() => console.log(`language changed to '${lang}'`));
 }
 
+type LanguageMenuLangType = {
+    lang: string;
+    countryCode: string;
+    title: string;
+    onClick: any;
+}
+
+function NavbarLogoContainer(props: {title: string}) {
+    const {title} = props;
+    return (
+        <Container fluid>
+            <NBar.Brand className={"mb-0 h1"} href="/">{title}</NBar.Brand>
+            <NBar.Toggle type={"button"}
+                         aria-controls={"top-navbar-lang-menu"}
+                         aria-expanded={"true"}
+                         aria-label={"Toggle navigation"}>
+            </NBar.Toggle>
+        </Container>
+    );
+}
+
+function NavbarLanguageMenuItem(props: {wrapper: LanguageMenuLangType}) {
+    const {wrapper} = props;
+    return (
+        <NavDropdown.Item href="#"
+                          style={{display: "flex"}}>
+            <ReactCountryFlag svg
+                              countryCode={wrapper.countryCode}
+                              title={wrapper.title}
+                              style={{width: '2em', height: '2em'}}
+                              onClick={wrapper.onClick}
+            />
+            <div style={{marginLeft: "10px", marginTop: "3px"}}
+                 onClick={wrapper.onClick}>{wrapper.title}</div>
+        </NavDropdown.Item>
+    );
+}
+
 function Navbar() {
     const {t, i18n} = useTranslation();
 
     return (
-        <NBar bg="dark" expand="lg">
-            <Container fluid>
-                <NBar.Brand className={"mb-0 h1"} href="/">{t('projectName')}</NBar.Brand>
-                <NBar.Toggle type={"button"}
-                             aria-controls={"navbarMenu"}
-                             aria-expanded={"true"}
-                             aria-label={"Toggle navigation"}>
-                </NBar.Toggle>
-            </Container>
-            <NBar.Collapse id={"navbarMenu"}>
+        <NBar bg={"dark"}
+              expand={"lg"}
+              id={"top-navbar"}>
+            <NavbarLogoContainer title={t('projectName', {defaultValue: "CrowdPulse"})!}/>
+            <NBar.Collapse id={"top-navbar-lang-menu"}>
                 <Nav className={"navbar-nav me-auto dropstart mb-2 mb-lg-0"}
                      style={{display: "flex", alignItems: "end", paddingRight: "15px"}}>
-                    <NavDropdown id={"navbarMenu"}
+                    <NavDropdown id={"top-navbar-lang-menu"}
                                  menuVariant={"dark"}
                                  style={{display: "contents"}}
                                  title={
@@ -35,25 +68,18 @@ function Navbar() {
                                                        style={{width: '2em', height: '2em'}}
                                                        title={t('language', {defaultValue: ""})!}/>
                                  }>
-                        {availableLanguages.map((lang, i) => {
-                            const countryCode = t('countryCode', {lng: lang});
-                            const title = t('language', {lng: lang, defaultValue: ""})!;
 
-                            return (
-                                <NavDropdown.Item key={i}
-                                                  href="#"
-                                                  style={{display: "flex"}}>
-                                    <ReactCountryFlag svg
-                                                      countryCode={countryCode}
-                                                      title={title}
-                                                      style={{width: '2em', height: '2em'}}
-                                                      onClick={() => handleLanguageChange(i18n, lang)}
-                                    />
-                                    <div style={{marginLeft: "10px", marginTop: "3px"}}
-                                         onClick={() => handleLanguageChange(i18n, lang)}>{title}</div>
-                                </NavDropdown.Item>
-                            );
+                        {availableLanguages.map(lang => {
+                            return {
+                                lang: lang,
+                                countryCode: t('countryCode', {lng: lang}),
+                                title: t('language', {lng: lang, defaultValue: ""})!,
+                                onClick: () => handleLanguageChange(i18n, lang)
+                            } as LanguageMenuLangType;
+                        }).map(wrapper => {
+                            return <NavbarLanguageMenuItem key={wrapper.lang} wrapper={wrapper}/>;
                         })}
+
                     </NavDropdown>
                 </Nav>
             </NBar.Collapse>

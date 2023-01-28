@@ -56,18 +56,16 @@ function App() {
     }
 
     return (
-        <div className={"App"}>
-            <Container fluid>
-                <Row id={"welcome-message"}>
-                    <Col>
-                        <h1>{t('welcome')}</h1>
-                    </Col>
-                </Row>
-                <Row>
-                    <DatabaseSelectionBox databasesData={databasesData}/>
-                </Row>
-            </Container>
-        </div>
+        <Container fluid>
+            <Row id={"welcome-message"}>
+                <Col>
+                    <h1>{t('welcome')}</h1>
+                </Col>
+            </Row>
+            <Row>
+                <DatabaseSelectionBox databasesData={databasesData}/>
+            </Row>
+        </Container>
     );
 }
 

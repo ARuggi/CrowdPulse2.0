@@ -32,7 +32,9 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <Navbar/>
-        <RouterProvider router={router} />
+        <div className={"App"}>
+            <RouterProvider router={router} />
+        </div>
     </React.StrictMode>
 );
 
