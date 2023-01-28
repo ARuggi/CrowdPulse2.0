@@ -25,8 +25,13 @@ enum AnalysisTab {
     MAP = "MAP"
 }
 
-function Overview(dbsInfo: any) {
-    return <>{JSON.stringify(dbsInfo)}</>;
+function Overview(databasesRequestResult: any) {
+    const {dbsInfo} = databasesRequestResult;
+
+    return dbsInfo.map((dbInfo: any) => (
+        <div key={dbInfo.name}
+             dangerouslySetInnerHTML={{__html: dbInfo.info.htmlDescription}}/>
+    ));
 }
 
 function Data(props: {tab: AnalysisTab, values: any}) {
@@ -170,7 +175,7 @@ function handleTabClick(tab: any) {
 function Analysis() {
 
     const [analysisState, setAnalysisState] = useState(AnalysisState.INIT);
-    const [dbsInfo, setDbsInfo] = useState({});
+    const [databasesRequestResult, setDatabasesRequestResult] = useState({});
     const {t} = useTranslation();
 
     const [query] = useSearchParams();
@@ -188,12 +193,11 @@ function Analysis() {
                     .sendRequest({dbs: queryDbs})
                     .then(result => {
                         wait(1000).then(() => {
-                            setDbsInfo(result.data.databases);
+                            setDatabasesRequestResult(result.data.databases);
                             setAnalysisState(AnalysisState.READY);
                         });
                     });
-                //setDbsInfo();
-                 break;
+                break;
             default: break;
         }
 
@@ -223,7 +227,7 @@ function Analysis() {
                           onSelect={handleTabClick}
                           justify>
                         <Tab eventKey={AnalysisTab.OVERVIEW} title={"Info"}>
-                            <Data tab={AnalysisTab.OVERVIEW} values={dbsInfo}/>
+                            <Data tab={AnalysisTab.OVERVIEW} values={databasesRequestResult}/>
                         </Tab>
                         <Tab eventKey={AnalysisTab.SENTIMENT} title={"Sentiment"}>
                             <Data tab={AnalysisTab.SENTIMENT} values={queryDbs}/>
