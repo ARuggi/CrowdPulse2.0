@@ -18,6 +18,7 @@
     "analysisOfDbs": "Analisi di %dbs%",
     "filters": "Filtri",
     "search": "Ricerca",
+    "start": "Avvia",
     "noDatabaseSelected": "Nessun database selezionato",
     "loadingDatabases": "Attendere il caricamento dei database",
     "releaseDate": "Rilasciato il",
@@ -36,6 +37,14 @@
       },
       "get-started": "Iniziamo!",
       "source-code": "Codice sorgente"
+    },
+    "savingModal": {
+      "title": "Salva per continuare con l'analisi",
+      "alertTitle": "Info",
+      "alertDescription": "I dati vengono salvati in locale e non vengono inviati su nessun server.",
+      "inputTextTitle": "Nome da visualizzare nella lista dopo il salvataggio",
+      "inputTextPlaceholder": "Inserisci un nome non utilizzato",
+      "errorAlreadyExists": "Il nome che hai scelto è stato già utilizzato!"
     }
   }
 }

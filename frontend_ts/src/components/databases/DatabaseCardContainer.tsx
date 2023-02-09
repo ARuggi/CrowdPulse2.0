@@ -2,13 +2,18 @@ import React, {useState} from 'react';
 
 import DatabaseCard from './DatabaseCard';
 import {Flex} from '@mantine/core';
+import AnalyzeFloatingButton from './AnalyzeFloatingButton';
+import SavingModal from './SavingModal';
+import {DatabaseType} from '../../api/DatabasesResponse';
 
 interface IProps {
-    databasesData: any,
+    databasesData: DatabaseType[],
 }
 
 const DatabaseCardsContainer: React.FC<IProps> = ({databasesData}) => {
-    const [selectedDatabases, setSelectedDatabases] = useState<Array<any>>([])
+
+    const [selectedDatabases, setSelectedDatabases] = useState<Array<DatabaseType>>([])
+    const [savingModalOpened, setSavingModalOpened] = useState(false);
 
     const addDatabase = (database: any) => {
         setSelectedDatabases((currentSelected: Array<any>) => ([...currentSelected, database]));
@@ -34,15 +39,24 @@ const DatabaseCardsContainer: React.FC<IProps> = ({databasesData}) => {
             mt='2em'
         style={{marginBottom: '50px'}}>
             {databasesData
-                .databases
-                .map((database: any) =>
+                .map((database: DatabaseType) =>
                     <DatabaseCard
                         key={database.name}
                         database={database}
                         onClick={() => toggleDatabase(database)}
-                        isSelected={selectedDatabases.find(d => d.name === database.name)}
+                        isSelected={selectedDatabases.find(d => d.name === database.name) !== undefined}
                     />
                 )}
+        </Flex>
+        <Flex justify='center'>
+            <AnalyzeFloatingButton
+                disabled={selectedDatabases.length === 0}
+                onClick={() => setSavingModalOpened(true)}/>
+            <SavingModal
+                opened={savingModalOpened}
+                onClose={() => setSavingModalOpened(false)}
+                selectedDatabases={selectedDatabases}
+            />
         </Flex>
     </>
 }

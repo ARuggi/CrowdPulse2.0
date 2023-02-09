@@ -18,6 +18,7 @@
         "analysisOfDbs": "Analysis of %dbs%",
         "filters": "Filters",
         "search": "Search",
+        "start": "Start",
         "noDatabaseSelected": "No database selected",
         "loadingDatabases": "Loading databases",
         "releaseDate": "Release date",
@@ -36,6 +37,14 @@
             },
             "get-started": "Get started!",
             "source-code": "Source code"
+        },
+        "savingModal": {
+            "title": "Continue analysis by saving",
+            "alertTitle": "Info",
+            "alertDescription": "Stored locally only. Data(s) won't be sent to any server.",
+            "inputTextTitle": "Saving name",
+            "inputTextPlaceholder": "Insert a name",
+            "errorAlreadyExists": "Selected name already used!"
         }
     }
 }

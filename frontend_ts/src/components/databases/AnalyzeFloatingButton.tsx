@@ -3,11 +3,18 @@ import {Button, MediaQuery} from '@mantine/core';
 import {useTranslation} from 'react-i18next';
 import {BiAnalyse} from 'react-icons/bi';
 
-const AnalyzeFloatingButton = () => {
+interface IProps {
+    disabled: boolean,
+    onClick: any,
+}
+
+const AnalyzeFloatingButton:React.FC<IProps> = ({disabled, onClick}) => {
     const { t } = useTranslation();
     return <>
         <MediaQuery styles={{display: 'none'}} smallerThan='md'>
             <Button
+                disabled={disabled}
+                onClick={onClick}
                 style={{
                     position: 'fixed',
                     bottom: '0',
@@ -24,6 +31,8 @@ const AnalyzeFloatingButton = () => {
     </MediaQuery>
         <MediaQuery styles={{display: 'none'}} largerThan={'md'}>
             <Button
+                disabled={disabled}
+                onClick={onClick}
                 style={{
                     position: 'fixed',
                     bottom: '0',

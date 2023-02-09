@@ -3,12 +3,13 @@ import {useTranslation} from 'react-i18next';
 import {
     createStyles,
     Group,
-    Image, MediaQuery,
-    Menu, UnstyledButton,
+    Image,
+    Menu,
+    UnstyledButton,
 } from '@mantine/core';
-import {AiOutlineDown} from "react-icons/ai";
+import {AiOutlineDown} from 'react-icons/ai';
 
-import i18next from "i18next";
+import i18next from 'i18next';
 
 const useStyles = createStyles((theme, { opened }: { opened: boolean }) => ({
     control: {
@@ -52,10 +53,12 @@ async function loadFlagImage(name: string) {
 
 const FrameThemeToggle = () => {
 
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const languages = Object.keys(i18next.services.resourceStore.data);
 
-    const [data, setData] = useState(languages.map(lang => {return {lang: lang, name: '', image: null}}));
+    const [data, setData] = useState(languages.map(lang => {
+        return {lang: lang, name: t('language', {lng: lang, defaultValue: ''})!, image: null}}
+    ));
 
     useEffect(() => {
         (async () => {
@@ -94,7 +97,7 @@ const FrameThemeToggle = () => {
             icon={<Image src={item.image} width={18} height={18}/>}
             onClick={() => triggerClick(item)}
             key={item.lang}>
-            {item.lang}
+            {item.name}
         </Menu.Item>
     ));
 
@@ -102,16 +105,14 @@ const FrameThemeToggle = () => {
         onOpen={() => setOpened(true)}
         onClose={() => setOpened(false)}
         withArrow
-        transition="rotate-left"
-        radius="md"
-        width="fit-content">
+        transition='rotate-left'
+        radius='md'
+        width='fit-content'>
         <Menu.Target>
             <UnstyledButton className={classes.control}>
-                <Group spacing="xs">
+                <Group spacing='xs'>
                     <Image src={getLangData(i18n.language)?.image} width={22} height={22}/>
-                    <MediaQuery styles={{ display: 'none' }} largerThan='sm'>
-                        <span className={classes.lang}>{selected?.lang}</span>
-                    </MediaQuery>
+                    <span className={classes.lang}>{selected?.name}</span>
                 </Group>
                 <AiOutlineDown size={16} className={classes.icon}/>
             </UnstyledButton>
