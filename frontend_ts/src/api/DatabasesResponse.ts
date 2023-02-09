@@ -1,5 +1,3 @@
-import AbstractRequest from "../AbstractRequest";
-
 export type DatabaseType = {
     name: string,       // Database name
     sizeOnDisk: number, // Size in Kbps
@@ -14,20 +12,6 @@ export type DatabaseType = {
     }
 }
 
-export type DatabaseRequestType = {
-    dbs: string[]
-}
-
-export type DatabasesData = {
+export type DatabasesResponse = {
     databases: DatabaseType[]
 }
-
-class DatabasesRequest extends AbstractRequest<DatabaseRequestType, DatabasesData> {
-
-    constructor() {
-        super("get", "/v1/databases");
-    }
-
-}
-
-export default DatabasesRequest;

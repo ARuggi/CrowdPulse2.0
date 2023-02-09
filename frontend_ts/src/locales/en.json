@@ -5,6 +5,11 @@
         "projectName": "CrowdPulse",
         "loading": "Loading",
         "error": "Error",
+        "light": "Light",
+        "dark": "Dark",
+        "home": "Home",
+        "databases": "Databases",
+        "analysis": "Analysis",
         "connectingToServer": "Connecting to the server...",
         "welcome": "Welcome to CrowdPulse!",
         "selectDatabase": "Select a database",
@@ -13,6 +18,20 @@
         "filters": "Filters",
         "search": "Search",
         "noDatabaseSelected": "No database selected",
-        "loadingDatabases": "Loading databases"
+        "loadingDatabases": "Loading databases",
+        "homepage": {
+            "title": "Welcome to CrowdPulse",
+            "description": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
+            "first-list-item": {
+                "title": "TypeScript based",
+                "description": " – this software has been made possible by the use of this language."
+            },
+            "second-list-item": {
+                "title": "Free and open source",
+                "description": " – The source code of this programme is at your disposal without any restrictions!"
+            },
+            "get-started": "Get started!",
+            "source-code": "Source code"
+        }
     }
 }
