@@ -2,7 +2,7 @@ import {useTranslation} from 'react-i18next';
 import React, {useEffect, useState} from 'react';
 import {
     Center,
-    Container,
+    Container, Flex,
     Space,
     Title,
 } from '@mantine/core';
@@ -12,7 +12,8 @@ import {DatabasesResponse} from '../../api/DatabasesResponse';
 
 import DatabaseCardsContainer from '../databases/DatabaseCardContainer';
 import DatabaseCardContainerSkeleton from '../databases/DatabaseCardContainerSkeleton';
-import {wait} from "@testing-library/user-event/dist/utils";
+import AnalyzeFloatingButton from './AnalyzeFloatingButton';
+import {wait} from '@testing-library/user-event/dist/utils';
 
 const Databases = () => {
 
@@ -39,16 +40,19 @@ const Databases = () => {
 
     if (!databasesData) {
         return <>
-            <Space h="xl"/>
+            <Space h='xl'/>
             <DatabaseCardContainerSkeleton/>
         </>
     }
 
     return <Container>
         <Center>
-            <Title order={2}>{t('selectDatabase')}</Title>
+            <Title order={2}>{t('selectDatabases')}</Title>
         </Center>
         <DatabaseCardsContainer databasesData={databasesData}/>
+        <Flex justify='center'>
+            <AnalyzeFloatingButton/>
+        </Flex>
     </Container>
 }
 

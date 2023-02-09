@@ -8,6 +8,7 @@ import {
     Center
 } from '@mantine/core';
 import {AiFillDatabase} from 'react-icons/ai';
+import {useTranslation} from "react-i18next";
 
 interface IProps {
     database: any,
@@ -16,6 +17,8 @@ interface IProps {
 }
 
 const DatabaseCard: React.FC<IProps> = ({database, onClick, isSelected}) => {
+    const { t } = useTranslation();
+
     return (
         <Card shadow='xl'
               p='xl'
@@ -33,9 +36,9 @@ const DatabaseCard: React.FC<IProps> = ({database, onClick, isSelected}) => {
             </Card.Section>
 
             <Text size='sm' color='dimmed'>
-                <small><b>Release date</b>: {database.info.releaseDate ? database.info.releaseDate.toString() : 'N/D'}</small><br/>
-                <small><b>Last update</b>: {database.info.lastUpdateDate ? database.info.lastUpdateDate.toString() : 'N/D'}</small><br/>
-                <small><b>Version</b>: {database.info.version ? database.info.version : 'N/D'}</small>
+                <small><b>{t('releaseDate')}</b>: {database.info.releaseDate ? database.info.releaseDate.toString() : 'N/D'}</small><br/>
+                <small><b>{t('lastUpdate')}</b>: {database.info.lastUpdateDate ? database.info.lastUpdateDate.toString() : 'N/D'}</small><br/>
+                <small><b>{t('version')}</b>: {database.info.version ? database.info.version : 'N/D'}</small>
             </Text>
 
             <Button variant='light' color={isSelected ? 'red' : 'green'} fullWidth mt='md' radius='md'>

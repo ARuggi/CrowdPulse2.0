@@ -27,7 +27,12 @@ const DatabaseCardsContainer: React.FC<IProps> = ({databasesData}) => {
     }
 
     return <>
-        <Flex justify='center' wrap='wrap' gap='md' mt='2em'>
+        <Flex
+            justify='center'
+            wrap='wrap'
+            gap='md'
+            mt='2em'
+        style={{marginBottom: '50px'}}>
             {databasesData
                 .databases
                 .map((database: any) =>
