@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Route, Routes} from 'react-router-dom';
 
-import Index from './components/home';
+import Home from './components/home';
 import Databases from './components/databases';
 import Analysis from './components/analysis';
 import NotFound from './components/notFound';
@@ -28,7 +28,7 @@ const App = () => {
         <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
             <Frame children={
                 <Routes>
-                    <Route index element={<Index />} path='/' />
+                    <Route index element={<Home />} path='/' />
                     <Route       element={<Databases />} path='/databases' />
                     <Route       element={<Analysis />}  path='/analysis' />
                     <Route       element={<NotFound />}  path='*' />

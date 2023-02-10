@@ -19,6 +19,8 @@
         "filters": "Filters",
         "search": "Search",
         "start": "Start",
+        "select": "Select",
+        "deselect": "Deselect",
         "noDatabaseSelected": "No database selected",
         "loadingDatabases": "Loading databases",
         "releaseDate": "Release date",

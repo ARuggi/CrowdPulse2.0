@@ -75,7 +75,7 @@ const AppFrame:React.FC<IProps> = ({children}) => {
                     component={ScrollArea}>
                     {analysisArray && <>
                         <Divider my='sm' />
-                        <Text style={{marginTop: '10px', marginLeft: '10px'}} inline>{t('analysis')}</Text>
+                        <Text inline style={{marginTop: '10px', marginLeft: '10px', opacity: '0.35'}}>{t('analysis')}</Text>
                         <Box py='md'>
                             {analysisArray
                                 .filter(analyse => analyse?.name !== undefined)
@@ -89,15 +89,15 @@ const AppFrame:React.FC<IProps> = ({children}) => {
                                         selected={isSelectedItem(token)}
                                         onClick={() => triggerItemClick(token, `/analysis?${params}`)}
                                         content={
-                                        <Box style={{
-                                            borderRadius: '5px',
-                                            borderWidth: 'thin',
-                                            borderStyle: 'double double double double',
-                                            textAlign: 'center',
-                                            padding: '5px',
-                                        }}>
-                                            <Text inline>{analyse.name}</Text>
-                                        </Box>}/>
+                                            <Box style={{
+                                                borderRadius: '5px',
+                                                borderWidth: 'thin',
+                                                borderStyle: 'double double double double',
+                                                textAlign: 'center',
+                                                padding: '5px',
+                                            }}>
+                                                <Text inline>{analyse.name}</Text>
+                                            </Box>}/>
                                 })}
                         </Box>
                     </>}

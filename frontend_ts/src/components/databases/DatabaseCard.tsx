@@ -42,7 +42,7 @@ const DatabaseCard: React.FC<IProps> = ({database, onClick, isSelected}) => {
             </Text>
 
             <Button variant='light' color={isSelected ? 'red' : 'green'} fullWidth mt='md' radius='md'>
-                {isSelected ? 'Deselect' : 'Select'}
+                {isSelected ? t('deselect') : t('select')}
             </Button>
         </Card>
     );
