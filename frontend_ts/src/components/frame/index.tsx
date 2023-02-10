@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {
@@ -28,7 +28,13 @@ const AppFrame:React.FC<IProps> = ({children}) => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [navigateTo, setNavigateTo] = useState<string | undefined>(undefined);
     const [selectedItem, setSelectedItem] = useState('home');
+
+    useEffect(() => {
+        if (navigateTo) navigate(navigateTo);
+    }, [navigateTo]);
+
     let analysisArray = undefined;
 
     if (hasCookie('analysis')) {
@@ -42,9 +48,8 @@ const AppFrame:React.FC<IProps> = ({children}) => {
     const triggerItemClick = (item: string, to: string) => {
         setSelectedItem(item);
         setMenuOpen(false);
-        navigate(to);
+        setNavigateTo(to);
     }
-
 
     return <AppShell
         navbar={

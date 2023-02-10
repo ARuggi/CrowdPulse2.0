@@ -8,6 +8,7 @@
     "light": "Chiaro",
     "dark": "Scuro",
     "home": "Home",
+    "pageNotFound": "Pagina non trovata",
     "databases": "Lista database",
     "analysis": "Analisi dati",
     "connectingToServer": "Connessione al server in corso...",

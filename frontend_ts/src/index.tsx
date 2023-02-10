@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 
 import './i18n';
 import App from './App';
-import {BrowserRouter} from "react-router-dom";
+import {BrowserRouter} from 'react-router-dom';
+import AppRoutes from './AppRoutes';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -12,7 +13,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <BrowserRouter>
-            <App/>
+            <App routes={<AppRoutes/>}/>
         </BrowserRouter>
     </React.StrictMode>
 );

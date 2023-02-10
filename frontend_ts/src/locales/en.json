@@ -8,6 +8,7 @@
         "light": "Light",
         "dark": "Dark",
         "home": "Home",
+        "pageNotFound": "Page not found",
         "databases": "Databases",
         "analysis": "Analysis",
         "connectingToServer": "Connecting to the server...",

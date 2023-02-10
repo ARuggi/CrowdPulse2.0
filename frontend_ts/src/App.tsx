@@ -1,23 +1,27 @@
 import React, {useEffect, useState} from 'react';
-import {Route, Routes} from 'react-router-dom';
 
-import Home from './components/home';
-import Databases from './components/databases';
-import Analysis from './components/analysis';
-import NotFound from './components/notFound';
 import Frame from './components/frame';
-import {ColorScheme, ColorSchemeProvider, MantineProvider} from "@mantine/core";
-import {getCookie, hasCookie} from "cookies-next";
+import {ColorScheme, ColorSchemeProvider, MantineProvider} from '@mantine/core';
+import {getCookie, hasCookie} from 'cookies-next';
 
-const App = () => {
+interface IProps {
+    routes: any;
+}
 
-    const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+const App:React.FC<IProps> = ({routes}) => {
+    const [colorScheme, setColorScheme] = useState<ColorScheme | undefined>(undefined);
 
     useEffect(() => {
         if (hasCookie('mantine-color-scheme')) {
             setColorScheme(getCookie('mantine-color-scheme') as ColorScheme);
+        } else {
+            setColorScheme('light');
         }
     }, []);
+
+    if (!colorScheme) {
+        return <></>;
+    }
 
     const toggleColorScheme = (value?: ColorScheme) => {
         setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
@@ -26,14 +30,7 @@ const App = () => {
     return <ColorSchemeProvider
         colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-            <Frame children={
-                <Routes>
-                    <Route index element={<Home />} path='/' />
-                    <Route       element={<Databases />} path='/databases' />
-                    <Route       element={<Analysis />}  path='/analysis' />
-                    <Route       element={<NotFound />}  path='*' />
-                </Routes>
-            }/>
+            <Frame children={routes}/>
         </MantineProvider>
     </ColorSchemeProvider>
 }

@@ -12,7 +12,6 @@ import {DatabasesResponse} from '../../api/DatabasesResponse';
 
 import DatabaseCardsContainer from '../databases/DatabaseCardContainer';
 import DatabaseCardContainerSkeleton from '../databases/DatabaseCardContainerSkeleton';
-import {wait} from '@testing-library/user-event/dist/utils';
 
 const Databases = () => {
 
@@ -23,14 +22,13 @@ const Databases = () => {
     useEffect(() => {
         (async () => {
             try {
-                await wait(500);
                 const result = await api.GetDatabases();
                 setDatabasesData(result);
             } catch(error) {
                 console.log(error);
                 setError(true);
             }
-        })()
+        })();
     }, []);
 
     if (isError) {
