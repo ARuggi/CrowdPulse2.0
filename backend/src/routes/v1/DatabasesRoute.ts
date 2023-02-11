@@ -6,23 +6,29 @@ import {
     getDatabaseCollectionsInfo,
     getCrowdPulseDatabaseInfo,
     isCrowdPulseCollection,
-    isReservedDatabase} from '../../util/DatabaseUtil';
+    isReservedDatabase
+} from '../../util/DatabaseUtil';
 
 // noinspection DuplicatedCode
 export class DatabasesRoute extends AbstractRoute {
 
     async handleRouteRequest(req: Request, res: Response): Promise<void> {
-        let filters = {dbs: []};
+        let dbs: Array<string> = [];
 
         if (req?.query?.dbs) {
-            filters.dbs.push(req.query.dbs);
+            let queryDbs = req.query.dbs;
+
+            if ((typeof(queryDbs)) === 'string') {
+                console.log("string");
+                dbs = [queryDbs as string];
+            } else {
+                dbs = req.query.dbs as string[];
+            }
         }
 
         try {
-
-            let result = await this.getInfoFromDatabase(filters);
+            let result = await this.getInfoFromDatabase(dbs);
             res.send(result);
-
         } catch (error) {
             console.log(error)
             res.status(500);
@@ -30,16 +36,14 @@ export class DatabasesRoute extends AbstractRoute {
         }
     }
 
-    private async getInfoFromDatabase(filters: {dbs: Array<string>}): Promise<any> {
+    private async getInfoFromDatabase(dbs: string[]): Promise<any> {
         let admin = getAdminConnection().db.admin();
         let result = await admin.listDatabases();
 
         result.databases = await asyncFilter(result.databases, async (database) => {
-            if (isReservedDatabase(database.name)
-                || (filters.dbs.length !== 0
-                    && !filters.dbs.find(name => name == database.name))) {
-                return false;
-            }
+
+            if (isReservedDatabase(database.name)) return false;
+            if (dbs.length > 0 && dbs.filter(name => name === database.name).length === 0) return false;
 
             let collectionsInfo = await getDatabaseCollectionsInfo(database.name);
             return !collectionsInfo.filter(r => isCrowdPulseCollection(r)).empty;
