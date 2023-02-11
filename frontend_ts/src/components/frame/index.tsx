@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {
     AppShell,
@@ -26,10 +26,15 @@ interface IProps {
 const AppFrame:React.FC<IProps> = ({children}) => {
 
     const navigate = useNavigate();
+    const location = useLocation();
     const { t } = useTranslation();
     const [menuOpen, setMenuOpen] = useState(false);
     const [navigateTo, setNavigateTo] = useState<string | undefined>(undefined);
-    const [selectedItem, setSelectedItem] = useState('home');
+    const [selectedItem, setSelectedItem] = useState('/');
+
+    useEffect(() => {
+        setSelectedItem(location.pathname + location.search);
+    });
 
     useEffect(() => {
         if (navigateTo) navigate(navigateTo);
@@ -45,8 +50,8 @@ const AppFrame:React.FC<IProps> = ({children}) => {
         return selectedItem === item;
     }
 
-    const triggerItemClick = (item: string, to: string) => {
-        setSelectedItem(item);
+    const triggerNavigation = (to: string) => {
+        setSelectedItem(to);
         setMenuOpen(false);
         setNavigateTo(to);
     }
@@ -60,16 +65,16 @@ const AppFrame:React.FC<IProps> = ({children}) => {
                     style={{ cursor: 'pointer' }}>
                 <Navbar.Section>
                     <FrameItem
-                        selected={isSelectedItem('home')}
-                        onClick={() => triggerItemClick('home', '/')}
+                        selected={isSelectedItem('/')}
+                        onClick={() => triggerNavigation('/')}
                         content={<Text inline>{t('home')}</Text>}
                     />
                 </Navbar.Section>
                 <Divider my='sm' />
                 <Navbar.Section>
                     <FrameItem
-                        selected={isSelectedItem('databases')}
-                        onClick={() => triggerItemClick('databases', '/databases')}
+                        selected={isSelectedItem('/databases')}
+                        onClick={() => triggerNavigation('/databases')}
                         content={<Text inline>{t('databases')}</Text>}
                     />
                 </Navbar.Section>
@@ -85,14 +90,14 @@ const AppFrame:React.FC<IProps> = ({children}) => {
                             {analysisArray
                                 .filter(analyse => analyse?.name !== undefined)
                                 .map(analyse => {
-                                    const token = 'analysis_' + analyse.name;
                                     let params = new URLSearchParams();
                                     analyse?.selectedDatabases.forEach((name: string) => params.append('dbs', name));
+                                    const analysisUrl = `/analysis?${params}`;
 
                                     return <FrameItem
                                         key={analyse.name}
-                                        selected={isSelectedItem(token)}
-                                        onClick={() => triggerItemClick(token, `/analysis?${params}`)}
+                                        selected={isSelectedItem(analysisUrl)}
+                                        onClick={() => triggerNavigation(analysisUrl)}
                                         content={
                                             <Box style={{
                                                 borderRadius: '5px',
