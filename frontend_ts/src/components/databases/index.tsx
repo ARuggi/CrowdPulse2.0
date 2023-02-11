@@ -16,7 +16,7 @@ import DatabaseCardContainerSkeleton from '../databases/DatabaseCardContainerSke
 const Databases = () => {
 
     const {t} = useTranslation();
-    const [isError, setError] = useState(false)
+    const [isError, setError] = useState(false);
     const [databasesData, setDatabasesData] = useState<DatabasesResponse | null>(null);
 
     useEffect(() => {
