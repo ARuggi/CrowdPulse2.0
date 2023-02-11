@@ -1,4 +1,4 @@
-import {createResponse, IRoute, ResponseType} from '../IRoute';
+import {IRoute} from '../IRoute';
 import {Request, Response} from 'express';
 import {getMongoConnection, getAdminConnection} from '../../database/database';
 import {Connection, Schema} from 'mongoose';
@@ -7,7 +7,7 @@ export abstract class AbstractTweetRoute implements IRoute {
 
     public static selectedDatabase: Connection = undefined;
 
-    async perform(req: Request, res: Response): Promise<void> {
+    async handleRequest(req: Request, res: Response): Promise<void> {
         let method = this.getMethod().toLowerCase();
 
         if (method === "get") {
@@ -40,7 +40,7 @@ export abstract class AbstractTweetRoute implements IRoute {
             return true;
         }
         res.status(500);
-        res.send(createResponse(ResponseType.KO, "No database selected"));
+        res.send({error: "No database selected"});
         return false;
     }
 

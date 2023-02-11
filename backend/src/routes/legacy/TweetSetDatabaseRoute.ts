@@ -1,6 +1,6 @@
 import {AbstractTweetRoute} from './AbstractTweetRoute';
 import {Request, Response} from 'express';
-import {createMissingBodyParamResponse, createResponse, ResponseType} from '../IRoute';
+import {createMissingBodyParamResponse} from '../IRoute';
 
 type RequestHandler = {
     database: string;
@@ -22,6 +22,7 @@ export class TweetSetDatabaseRoute extends AbstractTweetRoute {
         const handler = req.body as RequestHandler;
 
         if (!handler.database) {
+            res.status(400);
             res.send(createMissingBodyParamResponse("database"));
             return;
         }
@@ -29,12 +30,12 @@ export class TweetSetDatabaseRoute extends AbstractTweetRoute {
         try {
 
             AbstractTweetRoute.selectedDatabase = super.getMongoConnection().useDb(handler.database);
-            res.send(createResponse(ResponseType.OK, undefined, {selected: handler.database}));
+            res.send({selected: handler.database});
 
         } catch (error) {
             console.error(error);
             res.status(500);
-            res.send(createResponse(ResponseType.KO, error.message));
+            res.send({error: error.message});
         }
     }
 

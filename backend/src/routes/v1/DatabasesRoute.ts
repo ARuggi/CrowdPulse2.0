@@ -1,7 +1,6 @@
 import {AbstractRoute} from './AbstractRoute';
 import {Request, Response} from 'express';
 import {asyncFilter} from '../../util/AsyncUtil';
-import {createResponse, ResponseType} from '../IRoute';
 import {getAdminConnection} from '../../database/database';
 import {
     getDatabaseCollectionsInfo,
@@ -12,7 +11,7 @@ import {
 // noinspection DuplicatedCode
 export class DatabasesRoute extends AbstractRoute {
 
-    async performRequest(req: Request, res: Response): Promise<void> {
+    async handleRouteRequest(req: Request, res: Response): Promise<void> {
         let filters = {dbs: []};
 
         if (req?.query?.dbs) {
@@ -22,12 +21,12 @@ export class DatabasesRoute extends AbstractRoute {
         try {
 
             let result = await this.getInfoFromDatabase(filters);
-            res.send(createResponse(ResponseType.OK, undefined, result));
+            res.send(result);
 
         } catch (error) {
             console.log(error)
             res.status(500);
-            res.send(createResponse(ResponseType.KO, error.message));
+            res.send({error: error.message});
         }
     }
 

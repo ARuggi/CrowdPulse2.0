@@ -1,6 +1,6 @@
 import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from './AbstractTweetRoute';
 import {Request, Response} from 'express';
-import {createMissingQueryParamResponse, createResponse, ResponseType} from '../IRoute';
+import {createMissingQueryParamResponse} from '../IRoute';
 
 type RequestHandler = {
     collection: string;
@@ -18,6 +18,7 @@ export class TweetGetHashtagsRoute extends AbstractTweetRoute {
         const handler = req.query as RequestHandler;
 
         if (!handler.collection) {
+            res.status(400);
             res.send(createMissingQueryParamResponse("collection"));
             return;
         }
@@ -34,12 +35,12 @@ export class TweetGetHashtagsRoute extends AbstractTweetRoute {
                     throw error;
                 }
 
-                res.send(createResponse(ResponseType.OK, undefined, result));
+                res.send(result);
             }).allowDiskUse(true);
         } catch (error) {
             console.error(error);
             res.status(500);
-            res.send(createResponse(ResponseType.KO, error.message));
+            res.send({error: error.message});
         }
     }
 }

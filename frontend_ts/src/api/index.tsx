@@ -13,7 +13,7 @@ async function apiCall<Type> (method: string, url: string, body: any = null): Pr
     try {
         const response = await fetch(url, options)
         responseBody = await response.json()
-        return responseBody.data as Type
+        return responseBody as Type
     } catch (e: any) {
         throw new Error(responseBody || e.toString())
     }

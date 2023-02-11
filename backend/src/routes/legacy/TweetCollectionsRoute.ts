@@ -1,6 +1,5 @@
 import {AbstractTweetRoute} from './AbstractTweetRoute';
 import {Request, Response} from 'express';
-import {createResponse, ResponseType} from '../IRoute';
 
 export class TweetCollectionsRoute extends AbstractTweetRoute {
 
@@ -18,12 +17,12 @@ export class TweetCollectionsRoute extends AbstractTweetRoute {
                     throw error;
                 })
                 .then(result => {
-                    res.send(createResponse(ResponseType.OK, undefined, result));
+                    res.send(result);
                 });
         } catch (error) {
             console.error(error);
             res.status(500);
-            res.send(createResponse(ResponseType.KO, error.message));
+            res.send({error: error.message});
         }
     }
 }
