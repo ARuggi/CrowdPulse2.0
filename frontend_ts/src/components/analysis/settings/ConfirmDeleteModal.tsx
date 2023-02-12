@@ -34,7 +34,7 @@ const ConfirmDeleteModal:React.FC<IProps> = ({opened, onClose, dbs}) => {
         centered
         opened={opened}
         onClose={onClose}
-        title={<i>Stai per eliminare: <b>{currentAnalyse?.name}</b></i>}>
+        title={<i>{t('deleteModal.alert')} <b>{currentAnalyse?.name}</b></i>}>
         <Center>
             <Button
                 onClick={triggerDeleting}

@@ -62,6 +62,9 @@
       "inputTextPlaceholder": "Inserisci un nome non utilizzato",
       "errorAlreadyNameExists": "Il nome che hai scelto è stato già utilizzato!",
       "errorAlreadyDatabasesExists": "I database selezionati sono già stati salvati!"
+    },
+    "deleteModal": {
+      "alert": "Stai per eliminare:"
     }
   }
 }
