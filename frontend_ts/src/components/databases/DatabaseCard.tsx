@@ -36,9 +36,9 @@ const DatabaseCard: React.FC<IProps> = ({database, onClick, isSelected}) => {
             </Card.Section>
 
             <Text size='sm' color='dimmed'>
-                <small><b>{t('releaseDate')}</b>: {database.info.releaseDate ? database.info.releaseDate.toString() : 'N/D'}</small><br/>
-                <small><b>{t('lastUpdate')}</b>: {database.info.lastUpdateDate ? database.info.lastUpdateDate.toString() : 'N/D'}</small><br/>
-                <small><b>{t('version')}</b>: {database.info.version ? database.info.version : 'N/D'}</small>
+                <small><b>{t('releaseDate')}</b>: {database.info.releaseDate ? database.info.releaseDate.toString() : t('notDefined')}</small><br/>
+                <small><b>{t('lastUpdate')}</b>: {database.info.lastUpdateDate ? database.info.lastUpdateDate.toString() : t('notDefined')}</small><br/>
+                <small><b>{t('version')}</b>: {database.info.version ? database.info.version : t('notDefined')}</small>
             </Text>
 
             <Button variant='light' color={isSelected ? 'red' : 'green'} fullWidth mt='md' radius='md'>
