@@ -55,7 +55,7 @@ const DatabaseCardsContainer: React.FC<IProps> = ({databasesData}) => {
             <SavingModal
                 opened={savingModalOpened}
                 onClose={() => setSavingModalOpened(false)}
-                selectedDatabases={selectedDatabases}
+                selectedDatabases={selectedDatabases.sort((s1, s2) => s1.name.localeCompare(s2.name))}
             />
         </Flex>
     </>

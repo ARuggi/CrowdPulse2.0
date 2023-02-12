@@ -24,6 +24,7 @@
     "deselect": "Deseleziona",
     "noDatabaseSelected": "Nessun database selezionato",
     "loadingDatabases": "Attendere il caricamento dei database",
+    "name": "Nome",
     "releaseDate": "Rilasciato il",
     "lastUpdate": "Aggiornato il",
     "version": "Versione",
@@ -38,6 +39,7 @@
     "description": "Descrizione",
     "notDefined": "N/D",
     "noDescription": "Nessuna descrizione fornita.",
+    "delete": "Elimina",
     "homepage": {
       "title": "Benvenuto su CrowdPulse",
       "description": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
@@ -58,7 +60,8 @@
       "alertDescription": "I dati vengono salvati in locale e non vengono inviati su nessun server.",
       "inputTextTitle": "Nome da visualizzare nella lista dopo il salvataggio",
       "inputTextPlaceholder": "Inserisci un nome non utilizzato",
-      "errorAlreadyExists": "Il nome che hai scelto è stato già utilizzato!"
+      "errorAlreadyNameExists": "Il nome che hai scelto è stato già utilizzato!",
+      "errorAlreadyDatabasesExists": "I database selezionati sono già stati salvati!"
     }
   }
 }

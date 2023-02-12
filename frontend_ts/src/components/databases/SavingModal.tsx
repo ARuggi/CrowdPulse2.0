@@ -25,7 +25,7 @@ const SavingModal:React.FC<IProps> = ({opened, onClose, selectedDatabases}) => {
     const [error, setError] = useState<string | undefined>(undefined);
 
     const handleChangeText = (event: ChangeEvent<HTMLInputElement>) => {
-        setSavingName(event.target.value);
+        setSavingName(event.target.value.trim());
     }
 
     useEffect(() => {
@@ -38,16 +38,19 @@ const SavingModal:React.FC<IProps> = ({opened, onClose, selectedDatabases}) => {
 
                 const analysisArray = JSON.parse(getCookie('analysis') as string) as Array<any>;
 
-                if (analysisArray.find(current => current.name === savingName) === undefined) {
+                if (analysisArray.find(current => current.name === savingName)) {
+                    setError(t('savingModal.errorAlreadyNameExists')!);
+                } else if (analysisArray.find(current =>
+                    JSON.stringify(current.selectedDatabases) === JSON.stringify(selectedDatabases.map(db => db.name)))) {
+                    setError(t('savingModal.errorAlreadyDatabasesExists')!);
+                } else {
                     setCookie('analysis', [...analysisArray, {
-                        name: savingName,
+                        name: savingName.trim(),
                         selectedDatabases: [...selectedDatabases].map(database => database.name)
                     }], { maxAge: COOKIE_SAVING_MAX_AGE });
                     let params = new URLSearchParams();
                     selectedDatabases.forEach(database => params.append('dbs', database.name));
                     navigate(`/analysis?${params}`);
-                } else {
-                    setError(t('savingModal.errorAlreadyExists')!);
                 }
 
                 setSave(false);
@@ -56,6 +59,7 @@ const SavingModal:React.FC<IProps> = ({opened, onClose, selectedDatabases}) => {
     }, [save])
 
     return <Modal
+        centered
         size='xl'
         opened={opened}
         onClose={() => {onClose(); setError(undefined)}}
@@ -76,10 +80,10 @@ const SavingModal:React.FC<IProps> = ({opened, onClose, selectedDatabases}) => {
             fontSize='md'>
             <thead>
             <tr>
-                <th>Name</th>
-                <th>Release date</th>
-                <th>Update date</th>
-                <th>Version</th>
+                <th>{t('name')}</th>
+                <th>{t('releaseDate')}</th>
+                <th>{t('lastUpdate')}</th>
+                <th>{t('version')}</th>
             </tr>
             </thead>
             <tbody>

@@ -15,6 +15,7 @@ import WordTab from './WordTab';
 import TimelineTab from './TimelineTab';
 import TweetListTab from './TweetListTab';
 import MapTab from './MapTab';
+import SettingsTab from "./settings";
 
 
 const Analysis = () => {
@@ -30,7 +31,7 @@ const Analysis = () => {
 
     const dbs: string[] | undefined = query.getAll('dbs');
 
-    return <Tabs variant='pills' defaultValue='info'>
+    return <Tabs variant='default' defaultValue='info'>
         <Tabs.List>
             <Tabs.Tab value='info' icon={<AiFillInfoCircle size={14} />}>{t('info')}</Tabs.Tab>
             <Tabs.Tab value='sentiment' icon={<MdSentimentSatisfiedAlt size={14} />}>{t('sentiment')}</Tabs.Tab>
@@ -46,6 +47,7 @@ const Analysis = () => {
         <Tabs.Panel value='timeline' pt='xs'><TimelineTab dbs={dbs}/></Tabs.Panel>
         <Tabs.Panel value='tweet_list' pt='xs'><TweetListTab dbs={dbs}/></Tabs.Panel>
         <Tabs.Panel value='map' pt='xs'><MapTab dbs={dbs}/></Tabs.Panel>
+        <Tabs.Panel value='settings' pt='xs'><SettingsTab dbs={dbs}/></Tabs.Panel>
     </Tabs>
 }
 
