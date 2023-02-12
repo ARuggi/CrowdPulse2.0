@@ -19,7 +19,6 @@ export class DatabasesRoute extends AbstractRoute {
             let queryDbs = req.query.dbs;
 
             if ((typeof(queryDbs)) === 'string') {
-                console.log("string");
                 dbs = [queryDbs as string];
             } else {
                 dbs = req.query.dbs as string[];
