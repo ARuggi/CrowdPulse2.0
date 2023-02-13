@@ -90,9 +90,9 @@ const SavingModal:React.FC<IProps> = ({opened, onClose, selectedDatabases}) => {
             {selectedDatabases.map(database => {
                 return <tr key={database.name}>
                     <td><u>{database.name}</u></td>
-                    <td>{database.info.releaseDate?.toString()}</td>
-                    <td>{database.info.lastUpdateDate?.toString()}</td>
-                    <td>{database.info.version}</td>
+                    <td>{database.info.releaseDate ? database.info.releaseDate.toString() : t('notDefined')}</td>
+                    <td>{database.info.lastUpdateDate ? database.info.lastUpdateDate.toString() : t('notDefined')}</td>
+                    <td>{database.info.version ? database.info.version : t('notDefined')}</td>
                 </tr>
             })}
             </tbody>
