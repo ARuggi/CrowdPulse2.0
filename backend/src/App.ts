@@ -22,7 +22,7 @@ class App {
 
     private static ROUTES: Array<IRoute> = [
         // Legacy endpoints
-        new TweetSetDatabaseRoute(),               // POST - /tweet/setDbs
+        new TweetSetDatabaseRoute(),               // GET - /tweet/setDbs
         new TweetDatabasesRoute(),                 // GET  - /tweet/dbs
         new TweetCollectionsRoute(),               // GET  - /tweet/collections
         new TweetGetAnalyzedDataRoute(),           // GET  - /tweet/getAnalyzedData

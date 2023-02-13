@@ -3,7 +3,7 @@ import {Request, Response} from 'express';
 import {createMissingQueryParamResponse} from '../IRoute';
 
 type RequestHandler = {
-    collection: string;
+    db: string;
 }
 
 export class TweetGetAnalyzedSentimentDatesRoute extends AbstractTweetRoute {
@@ -18,7 +18,7 @@ export class TweetGetAnalyzedSentimentDatesRoute extends AbstractTweetRoute {
     async performTweetRequest(req: Request, res: Response): Promise<void> {
         const handler = req.query as RequestHandler;
 
-        if (!handler.collection) {
+        if (!handler.db) {
             res.status(400);
             res.send(createMissingQueryParamResponse("collection"));
             return;
@@ -26,7 +26,7 @@ export class TweetGetAnalyzedSentimentDatesRoute extends AbstractTweetRoute {
 
         try {
             const analyzedTweetModel = AbstractTweetRoute.selectedDatabase
-                .model<IAnalyzedTweetData>(handler.collection, AnalyzedTweetSchema);
+                .model<IAnalyzedTweetData>(handler.db, AnalyzedTweetSchema);
 
             analyzedTweetModel
                 .find({}, {timeout: false})

@@ -3,7 +3,7 @@ import {Request, Response} from 'express';
 import {createMissingBodyParamResponse} from '../IRoute';
 
 type RequestHandler = {
-    database: string;
+    mongodb: string;
 }
 
 export class TweetSetDatabaseRoute extends AbstractTweetRoute {
@@ -11,7 +11,7 @@ export class TweetSetDatabaseRoute extends AbstractTweetRoute {
     private static TWEET_PATH = "/setDbs";
 
     getMethod(): string {
-        return "post";
+        return "get";
     }
 
     tweetPath(): string {
@@ -19,9 +19,9 @@ export class TweetSetDatabaseRoute extends AbstractTweetRoute {
     }
 
     async performTweetRequest(req: Request, res: Response): Promise<void> {
-        const handler = req.body as RequestHandler;
+        const handler = req.query as RequestHandler;
 
-        if (!handler.database) {
+        if (!handler.mongodb) {
             res.status(400);
             res.send(createMissingBodyParamResponse("database"));
             return;
@@ -29,8 +29,8 @@ export class TweetSetDatabaseRoute extends AbstractTweetRoute {
 
         try {
 
-            AbstractTweetRoute.selectedDatabase = super.getMongoConnection().useDb(handler.database);
-            res.send({selected: handler.database});
+            AbstractTweetRoute.selectedDatabase = super.getMongoConnection().useDb(handler.mongodb);
+            res.send({selected: handler.mongodb});
 
         } catch (error) {
             console.error(error);
