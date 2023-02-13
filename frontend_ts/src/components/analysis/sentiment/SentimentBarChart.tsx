@@ -1,10 +1,18 @@
 import React, {CSSProperties} from 'react';
-import {AxisOptions, Chart} from 'react-charts';
+import {AxisBandOptions, AxisOptions, Chart} from 'react-charts';
 import {getCookie, hasCookie} from "cookies-next";
+import {Datum, DatumFocusStatus, DatumStyles} from "react-charts/types/types";
 
-type MyDatum = {
-    date: number,
-    stars: number
+enum SentimentType {
+    POSITIVE='positive',
+    NEUTRAL='neutral',
+    NEGATIVE='negative'
+}
+
+type DataType = {
+    sentiment: SentimentType,
+    value: number,
+    color: string
 }
 
 interface IProps {
@@ -20,31 +28,56 @@ const SentimentBarChart:React.FC<IProps> = ({style = undefined}) => {
 
     const data = [
         {
-            label: 'React Charts',
+            id: '',
+            label: 'Sentiments',
             data: [
-                {date: 10, stars: Math.floor(Math.random() * 10) + 1},
-                {date: 20, stars: Math.floor(Math.random() * 10) + 1},
-                {date: 30, stars: Math.floor(Math.random() * 10) + 1},
-                {date: 40, stars: Math.floor(Math.random() * 10) + 1},
-                {date: 50, stars: Math.floor(Math.random() * 10) + 1},
+                {sentiment: SentimentType.POSITIVE, value: 150, color: 'cyan'},
+                {sentiment: SentimentType.NEUTRAL,  value:  50, color: 'gray'},
+                {sentiment: SentimentType.NEGATIVE, value:  10, color: 'red'}
             ],
         },
     ]
 
-    const primaryAxis = React.useMemo(
-        (): AxisOptions<MyDatum> => ({
-            getValue: datum => datum.date,
+    const xAxis = React.useMemo(
+        (): AxisBandOptions<DataType> => ({
+            getValue: datum => datum.sentiment,
+            showGrid: true,
         }),
         []
     )
 
-    const secondaryAxes = React.useMemo(
-        (): AxisOptions<MyDatum>[] => [{
-            getValue: datum => datum.stars,
-        },
-        ],
+    const yAxis = React.useMemo(
+        (): AxisOptions<DataType>[] => [{
+            getValue: datum => datum.value,
+            showGrid: true,
+            min: 0
+        }],
         []
     )
+
+    const datumStyle = (datum: Datum<DataType>, status: DatumFocusStatus): DatumStyles => {
+        let color: string;
+        let opacity = 0.75;
+
+        switch (datum.originalDatum.sentiment) {
+            case SentimentType.POSITIVE: color = '#ffc234'; break;
+            case SentimentType.NEUTRAL:  color = '#059bff'; break;
+            case SentimentType.NEGATIVE: color = '#ff4069'; break;
+        }
+
+        if (status === 'focused') {
+            opacity = 1;
+        }
+
+        return {
+            rectangle: {
+                fill: color,
+                fillOpacity: `${opacity}`,
+                strokeWidth: 2,
+                strokeOpacity: 0.5
+            }
+        };
+    }
 
     return <>
         <div style={{
@@ -66,11 +99,12 @@ const SentimentBarChart:React.FC<IProps> = ({style = undefined}) => {
                         tooltip: {show: true},
                         dark: colorScheme === 'dark',
                         data: data,
-                        primaryAxis: primaryAxis,
-                        secondaryAxes: secondaryAxes,
-                        primaryCursor: {show: false},
+                        primaryAxis: xAxis,
+                        secondaryAxes: yAxis,
                         secondaryCursor: {show: false},
-                        interactionMode: 'primary'
+                        primaryCursor: {showLabel: false},
+                        interactionMode: 'primary',
+                        getDatumStyle: datumStyle
                     }}/>
             </div>
         </div>
