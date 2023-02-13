@@ -34,7 +34,7 @@ const AppFrame:React.FC<IProps> = ({children}) => {
 
     useEffect(() => {
         setSelectedItem(location.pathname + location.search);
-    });
+    }, [location.pathname + location.search]);
 
     useEffect(() => {
         if (navigateTo) navigate(navigateTo);
