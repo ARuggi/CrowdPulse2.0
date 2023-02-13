@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import api from '../../api';
-import {DatabasesResponse} from '../../api/DatabasesResponse';
+import api from '../../../api';
+import {DatabasesResponse} from '../../../api/DatabasesResponse';
 import {useTranslation} from 'react-i18next';
 import {
     Center,

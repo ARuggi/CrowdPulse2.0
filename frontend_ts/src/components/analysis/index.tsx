@@ -9,12 +9,12 @@ import {RiTimeLine} from 'react-icons/ri';
 import {BsMap} from 'react-icons/bs';
 import {FiSettings} from "react-icons/fi";
 
-import InfoTab from './InfoTab';
-import SentimentTab from './SentimentTab';
-import WordTab from './WordTab';
-import TimelineTab from './TimelineTab';
-import TweetListTab from './TweetListTab';
-import MapTab from './MapTab';
+import InfoTab from './info';
+import SentimentTab from './sentiment';
+import WordTab from './word';
+import TimelineTab from './timeline';
+import TweetListTab from './tweetList';
+import MapTab from './map';
 import SettingsTab from "./settings";
 
 
