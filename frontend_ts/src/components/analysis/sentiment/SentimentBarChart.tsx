@@ -1,12 +1,13 @@
-import React, {CSSProperties} from 'react';
+import React from 'react';
 import {AxisBandOptions, AxisOptions, Chart} from 'react-charts';
 import {getCookie, hasCookie} from "cookies-next";
 import {Datum, DatumFocusStatus, DatumStyles} from "react-charts/types/types";
+import {useMediaQuery} from "@mantine/hooks";
 
 enum SentimentType {
-    POSITIVE='positive',
-    NEUTRAL='neutral',
-    NEGATIVE='negative'
+    POSITIVE = 'positive',
+    NEUTRAL  = 'neutral',
+    NEGATIVE = 'negative'
 }
 
 type DataType = {
@@ -16,10 +17,15 @@ type DataType = {
 }
 
 interface IProps {
-    style: CSSProperties | undefined
 }
 
-const SentimentBarChart:React.FC<IProps> = ({style = undefined}) => {
+const SentimentBarChart:React.FC<IProps> = ({}) => {
+
+    const mediaQueryMd = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
+    const mediaQuerySm = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
+    const mediaQueryXs = useMediaQuery('(max-width: 768px)');
+    let width = mediaQueryMd ? 80 : mediaQuerySm ? 60 : mediaQueryXs ? 40 : 100;
+
     let colorScheme = undefined;
 
     if (hasCookie('mantine-color-scheme')) {
@@ -31,9 +37,9 @@ const SentimentBarChart:React.FC<IProps> = ({style = undefined}) => {
             id: '',
             label: 'Sentiments',
             data: [
-                {sentiment: SentimentType.POSITIVE, value: 150, color: 'cyan'},
-                {sentiment: SentimentType.NEUTRAL,  value:  50, color: 'gray'},
-                {sentiment: SentimentType.NEGATIVE, value:  10, color: 'red'}
+                {sentiment: SentimentType.POSITIVE, value: 150, color: '#ffc234'},
+                {sentiment: SentimentType.NEUTRAL,  value:  50, color: '#059bff'},
+                {sentiment: SentimentType.NEGATIVE, value:  10, color: '#ff4069'}
             ],
         },
     ]
@@ -56,14 +62,8 @@ const SentimentBarChart:React.FC<IProps> = ({style = undefined}) => {
     )
 
     const datumStyle = (datum: Datum<DataType>, status: DatumFocusStatus): DatumStyles => {
-        let color: string;
+        let color = datum.originalDatum.color;
         let opacity = 0.75;
-
-        switch (datum.originalDatum.sentiment) {
-            case SentimentType.POSITIVE: color = '#ffc234'; break;
-            case SentimentType.NEUTRAL:  color = '#059bff'; break;
-            case SentimentType.NEGATIVE: color = '#ff4069'; break;
-        }
 
         if (status === 'focused') {
             opacity = 1;
@@ -85,12 +85,11 @@ const SentimentBarChart:React.FC<IProps> = ({style = undefined}) => {
             width: "auto",
             borderRadius: "0.5rem",
             boxShadow: "5px 5px rgba(0,0,0,.1)",
-            ...style,
         }}>
             <div
                 style={{
-                    width: '100vh',
-                    height: '400px'
+                    width: `${width}vh`,
+                    height: '300px'
                 }}>
                 <Chart
                     options={{
