@@ -1,12 +1,15 @@
 import React from 'react';
-import {Center, Loader} from '@mantine/core';
+import {Center} from '@mantine/core';
+import SentimentBarChart from "./SentimentBarChart";
 
 interface IProps {
     dbs: string[]
 }
 
 const SentimentTab:React.FC<IProps> = ({dbs}) => {
-    return <Center><Loader size='xl' variant='dots' /></Center>
+    return <Center>
+        <SentimentBarChart style={{}}/>
+    </Center>
 }
 
 export default SentimentTab;
