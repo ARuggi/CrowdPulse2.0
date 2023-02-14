@@ -1,12 +1,14 @@
 import React from 'react';
-import {Center, Loader} from '@mantine/core';
+import Filters from "../filters";
 
 interface IProps {
     dbs: string[]
 }
 
 const TweetListTab:React.FC<IProps> = ({dbs}) => {
-    return <Center><Loader size='xl' variant='dots' /></Center>
+    return <>
+        <Filters />
+    </>
 }
 
 export default TweetListTab;
