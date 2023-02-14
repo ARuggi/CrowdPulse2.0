@@ -10,9 +10,10 @@ interface IProps {
 
 const SentimentTab:React.FC<IProps> = ({dbs}) => {
     return <>
-        <SentimentFilters style={{marginBottom: '20px'}}/>
-        <Divider my="md"/>
+        <SentimentFilters style={{marginBottom: '0px'}}/>
+        <Divider my="md" size="md"/>
         <Flex
+            style={{marginTop: '50px'}}
             gap='md'
             justify='center'
             align='center'
