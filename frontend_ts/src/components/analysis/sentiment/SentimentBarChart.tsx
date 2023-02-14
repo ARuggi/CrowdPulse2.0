@@ -1,9 +1,9 @@
 import React from 'react';
 import {AxisBandOptions, AxisOptions, Chart} from 'react-charts';
-import {getCookie, hasCookie} from "cookies-next";
 import {Datum, DatumFocusStatus, DatumStyles} from "react-charts/types/types";
 import {useMediaQuery} from "@mantine/hooks";
 import SentimentTotalBox from "./SentimentTotalBox";
+import {useMantineColorScheme} from "@mantine/core";
 
 enum SentimentType {
     POSITIVE = 'positive',
@@ -22,16 +22,13 @@ interface IProps {
 
 const SentimentBarChart:React.FC<IProps> = () => {
 
+    const { colorScheme } = useMantineColorScheme();
+
+
     const mediaQueryMd = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
     const mediaQuerySm = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
     const mediaQueryXs = useMediaQuery('(max-width: 768px)');
     let width = mediaQueryMd ? 80 : mediaQuerySm ? 60 : mediaQueryXs ? 40 : 100;
-
-    let colorScheme = undefined;
-
-    if (hasCookie('mantine-color-scheme')) {
-        colorScheme = getCookie('mantine-color-scheme');
-    }
 
     const data = [
         {
