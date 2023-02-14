@@ -1,8 +1,8 @@
 import React from 'react';
-import {Divider, Flex} from '@mantine/core';
+import {Flex} from '@mantine/core';
 import SentimentBarChart from './SentimentBarChart';
 import SentimentCakeChart from './SentimentCakeChart';
-import SentimentFilters from './filters';
+import Filters from './filters';
 
 interface IProps {
     dbs: string[]
@@ -10,8 +10,7 @@ interface IProps {
 
 const SentimentTab:React.FC<IProps> = ({dbs}) => {
     return <>
-        <SentimentFilters style={{marginBottom: '0px'}}/>
-        <Divider my="md" size="md"/>
+        <Filters />
         <Flex
             style={{marginTop: '50px'}}
             gap='md'
