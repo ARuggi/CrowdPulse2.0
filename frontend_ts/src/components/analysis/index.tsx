@@ -16,9 +16,12 @@ import TimelineTab from './timeline';
 import TweetListTab from './tweetList';
 import MapTab from './map';
 import SettingsTab from "./settings";
+import {useMediaQuery} from "@mantine/hooks";
 
 
 const Analysis = () => {
+    const mediaQueryMd = useMediaQuery('(min-width: 992px)');
+
     const { t } = useTranslation();
     const location = useLocation();
     const [query] = useSearchParams();
@@ -33,13 +36,13 @@ const Analysis = () => {
 
     return <Tabs variant='default' defaultValue='info'>
         <Tabs.List>
-            <Tabs.Tab value='info' icon={<AiFillInfoCircle size={14} />}>{t('info')}</Tabs.Tab>
-            <Tabs.Tab value='sentiment' icon={<MdSentimentSatisfiedAlt size={14} />}>{t('sentiment')}</Tabs.Tab>
-            <Tabs.Tab value='word' icon={<AiFillFileWord size={14} />}>{t('word')}</Tabs.Tab>
-            <Tabs.Tab value='timeline' icon={<RiTimeLine size={14} />}>{t('timeline')}</Tabs.Tab>
-            <Tabs.Tab value='tweet_list' icon={<AiOutlineUnorderedList size={14} />}>{t('tweetList')}</Tabs.Tab>
-            <Tabs.Tab value='map' icon={<BsMap size={14} />}>{t('map')}</Tabs.Tab>
-            <Tabs.Tab value='settings' icon={<FiSettings size={14} />} ml="auto">{t('settings')}</Tabs.Tab>
+            <Tabs.Tab value='info' icon={<AiFillInfoCircle size={14} />}>{mediaQueryMd ? t('info') : ''}</Tabs.Tab>
+            <Tabs.Tab value='sentiment' icon={<MdSentimentSatisfiedAlt size={14} />}>{mediaQueryMd ? t('sentiment'): ''}</Tabs.Tab>
+            <Tabs.Tab value='word' icon={<AiFillFileWord size={14} />}>{mediaQueryMd ? t('word'): ''}</Tabs.Tab>
+            <Tabs.Tab value='timeline' icon={<RiTimeLine size={14} />}>{mediaQueryMd ? t('timeline') : ''}</Tabs.Tab>
+            <Tabs.Tab value='tweet_list' icon={<AiOutlineUnorderedList size={14} />}>{mediaQueryMd ? t('tweetList') : ''}</Tabs.Tab>
+            <Tabs.Tab value='map' icon={<BsMap size={14} />}>{mediaQueryMd ? t('map') : ''}</Tabs.Tab>
+            <Tabs.Tab value='settings' icon={<FiSettings size={14} />} ml="auto">{mediaQueryMd ? t('settings') : ''}</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value='info' pt='xs'><InfoTab dbs={dbs}/></Tabs.Panel>
         <Tabs.Panel value='sentiment' pt='xs'><SentimentTab dbs={dbs}/></Tabs.Panel>
