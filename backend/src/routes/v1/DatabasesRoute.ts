@@ -1,6 +1,5 @@
 import {AbstractRoute} from './AbstractRoute';
 import {Request, Response} from 'express';
-import {asyncFilter} from '../../util/AsyncUtil';
 import {getAdminConnection} from '../../database/database';
 import {
     getDatabaseCollectionsInfo,
@@ -8,51 +7,42 @@ import {
     isCrowdPulseCollection,
     isReservedDatabase
 } from '../../util/DatabaseUtil';
+import {getDatabasesFromQuery} from '../../util/RequestUtil';
 
 // noinspection DuplicatedCode
 export class DatabasesRoute extends AbstractRoute {
 
     async handleRouteRequest(req: Request, res: Response): Promise<void> {
-        let dbs: Array<string> = [];
-
-        if (req?.query?.dbs) {
-            let queryDbs = req.query.dbs;
-
-            if ((typeof(queryDbs)) === 'string') {
-                dbs = [queryDbs as string];
-            } else {
-                dbs = req.query.dbs as string[];
-            }
-        }
+        let dbs = getDatabasesFromQuery(req);
 
         try {
-            let result = await this.getInfoFromDatabase(dbs);
-            res.send(result);
+
+            let listDatabases = await getAdminConnection().db.admin().listDatabases();
+            listDatabases.databases = listDatabases.databases.filter((database) => !isReservedDatabase(database.name));
+            let result = [];
+
+            for (const database of listDatabases.databases) {
+                if (dbs.length > 0 && !dbs.find(name => name === database.name)) continue;
+
+                let collections: any[] = await getDatabaseCollectionsInfo(database.name);
+                collections = collections.filter(collection => isCrowdPulseCollection(collection));
+
+                if (collections.length > 0) {
+                    result.push(database);
+                }
+            }
+
+            for (const database of result) {
+                database.info = await getCrowdPulseDatabaseInfo(database.name);
+            }
+
+            res.send({databases: result});
+
         } catch (error) {
             console.log(error)
             res.status(500);
             res.send({error: error.message});
         }
-    }
-
-    private async getInfoFromDatabase(dbs: string[]): Promise<any> {
-        let admin = getAdminConnection().db.admin();
-        let result = await admin.listDatabases();
-
-        result.databases = await asyncFilter(result.databases, async (database) => {
-
-            if (isReservedDatabase(database.name)) return false;
-            if (dbs.length > 0 && dbs.filter(name => name === database.name).length === 0) return false;
-
-            let collectionsInfo = await getDatabaseCollectionsInfo(database.name);
-            return !collectionsInfo.filter(r => isCrowdPulseCollection(r)).empty;
-        });
-
-        for (const database of result.databases) {
-            database.info = await getCrowdPulseDatabaseInfo(database.name);
-        }
-
-        return result;
     }
 
     protected path(): string {

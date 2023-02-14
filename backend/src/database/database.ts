@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
+import mongoose, {Connection} from "mongoose";
 
 // disable auto-pluralize Mongoose.
 mongoose.pluralize(null);
 
-let mongoConnection;
-let adminConnection;
+let mongoConnection: Connection;
+let adminConnection: Connection;
 
-export function loadDatabase() {
+export const loadDatabase = () => {
     return new Promise((resolve, reject) => {
         console.log(`Connecting to: ${process.env.DATABASE_ACCESS} ...`);
         mongoConnection = mongoose
@@ -35,10 +35,10 @@ export function loadDatabase() {
     });
 }
 
-export function getMongoConnection() {
+export const getMongoConnection = (): Connection => {
     return mongoConnection;
 }
 
-export function getAdminConnection() {
+export const getAdminConnection = (): Connection => {
     return adminConnection;
 }

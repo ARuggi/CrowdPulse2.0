@@ -1,7 +1,6 @@
 import {AbstractTweetRoute} from './AbstractTweetRoute';
 import {Request, Response} from 'express';
 import {getAdminConnection} from '../../database/database';
-import {asyncFilter} from '../../util/AsyncUtil';
 import {
     isCrowdPulseCollection,
     getDatabaseCollectionsInfo,
@@ -27,32 +26,20 @@ export class TweetDatabasesRoute extends AbstractTweetRoute {
 
     async performTweetRequest(req: Request, res: Response): Promise<void> {
         try {
-            getAdminConnection()
-                .db
-                .admin()
-                .listDatabases(async (error, result: ResultType) => {
+            let listDatabases = await getAdminConnection().db.admin().listDatabases();
+            listDatabases.databases = listDatabases.databases.filter((database) => !isReservedDatabase(database.name));
+            let result: ResultType[] = [];
 
-                    if (error) {
-                        throw error;
-                    }
+            for (const database of listDatabases.databases) {
+                let collections: any[] = await getDatabaseCollectionsInfo(database.name);
+                collections = collections.filter(collection => isCrowdPulseCollection(collection));
 
-                    result.databases = await asyncFilter(result.databases, async (database) => {
+                if (collections.length > 0) {
+                    result.push(database as unknown as ResultType);
+                }
+            }
 
-                        if (isReservedDatabase(database.name)) {
-                            return false;
-                        }
-
-                        return await getDatabaseCollectionsInfo(database.name)
-                            .then((result) => {
-                                return !result
-                                    .filter(r => {return isCrowdPulseCollection(r)})
-                                    .empty;
-                            });
-                    });
-
-                    res.send(result);
-                });
-
+            res.send({databases: result});
         } catch (error) {
             console.error(error);
             res.status(500);

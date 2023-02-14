@@ -59,32 +59,37 @@ export interface IAnalyzedTweetData {
     author_name: string,
     author_username: string,
     created_at: Date,
-    possibly_sensitive: boolean,
-    complete_text: boolean,
-    twitter_context_annotations: [],
-    referenced_tweets: [],
-    twitter_entities: object,
-    metrics: object,
+    lang?: string
+    possibly_sensitive?: boolean,
+    complete_text?: boolean,
+    referenced_tweets?: [],
+    twitter_entities?: {
+        mentions: []
+    },
+    metrics?: {
+        retweet_count?: number,
+        reply_count?: number,
+        like_count?: number,
+        quote_count?: number
+    },
     processed: boolean,
-    sentiment: object,
-    tags: object,
-    spacy: object,
+    sentiment?: {
+        "sent-it"?: {
+            subjectivity: string,
+            sentiment: string
+        },
+        "feel-it"?: {
+            emotion: string,
+            sentiment: string
+        }
+    },
+    tags?: {
+        tag_me: []
+    },
+    spacy?: {
+        processed_text: [],
+        entities: []
+    },
 }
 
-export const AnalyzedTweetSchema = new Schema<IAnalyzedTweetData>({
-    raw_text: {type: String},
-    author_id: {type: String},
-    author_name: {type: String},
-    author_username: {type: String},
-    created_at: {type: Date},
-    possibly_sensitive: {type: Boolean},
-    complete_text: {type: Boolean},
-    twitter_context_annotations: {type: []},
-    referenced_tweets: {type: []},
-    twitter_entities: {type: Object},
-    metrics: {type: Object},
-    processed: {type: Boolean},
-    sentiment: {type: Object},
-    tags: {type: Object},
-    spacy: {type: Object},
-});
+export const AnalyzedTweetSchema = new Schema<IAnalyzedTweetData>();
