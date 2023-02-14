@@ -10,7 +10,17 @@ interface IProps {
 
 const SentimentTab:React.FC<IProps> = ({dbs}) => {
     return <>
-        <Filters />
+        <Filters
+            filters={{
+                showAlgorithm: true,
+                showSentiment: false,
+                showType: false,
+                showDataRangePicker: true,
+                showTags: true,
+                showProcessedText: true,
+                showHashTags: true,
+                showUsernames: true
+            }}/>
         <Flex
             style={{marginTop: '50px'}}
             gap='md'
