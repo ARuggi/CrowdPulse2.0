@@ -2,7 +2,7 @@ import React from 'react';
 import {Flex} from '@mantine/core';
 import SentimentBarChart from './SentimentBarChart';
 import SentimentCakeChart from './SentimentCakeChart';
-import Filters from './filters';
+import Filters from '../filters';
 
 interface IProps {
     dbs: string[]

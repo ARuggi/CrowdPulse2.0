@@ -15,11 +15,12 @@ interface IProps {
 }
 
 const Filters:React.FC<IProps> = ({divider = true, style}) => {
+    const mediaQueryLg = useMediaQuery('(min-width: 1200px)');
     const mediaQueryMd = useMediaQuery('(min-width: 992px)');
 
     return <>
         <Spoiler
-            maxHeight={0}
+            maxHeight={mediaQueryLg ? 1000 : 0}
             showLabel={
                 <Box
                     sx={(theme) => ({
