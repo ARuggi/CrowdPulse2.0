@@ -3,6 +3,7 @@ import {AxisBandOptions, AxisOptions, Chart} from 'react-charts';
 import {getCookie, hasCookie} from "cookies-next";
 import {Datum, DatumFocusStatus, DatumStyles} from "react-charts/types/types";
 import {useMediaQuery} from "@mantine/hooks";
+import SentimentTotalBox from "./SentimentTotalBox";
 
 enum SentimentType {
     POSITIVE = 'positive',
@@ -19,7 +20,7 @@ type DataType = {
 interface IProps {
 }
 
-const SentimentBarChart:React.FC<IProps> = ({}) => {
+const SentimentBarChart:React.FC<IProps> = () => {
 
     const mediaQueryMd = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
     const mediaQuerySm = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
@@ -84,7 +85,7 @@ const SentimentBarChart:React.FC<IProps> = ({}) => {
             display: "inline-block",
             width: "auto",
             borderRadius: "0.5rem",
-            boxShadow: "5px 5px rgba(0,0,0,.1)",
+            boxShadow: "1px 1px rgba(0,0,0,.1)",
         }}>
             <div
                 style={{
@@ -106,6 +107,7 @@ const SentimentBarChart:React.FC<IProps> = ({}) => {
                         getDatumStyle: datumStyle
                     }}/>
             </div>
+            <SentimentTotalBox/>
         </div>
     </>
 }
