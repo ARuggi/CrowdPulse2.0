@@ -34,7 +34,7 @@ const Analysis = () => {
 
     const dbs: string[] | undefined = query.getAll('dbs');
 
-    return <Tabs variant='default' defaultValue='info'>
+    return <Tabs keepMounted={false} variant='default' defaultValue='info'>
         <Tabs.List>
             <Tabs.Tab value='info' icon={<AiFillInfoCircle size={14} />}>{mediaQueryMd ? t('info') : ''}</Tabs.Tab>
             <Tabs.Tab value='sentiment' icon={<MdSentimentSatisfiedAlt size={14} />}>{mediaQueryMd ? t('sentiment'): ''}</Tabs.Tab>
