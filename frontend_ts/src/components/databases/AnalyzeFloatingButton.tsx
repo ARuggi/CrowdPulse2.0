@@ -18,9 +18,9 @@ const AnalyzeFloatingButton:React.FC<IProps> = ({disabled, onClick}) => {
                 style={{
                     position: 'fixed',
                     bottom: '0',
-                    width: '50vh',
+                    width: '100vh',
                     height: '50px',
-                    marginBottom: '10%'
+                    marginBottom: '0'
                 }}
                 fullWidth
                 variant='gradient'
