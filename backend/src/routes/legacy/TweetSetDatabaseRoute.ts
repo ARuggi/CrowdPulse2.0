@@ -1,6 +1,6 @@
 import {AbstractTweetRoute} from './AbstractTweetRoute';
 import {Request, Response} from 'express';
-import {createMissingBodyParamResponse} from '../IRoute';
+import {createMissingQueryParamResponse} from '../IRoute';
 
 type RequestHandler = {
     mongodb: string;
@@ -23,7 +23,7 @@ export class TweetSetDatabaseRoute extends AbstractTweetRoute {
 
         if (!handler.mongodb) {
             res.status(400);
-            res.send(createMissingBodyParamResponse("database"));
+            res.send(createMissingQueryParamResponse("mongodb"));
             return;
         }
 
