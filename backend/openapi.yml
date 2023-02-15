@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+  title: CrowdPulse - OpenAPI 3.0
+  description: "CrowdPulse API specifics"
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000
+tags:
+  - name: legacy
+    description: Legacy endpoints for CrowdPulse 2.0
+  - name: v1
+    description: First release of endpoints for CrowdPulse 3.0
+
+paths:
+
+  # [LEGACY] GET - /tweet/setDbs
+  /tweet/setDbs:
+    get:
+      tags: [legacy]
+      summary: Sets the name of the database to be used for subsequent calls
+      parameters:
+        - name: mongodb
+          in: query
+          description: MongoDB database name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/legacy_setDbs'
+        '400':
+          description: Invalid status value
+  # [LEGACY] GET - /tweet/dbs
+  /tweet/dbs:
+    get:
+      tags: [legacy]
+      summary: Gets the databases specs
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/legacy_dbs'
+        '400':
+          description: Invalid status value
+  # TODO: [LEGACY] add missing endpoints...
+
+  # [v1] GET - /tweet/dbs
+  /v1/databases:
+    get:
+      tags: [v1]
+      summary: Gets the database specifications. If the dbs array is empty, a full list of databases will be returned.
+      parameters:
+        - name: dbs
+          in: query
+          description: MongoDB database names
+          required: false
+          schema:
+            type: array
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1_dbs'
+        '400':
+          description: Invalid status value
+  # [v1] GET - /tweet/sentiment
+  /v1/sentiment:
+    get:
+      tags: [v1]
+      summary: Gets the sentiment values.
+      parameters:
+        - name: dbs
+          in: query
+          description: MongoDB database names
+          required: false
+          schema:
+            type: array
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1_sentiment'
+        '500':
+          description: Executing error
+components:
+  schemas:
+    # [LEGACY]
+    legacy_setDbs:
+      type: object
+      properties:
+        selected:
+          type: string
+          example: database_name
+    legacy_dbs:
+      type: object
+      properties:
+        databases:
+          type: array
+          items:
+            example: [{
+              name: string,
+              sizeOnDisk: number,
+              empty: boolean
+            }]
+    # [V1]
+    v1_dbs:
+      type: object
+      properties:
+        databases:
+          type: array
+          items:
+            example: [
+              {
+                name: string,
+                sizeOnDisk: number,
+                empty: boolean
+              }
+            ]
+    v1_sentiment:
+      type: object
+      properties:
+        sentIt:
+          type: object
+          example: {
+            "positive": number,
+            "neutral": number,
+            "negative": number
+          }
+        feelIt:
+          type: object
+          example: {
+            "positive": number,
+            "neutral": number,
+            "negative": number
+          }
