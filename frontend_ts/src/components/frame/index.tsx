@@ -62,7 +62,7 @@ const AppFrame:React.FC<IProps> = ({children}) => {
                     hidden={!menuOpen}
                     width={{ sm: 250, lg: 250 }}
                     p='lg'
-                    style={{ cursor: 'pointer' }}>
+                    style={{ cursor: 'pointer', zIndex: '10000' }}>
                 <Navbar.Section>
                     <FrameItem
                         selected={isSelectedItem('/')}
