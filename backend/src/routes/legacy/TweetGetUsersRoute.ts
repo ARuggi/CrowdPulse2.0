@@ -1,6 +1,7 @@
-import {AnalyzedTweetSchema, IAnalyzedTweetData, AbstractTweetRoute} from './AbstractTweetRoute';
+import {AbstractTweetRoute} from './AbstractTweetRoute';
 import {Request, Response} from 'express';
 import {createMissingQueryParamResponse} from '../IRoute';
+import {AnalyzedTweetSchema} from "../../database/database";
 
 type RequestHandler = {
     db: string;
@@ -24,8 +25,7 @@ export class TweetGetUsersRoute extends AbstractTweetRoute {
         }
 
         try {
-            const analyzedTweetModel = AbstractTweetRoute.selectedDatabase
-                .model<IAnalyzedTweetData>(handler.db, AnalyzedTweetSchema);
+            const analyzedTweetModel = AbstractTweetRoute.selectedDatabase.model(handler.db, AnalyzedTweetSchema);
 
             analyzedTweetModel.aggregate([
                 {$group: {_id: "$author_name"}}

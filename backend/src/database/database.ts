@@ -1,4 +1,4 @@
-import mongoose, {Connection} from "mongoose";
+import mongoose, {Connection, Schema} from "mongoose";
 
 // disable auto-pluralize Mongoose.
 mongoose.pluralize(null);
@@ -42,3 +42,43 @@ export const getMongoConnection = (): Connection => {
 export const getAdminConnection = (): Connection => {
     return adminConnection;
 }
+
+export const AnalyzedTweetSchema = new Schema({
+    raw_text: String,
+    author_id: String,
+    author_name: String,
+    author_username: String,
+    created_at: String,
+    lang: String,
+    possibly_sensitive: Boolean,
+    complete_text: Boolean,
+    referenced_tweets: [],
+    twitter_entities: {
+        hashtags: [],
+        mentions: []
+    },
+    metrics: {
+        retweet_count: Number,
+        reply_count: Number,
+        like_count: Number,
+        quote_count: Number
+    },
+    processed: Boolean,
+    sentiment: {
+        "sent-it": {
+            subjectivity: String,
+            sentiment: String
+        },
+        "feel-it": {
+            emotion: String,
+            sentiment: String
+        }
+    },
+    tags: {
+        tag_me: []
+    },
+    spacy: {
+        processed_text: [],
+        entities: []
+    },
+});

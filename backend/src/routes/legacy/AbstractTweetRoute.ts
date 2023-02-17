@@ -1,7 +1,7 @@
 import {IRoute} from '../IRoute';
 import {Request, Response} from 'express';
 import {getMongoConnection, getAdminConnection} from '../../database/database';
-import {Connection, Schema} from 'mongoose';
+import {Connection} from 'mongoose';
 
 export abstract class AbstractTweetRoute implements IRoute {
 
@@ -52,44 +52,3 @@ export abstract class AbstractTweetRoute implements IRoute {
         return getAdminConnection();
     }
 }
-
-export interface IAnalyzedTweetData {
-    raw_text: string,
-    author_id: string,
-    author_name: string,
-    author_username: string,
-    created_at: Date,
-    lang?: string
-    possibly_sensitive?: boolean,
-    complete_text?: boolean,
-    referenced_tweets?: [],
-    twitter_entities?: {
-        mentions: []
-    },
-    metrics?: {
-        retweet_count?: number,
-        reply_count?: number,
-        like_count?: number,
-        quote_count?: number
-    },
-    processed: boolean,
-    sentiment?: {
-        "sent-it"?: {
-            subjectivity: string,
-            sentiment: string
-        },
-        "feel-it"?: {
-            emotion: string,
-            sentiment: string
-        }
-    },
-    tags?: {
-        tag_me: []
-    },
-    spacy?: {
-        processed_text: [],
-        entities: []
-    },
-}
-
-export const AnalyzedTweetSchema = new Schema<IAnalyzedTweetData>();
