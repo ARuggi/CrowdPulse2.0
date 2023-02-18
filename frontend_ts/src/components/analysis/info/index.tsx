@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import api from '../../../api';
 import {DatabasesResponse} from '../../../api/DatabasesResponse';
+import {DatabasesContext} from '../index'
 import {useTranslation} from 'react-i18next';
 import {
     Center,
@@ -15,10 +16,6 @@ import {
 } from '@mantine/core';
 import {TbFileDatabase} from "react-icons/tb";
 
-interface IProps {
-    dbs: string[]
-}
-
 const bytesToKiloBytes = (bytes: number) => {
     return bytes / 1024;
 }
@@ -27,11 +24,12 @@ const kiloBytesToMegaBytes = (kiloBytes: number) => {
     return kiloBytes / 1024;
 }
 
-const InfoTab:React.FC<IProps> = ({dbs}) => {
+const InfoTab = () => {
 
     const { t } = useTranslation();
     const [isError, setError] = useState(false);
     const [databasesData, setDatabasesData] = useState<DatabasesResponse | null>(null);
+    const dbs = useContext(DatabasesContext);
 
     useEffect(() => {
         (async () => {

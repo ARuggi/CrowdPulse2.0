@@ -1,11 +1,10 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Filters from "../filters";
+import {DatabasesContext} from "../index";
 
-interface IProps {
-    dbs: string[]
-}
+const TweetListTab = () => {
+    const dbs = useContext(DatabasesContext);
 
-const TweetListTab:React.FC<IProps> = ({dbs}) => {
     return <>
         <Filters
             filters={{

@@ -1,7 +1,10 @@
-import React from "react";
-import {Box, Flex, Text} from "@mantine/core";
+import React, {useContext} from "react";
+import {Box, Flex, Loader, Text} from "@mantine/core";
+import {SentimentContext} from "./index";
 
 const SentimentTotalBox = () => {
+    const sentimentData = useContext(SentimentContext);
+
     return <Box
         sx={(theme) => ({
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
@@ -15,8 +18,14 @@ const SentimentTotalBox = () => {
             align="center"
             direction="row"
             wrap="wrap">
-            <Text><b>Total</b></Text>
-            <Text>100</Text>
+            <Text><b>Processed</b></Text>
+            {sentimentData
+                ? <Text>{sentimentData?.processed}</Text>
+                : <Loader size="sm" variant="dots"/>}
+            <Text><b>Not processed</b></Text>
+            {sentimentData
+                ? <Text>{sentimentData?.notProcessed}</Text>
+                : <Loader size="sm" variant="dots"/>}
         </Flex>
     </Box>
 }

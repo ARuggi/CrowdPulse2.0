@@ -1,15 +1,13 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Center} from '@mantine/core';
 import {useTranslation} from "react-i18next";
 import DeleteSection from "./DeleteSection";
 import RenameSection from "./RenameSection";
+import {DatabasesContext} from "../index";
 
-interface IProps {
-    dbs: string[]
-}
+const SettingsTab = () => {
 
-const SettingsTab:React.FC<IProps> = ({dbs}) => {
-
+    const dbs = useContext(DatabasesContext);
     const { t } = useTranslation();
 
     return <Center>

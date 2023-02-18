@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import {useLocation, useSearchParams} from 'react-router-dom';
 import {useTranslation} from "react-i18next";
 import {Tabs} from '@mantine/core';
@@ -18,6 +18,7 @@ import MapTab from './map';
 import SettingsTab from "./settings";
 import {useMediaQuery} from "@mantine/hooks";
 
+export const DatabasesContext = createContext<string[]>([]);
 
 const Analysis = () => {
     const mediaQueryMd = useMediaQuery('(min-width: 992px)');
@@ -34,24 +35,26 @@ const Analysis = () => {
 
     const dbs: string[] | undefined = query.getAll('dbs');
 
-    return <Tabs keepMounted={false} variant='default' defaultValue='info'>
-        <Tabs.List>
-            <Tabs.Tab value='info' icon={<AiFillInfoCircle size={14} />}>{mediaQueryMd ? t('info') : ''}</Tabs.Tab>
-            <Tabs.Tab value='sentiment' icon={<MdSentimentSatisfiedAlt size={14} />}>{mediaQueryMd ? t('sentiment'): ''}</Tabs.Tab>
-            <Tabs.Tab value='word' icon={<AiFillFileWord size={14} />}>{mediaQueryMd ? t('word'): ''}</Tabs.Tab>
-            <Tabs.Tab value='timeline' icon={<RiTimeLine size={14} />}>{mediaQueryMd ? t('timeline') : ''}</Tabs.Tab>
-            <Tabs.Tab value='tweet_list' icon={<AiOutlineUnorderedList size={14} />}>{mediaQueryMd ? t('tweetList') : ''}</Tabs.Tab>
-            <Tabs.Tab value='map' icon={<BsMap size={14} />}>{mediaQueryMd ? t('map') : ''}</Tabs.Tab>
-            <Tabs.Tab value='settings' icon={<FiSettings size={14} />} ml="auto">{mediaQueryMd ? t('settings') : ''}</Tabs.Tab>
-        </Tabs.List>
-        <Tabs.Panel value='info' pt='xs'><InfoTab dbs={dbs}/></Tabs.Panel>
-        <Tabs.Panel value='sentiment' pt='xs'><SentimentTab dbs={dbs}/></Tabs.Panel>
-        <Tabs.Panel value='word' pt='xs'><WordTab dbs={dbs}/></Tabs.Panel>
-        <Tabs.Panel value='timeline' pt='xs'><TimelineTab dbs={dbs}/></Tabs.Panel>
-        <Tabs.Panel value='tweet_list' pt='xs'><TweetListTab dbs={dbs}/></Tabs.Panel>
-        <Tabs.Panel value='map' pt='xs'><MapTab dbs={dbs}/></Tabs.Panel>
-        <Tabs.Panel value='settings' pt='xs'><SettingsTab dbs={dbs}/></Tabs.Panel>
-    </Tabs>
+    return <DatabasesContext.Provider value={dbs}>
+        <Tabs keepMounted={false} variant='default' defaultValue='info'>
+            <Tabs.List>
+                <Tabs.Tab value='info' icon={<AiFillInfoCircle size={14} />}>{mediaQueryMd ? t('info') : ''}</Tabs.Tab>
+                <Tabs.Tab value='sentiment' icon={<MdSentimentSatisfiedAlt size={14} />}>{mediaQueryMd ? t('sentiment'): ''}</Tabs.Tab>
+                <Tabs.Tab value='word' icon={<AiFillFileWord size={14} />}>{mediaQueryMd ? t('word'): ''}</Tabs.Tab>
+                <Tabs.Tab value='timeline' icon={<RiTimeLine size={14} />}>{mediaQueryMd ? t('timeline') : ''}</Tabs.Tab>
+                <Tabs.Tab value='tweet_list' icon={<AiOutlineUnorderedList size={14} />}>{mediaQueryMd ? t('tweetList') : ''}</Tabs.Tab>
+                <Tabs.Tab value='map' icon={<BsMap size={14} />}>{mediaQueryMd ? t('map') : ''}</Tabs.Tab>
+                <Tabs.Tab value='settings' icon={<FiSettings size={14} />} ml="auto">{mediaQueryMd ? t('settings') : ''}</Tabs.Tab>
+            </Tabs.List>
+            <Tabs.Panel value='info' pt='xs'><InfoTab/></Tabs.Panel>
+            <Tabs.Panel value='sentiment' pt='xs'><SentimentTab/></Tabs.Panel>
+            <Tabs.Panel value='word' pt='xs'><WordTab/></Tabs.Panel>
+            <Tabs.Panel value='timeline' pt='xs'><TimelineTab/></Tabs.Panel>
+            <Tabs.Panel value='tweet_list' pt='xs'><TweetListTab/></Tabs.Panel>
+            <Tabs.Panel value='map' pt='xs'><MapTab/></Tabs.Panel>
+            <Tabs.Panel value='settings' pt='xs'><SettingsTab/></Tabs.Panel>
+        </Tabs>
+    </DatabasesContext.Provider>
 }
 
 export default Analysis;

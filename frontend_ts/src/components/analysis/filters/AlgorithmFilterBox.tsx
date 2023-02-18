@@ -1,7 +1,11 @@
 import React from "react";
 import {Box, Flex, SegmentedControl, Text} from "@mantine/core";
 
-const AlgorithmFilterBox = () => {
+interface IProps {
+    disableAllLabel: boolean | undefined
+}
+
+const AlgorithmFilterBox:React.FC<IProps> = ({disableAllLabel = false}) => {
     return <Box
         sx={(theme) => ({
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
@@ -19,7 +23,10 @@ const AlgorithmFilterBox = () => {
             <Text><b>Algorithm</b></Text>
             <SegmentedControl
                 style={{flex: 'fit-content'}}
-                data={[
+                data={disableAllLabel ? [
+                    {label: 'sent-it', value: 'sent-it'},
+                    {label: 'feel-it', value: 'feel-it'}
+                ] : [
                     {label: 'all', value: 'all'},
                     {label: 'sent-it', value: 'sent-it'},
                     {label: 'feel-it', value: 'feel-it'}

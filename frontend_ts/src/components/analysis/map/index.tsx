@@ -1,13 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Filters from "../filters";
 import {Flex} from "@mantine/core";
 import MapBox from "./MapBox";
+import {DatabasesContext} from "../index";
 
-interface IProps {
-    dbs: string[]
-}
+const MapTab = () => {
+    const dbs = useContext(DatabasesContext);
 
-const MapTab:React.FC<IProps> = ({dbs}) => {
     return <>
         <Filters
             filters={{

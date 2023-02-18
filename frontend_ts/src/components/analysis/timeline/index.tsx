@@ -1,13 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Filters from "../filters";
 import {Flex} from "@mantine/core";
 import TimelineBarChart from "./TimelineBarChart";
+import {DatabasesContext} from "../index";
 
-interface IProps {
-    dbs: string[]
-}
+const TimelineTab = () => {
+    const dbs = useContext(DatabasesContext);
 
-const TimelineTab:React.FC<IProps> = ({dbs}) => {
     return <>
         <Filters
             filters={{

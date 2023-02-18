@@ -17,6 +17,9 @@ interface IProps {
     style?: CSSProperties
     filters?: {
         showAlgorithm?: boolean,
+        algorithm?: {
+            disableAllLabel?: boolean
+        }
         showSentiment?: boolean,
         showType?: boolean,
         showDataRangePicker?: boolean,
@@ -29,6 +32,7 @@ interface IProps {
 
 const defaultFilters = {
     showAlgorithm: true,
+    algorithm: {disableAllLabel: false},
     showSentiment: true,
     showType: true,
     showDataRangePicker: true,
@@ -89,7 +93,7 @@ const Filters:React.FC<IProps> = ({divider = true, style, filters = defaultFilte
                 wrap='wrap'
                 style={{...style}}>
                 <Grid justify='center' align='stretch' grow>
-                    {filters?.showAlgorithm       && <Grid.Col span={mediaQueryMd ? 4 : 8}><AlgorithmFilterBox/></Grid.Col>}
+                    {filters?.showAlgorithm       && <Grid.Col span={mediaQueryMd ? 4 : 8}><AlgorithmFilterBox disableAllLabel={filters?.algorithm?.disableAllLabel}/></Grid.Col>}
                     {filters?.showSentiment       && <Grid.Col span={mediaQueryMd ? 4 : 8}><SentimentFilterBox/></Grid.Col>}
                     {filters?.showType            && <Grid.Col span={mediaQueryMd ? 4 : 8}><TypeFilterBox/></Grid.Col>}
                     {filters?.showDataRangePicker && <Grid.Col span={mediaQueryMd ? 4 : 8}><DateFilterBox/></Grid.Col>}
