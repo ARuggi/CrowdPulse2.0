@@ -37,6 +37,8 @@ export class SentimentRoute extends AbstractRoute {
         };
 
         let data = {positive: 0, neutral: 0, negative: 0};
+        let notProcessedCount = 0;
+
         let filters = this.createFindFilters(queryFilters);
 
         try {
@@ -50,6 +52,11 @@ export class SentimentRoute extends AbstractRoute {
 
                 currentResults.map(current => {
                     const sentiment = current?.sentiment;
+
+                    if (!current?.processed) {
+                        notProcessedCount++;
+                        return;
+                    }
 
                     if (sentiment) {
                         const typeContent = sentiment[queryFilters.algorithm];
@@ -65,15 +72,17 @@ export class SentimentRoute extends AbstractRoute {
                 });
             }
 
-            let count = data.positive + data.neutral + data.negative;
+            let processedCount = data.positive + data.neutral + data.negative;
+
             const percentages = {
-                positive: data.positive === 0 ? '0' : ((data.positive / count) * 100).toFixed(2),
-                neutral:  data.neutral  === 0 ? '0' : ((data.neutral  / count) * 100).toFixed(2),
-                negative: data.negative === 0 ? '0' : ((data.negative / count) * 100).toFixed(2)
+                positive: data.positive === 0 ? '0' : ((data.positive / processedCount) * 100).toFixed(2),
+                neutral:  data.neutral  === 0 ? '0' : ((data.neutral  / processedCount) * 100).toFixed(2),
+                negative: data.negative === 0 ? '0' : ((data.negative / processedCount) * 100).toFixed(2)
             }
 
             res.send({
-                count: count,
+                processed: processedCount,
+                notProcessed: notProcessedCount,
                 data: data,
                 percentages: percentages
             });

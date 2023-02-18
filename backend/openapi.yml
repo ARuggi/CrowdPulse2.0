@@ -171,7 +171,9 @@ components:
     v1_sentiment:
       type: object
       properties:
-        count:
+        processed:
+          type: number
+        notProcessed:
           type: number
         data:
           type: object
