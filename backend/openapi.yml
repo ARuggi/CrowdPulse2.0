@@ -171,6 +171,8 @@ components:
     v1_sentiment:
       type: object
       properties:
+        algorithm:
+          type: string
         processed:
           type: number
         notProcessed:
@@ -181,6 +183,14 @@ components:
             "positive": number,
             "neutral": number,
             "negative": number
+          }
+        emotion:
+          type: object
+          example: {
+            "joy": number,
+            "sadness": number,
+            "anger": number,
+            "fear": number
           }
         percentages:
           type: object

@@ -36,7 +36,8 @@ export class SentimentRoute extends AbstractRoute {
             usernames:     readArrayFromQuery(req.query?.usernames)
         };
 
-        let data = {positive: 0, neutral: 0, negative: 0};
+        let sentimentData = {positive: 0, neutral: 0, negative: 0};
+        let emotionData = {joy: 0, sadness: 0, anger: 0, fear: 0};
         let notProcessedCount = 0;
 
         let filters = this.createFindFilters(queryFilters);
@@ -63,27 +64,38 @@ export class SentimentRoute extends AbstractRoute {
 
                         if (typeContent) {
                             switch (typeContent.sentiment) {
-                                case 'positive': data.positive++; break;
-                                case 'neutral':  data.neutral++;  break;
-                                case 'negative': data.negative++; break;
+                                case 'positive': sentimentData.positive++; break;
+                                case 'neutral':  sentimentData.neutral++;  break;
+                                case 'negative': sentimentData.negative++; break;
+                            }
+
+                            if (queryFilters.algorithm === 'feel-it') {
+                                switch (typeContent.emotion) {
+                                    case 'joy':     emotionData.joy++;     break;
+                                    case 'sadness': emotionData.sadness++; break;
+                                    case 'anger':   emotionData.anger++;   break;
+                                    case 'fear':    emotionData.fear++;    break;
+                                }
                             }
                         }
                     }
                 });
             }
 
-            let processedCount = data.positive + data.neutral + data.negative;
+            let processedCount = sentimentData.positive + sentimentData.neutral + sentimentData.negative;
 
             const percentages = {
-                positive: data.positive === 0 ? '0' : ((data.positive / processedCount) * 100).toFixed(2),
-                neutral:  data.neutral  === 0 ? '0' : ((data.neutral  / processedCount) * 100).toFixed(2),
-                negative: data.negative === 0 ? '0' : ((data.negative / processedCount) * 100).toFixed(2)
+                positive: sentimentData.positive === 0 ? '0' : ((sentimentData.positive / processedCount) * 100).toFixed(2),
+                neutral:  sentimentData.neutral  === 0 ? '0' : ((sentimentData.neutral  / processedCount) * 100).toFixed(2),
+                negative: sentimentData.negative === 0 ? '0' : ((sentimentData.negative / processedCount) * 100).toFixed(2)
             }
 
             res.send({
+                algorithm: queryFilters.algorithm,
                 processed: processedCount,
                 notProcessed: notProcessedCount,
-                data: data,
+                data: sentimentData,
+                emotion: emotionData,
                 percentages: percentages
             });
 

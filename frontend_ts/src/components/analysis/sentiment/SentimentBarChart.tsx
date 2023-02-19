@@ -5,6 +5,7 @@ import {useMediaQuery} from "@mantine/hooks";
 import SentimentTotalBox from "./SentimentTotalBox";
 import {Flex, Loader, useMantineColorScheme} from "@mantine/core";
 import {SentimentContext} from "./index";
+import {FiltersContext} from "../index";
 
 enum SentimentType {
     POSITIVE = 'positive',
@@ -12,46 +13,60 @@ enum SentimentType {
     NEGATIVE = 'negative'
 }
 
+enum EmotionType {
+    JOY      = 'joy',
+    SADNESS  = 'sadness',
+    ANGER    = 'anger',
+    FEAR     = 'fear'
+}
+
 type DataType = {
-    sentiment: SentimentType,
+    type: SentimentType | EmotionType,
     value: number,
     color: string
 }
 
-interface IProps {
-}
-
-const SentimentBarChart:React.FC<IProps> = () => {
+const SentimentBarChart = () => {
 
     const { colorScheme } = useMantineColorScheme();
+    const {filters} = useContext(FiltersContext);
     const sentimentData = useContext(SentimentContext);
 
     const mediaQueryMd = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
     const mediaQuerySm = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
     const mediaQueryXs = useMediaQuery('(max-width: 768px)');
+
     let width = mediaQueryMd ? 80 : mediaQuerySm ? 60 : mediaQueryXs ? 40 : 100;
+    let height = filters.algorithm === 'sent-it' ? 300 : 150;
 
-    const values = {
-        positive: sentimentData ? sentimentData.data.positive : 0,
-        neutral: sentimentData ? sentimentData.data.neutral : 0,
-        negative: sentimentData ? sentimentData.data.negative : 0
-    };
-
-    const data = [
+    const sentimentChartData = [
         {
-            id: '',
-            label: 'Sentiments',
+            id: 'sentiment',
+            label: 'Sentiment',
             data: [
-                {sentiment: SentimentType.POSITIVE, value: values.positive, color: '#ffc234'},
-                {sentiment: SentimentType.NEUTRAL,  value: values.neutral,  color: '#059bff'},
-                {sentiment: SentimentType.NEGATIVE, value: values.negative, color: '#ff4069'}
+                {type: SentimentType.POSITIVE, value: sentimentData ? sentimentData.data.positive : 0, color: '#FFC234'},
+                {type: SentimentType.NEUTRAL,  value: sentimentData ? sentimentData.data.neutral  : 0, color: '#059BFF'},
+                {type: SentimentType.NEGATIVE, value: sentimentData ? sentimentData.data.negative : 0, color: '#FF4069'}
             ],
-        },
-    ]
+        }
+    ];
+
+    const emotionChartData = [
+        {
+            id: 'emotion',
+            label: 'Emotion',
+            data: [
+                {type: EmotionType.JOY,     value: sentimentData ? sentimentData.emotion.joy     : 0, color: 'rgba(255,165,0,0.51)'},
+                {type: EmotionType.SADNESS, value: sentimentData ? sentimentData.emotion.sadness : 0, color: 'rgba(0,0,255,0.49)'},
+                {type: EmotionType.ANGER,   value: sentimentData ? sentimentData.emotion.anger   : 0, color: 'rgba(255,0,0,0.55)'},
+                {type: EmotionType.FEAR,    value: sentimentData ? sentimentData.emotion.fear    : 0, color: 'rgba(128,0,128,0.56)'}
+            ],
+        }
+    ];
 
     const xAxis = React.useMemo(
         (): AxisBandOptions<DataType> => ({
-            getValue: datum => datum.sentiment,
+            getValue: datum => datum.type,
             showGrid: true,
         }),
         []
@@ -94,7 +109,7 @@ const SentimentBarChart:React.FC<IProps> = () => {
             <div
                 style={{
                     width: `${width}vh`,
-                    height: '300px'
+                    height: `${height}px`
                 }}>
                 {sentimentData
                     ? <Chart
@@ -103,7 +118,7 @@ const SentimentBarChart:React.FC<IProps> = () => {
                             // issue: https://github.com/TanStack/react-charts/issues/301
                             tooltip: {show: true},
                             dark: colorScheme === 'dark',
-                            data: data,
+                            data: sentimentChartData,
                             primaryAxis: xAxis,
                             secondaryAxes: yAxis,
                             secondaryCursor: {show: false},
@@ -111,15 +126,48 @@ const SentimentBarChart:React.FC<IProps> = () => {
                             interactionMode: 'primary',
                             getDatumStyle: datumStyle
                         }}/>
-                : <Flex
+                    : <Flex
                         bg="rgba(0, 0, 0, .3)"
                         gap="md"
                         justify="center"
                         align="center"
                         direction="row"
                         wrap="wrap">
-                        <Loader variant="bars" style={{height: '300px'}}/>
+                        <Loader variant="bars" style={{height: `${height}px`}}/>
                     </Flex>}
+            </div>
+            <div
+                style={{
+                    display: filters.algorithm === 'feel-it' ? '' : 'none',
+                    width: `${width}vh`,
+                    height: `${height}px`
+                }}>
+                {filters.algorithm === 'feel-it'
+                    ? sentimentData
+                        ? <Chart
+                            options={{
+                                // the tooltip works fine on react-charts 3.0.0-beta.38
+                                // issue: https://github.com/TanStack/react-charts/issues/301
+                                tooltip: {show: true},
+                                dark: colorScheme === 'dark',
+                                data: emotionChartData,
+                                primaryAxis: xAxis,
+                                secondaryAxes: yAxis,
+                                secondaryCursor: {show: false},
+                                primaryCursor: {showLabel: false},
+                                interactionMode: 'primary',
+                                getDatumStyle: datumStyle
+                            }}/>
+                        : <Flex
+                            bg="rgba(0, 0, 0, .3)"
+                            gap="md"
+                            justify="center"
+                            align="center"
+                            direction="row"
+                            wrap="wrap">
+                            <Loader variant="bars" style={{height: `${height}px`}}/>
+                        </Flex>
+                    : <></>}
             </div>
             <SentimentTotalBox/>
         </div>
