@@ -1,12 +1,15 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Flex} from '@mantine/core';
-import SentimentBarChart from './SentimentBarChart';
-import SentimentCakeChart from './SentimentCakeChart';
-import Filters from '../filters';
-import {DatabasesContext, FiltersContext} from '../index';
+
 import api from '../../../api';
 import {SentimentResponse} from '../../../api/SentimentResponse';
-import {useTranslation} from 'react-i18next';
+import {DatabasesContext, FiltersContext} from '../index';
+import Filters from '../filters';
+import SentimentBarChart from './SentimentBarChart';
+
+import SentimentCakeChart from './SentimentCakeChart';
+import SentimentLineChart from './SentimentLineChart';
 
 export const SentimentContext = createContext<SentimentResponse | null>(null);
 
@@ -70,6 +73,7 @@ const SentimentTab = () => {
                 <SentimentBarChart/>
                 <SentimentCakeChart/>
             </SentimentContext.Provider>
+            <SentimentLineChart/>
         </Flex>
     </>
 }
