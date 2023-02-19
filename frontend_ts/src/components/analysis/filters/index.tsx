@@ -7,10 +7,11 @@ import AlgorithmFilterBox from './AlgorithmFilterBox';
 import SentimentFilterBox from "./SentimentFilterBox";
 import TypeFilterBox from './TypeFilterBox';
 import DateFilterBox from './DateFilterBox';
-import TagsFilterBox from './TagsFilterBox';
-import ProcessedTextFilterBox from './ProcessedTextFilterBox';
-import HashtagsFilterBox from './HashtagsFilterBox';
-import UsernamesFilterBox from './UsernamesFilterBox';
+import MultiSelectionFilterBox from "./MultiSelectionFilterBox";
+
+import {AiFillTag, AiOutlineUser} from "react-icons/ai";
+import {GrTextAlignCenter} from "react-icons/gr";
+import {HiHashtag} from "react-icons/hi";
 
 interface IProps {
     divider?: boolean,
@@ -93,14 +94,63 @@ const Filters:React.FC<IProps> = ({divider = true, style, filters = defaultFilte
                 wrap='wrap'
                 style={{...style}}>
                 <Grid justify='center' align='stretch' grow>
-                    {filters?.showAlgorithm       && <Grid.Col span={mediaQueryMd ? 4 : 8}><AlgorithmFilterBox disableAllLabel={filters?.algorithm?.disableAllLabel}/></Grid.Col>}
-                    {filters?.showSentiment       && <Grid.Col span={mediaQueryMd ? 4 : 8}><SentimentFilterBox/></Grid.Col>}
-                    {filters?.showType            && <Grid.Col span={mediaQueryMd ? 4 : 8}><TypeFilterBox/></Grid.Col>}
-                    {filters?.showDataRangePicker && <Grid.Col span={mediaQueryMd ? 4 : 8}><DateFilterBox/></Grid.Col>}
-                    {filters?.showTags            && <Grid.Col span={mediaQueryMd ? 4 : 8}><TagsFilterBox/></Grid.Col>}
-                    {filters?.showProcessedText   && <Grid.Col span={mediaQueryMd ? 4 : 8}><ProcessedTextFilterBox/></Grid.Col>}
-                    {filters?.showHashTags        && <Grid.Col span={mediaQueryMd ? 4 : 8}><HashtagsFilterBox/></Grid.Col>}
-                    {filters?.showUsernames       && <Grid.Col span={mediaQueryMd ? 4 : 8}><UsernamesFilterBox/></Grid.Col>}
+
+                    {filters?.showAlgorithm &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <AlgorithmFilterBox disableAllLabel={filters?.algorithm?.disableAllLabel}/>
+                        </Grid.Col>}
+
+                    {filters?.showSentiment &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <SentimentFilterBox/>
+                        </Grid.Col>}
+
+                    {filters?.showType &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <TypeFilterBox/>
+                        </Grid.Col>}
+
+                    {filters?.showDataRangePicker &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <DateFilterBox/>
+                        </Grid.Col>}
+
+                    {filters?.showTags &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <MultiSelectionFilterBox
+                                propertyName={'tags'}
+                                label={'Tags'}
+                                icon={<AiFillTag/>}
+                                placeholder={'write tags'}/>
+                        </Grid.Col>}
+
+                    {filters?.showProcessedText &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <MultiSelectionFilterBox
+                                propertyName={'processedText'}
+                                label={'Processed Text'}
+                                icon={<GrTextAlignCenter/>}
+                                placeholder={'write any word'}/>
+                        </Grid.Col>}
+
+                    {filters?.showHashTags &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <MultiSelectionFilterBox
+                                propertyName={'hashtags'}
+                                label={'Hashtags'}
+                                icon={<HiHashtag/>}
+                                placeholder={'write hashtags'}/>
+                        </Grid.Col>}
+
+                    {filters?.showUsernames &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <MultiSelectionFilterBox
+                                propertyName={'usernames'}
+                                label={'Usernames'}
+                                icon={<AiOutlineUser/>}
+                                placeholder={'write username'}/>
+                        </Grid.Col>}
+
                 </Grid>
             </Flex>
         </Spoiler>

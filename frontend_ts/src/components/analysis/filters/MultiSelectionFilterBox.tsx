@@ -1,11 +1,16 @@
-// noinspection DuplicatedCode
-
 import React, {useContext, useEffect, useState} from 'react';
 import {Box, Flex, MultiSelect, Switch} from '@mantine/core';
-import {AiFillTag} from 'react-icons/ai';
 import {FiltersContext} from '../index';
 
-const TagsFilterBox = () => {
+interface IProps {
+    propertyName: string,
+    label: string,
+    placeholder: string
+    icon: any,
+
+}
+
+const MultiSelectionFilterBox:React.FC<IProps> = ({propertyName, label, placeholder, icon}) => {
     const [values, setValues] = useState<string[]>([]);
     const [enabled, setEnabled] = useState(true);
     const {filters, setFilters} = useContext(FiltersContext);
@@ -13,7 +18,8 @@ const TagsFilterBox = () => {
     useEffect(() => {
 
         if (filters) {
-            const newFilters = {...filters, tags: enabled ? values : undefined};
+
+            const newFilters = {...filters, [propertyName]: enabled ? values : undefined};
             setFilters(newFilters);
         }
 
@@ -43,19 +49,19 @@ const TagsFilterBox = () => {
             direction='row'
             wrap='wrap'>
             <Switch
-                onLabel="ON"
-                offLabel="OFF"
+                onLabel='ON'
+                offLabel='OFF'
                 defaultChecked={true}
                 onChange={onChangeSwitch}
-                label={<b>Tags</b>}
+                label={<b>{label}</b>}
             />
             <MultiSelect
-                icon={<AiFillTag/>}
+                icon={icon}
                 style={{flex: 'fit-content'}}
                 transitionDuration={150}
                 transition='pop-top-left'
                 transitionTimingFunction='ease'
-                placeholder='write tags'
+                placeholder={placeholder}
                 searchable
                 creatable
                 clearable
@@ -72,4 +78,4 @@ const TagsFilterBox = () => {
     </Box>
 }
 
-export default TagsFilterBox;
+export default MultiSelectionFilterBox;
