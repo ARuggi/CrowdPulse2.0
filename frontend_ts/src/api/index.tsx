@@ -64,8 +64,8 @@ const api = {
      * Endpoint: GET - /v1/sentiment
      * @param dbs Specify an array of database names.
      * @param algorithm sent-it (default value) or feel-it.
-     * @param dataFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
-     * @param dataTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
+     * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
+     * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
      * @param tags An array of tags
      * @param processedText An array processed words
      * @param hashtags An array of hashtags (without #)
@@ -73,8 +73,8 @@ const api = {
      */
     GetSentiment(dbs: string[],
                  algorithm: string = 'sent-it',
-                 dataFrom:  string | undefined = undefined,
-                 dataTo:    string |  undefined = undefined ,
+                 dateFrom:  Date | undefined = undefined,
+                 dateTo:    Date | undefined = undefined,
                  tags:          string[] | undefined = undefined,
                  processedText: string[] | undefined = undefined,
                  hashtags:      string[] | undefined = undefined,
@@ -87,9 +87,9 @@ const api = {
 
         body.push({key: 'algorithm', value: algorithm});
 
-        if (dataFrom && dataTo) {
-            body.push({key: 'dataFrom', value: dataFrom});
-            body.push({key: 'dataTo', value: dataTo});
+        if (dateFrom && dateTo) {
+            body.push({key: 'dateFrom', value: dateFrom.toISOString()});
+            body.push({key: 'dateTo', value: dateTo.toISOString()});
         }
 
         if (tags && tags.length > 0) {

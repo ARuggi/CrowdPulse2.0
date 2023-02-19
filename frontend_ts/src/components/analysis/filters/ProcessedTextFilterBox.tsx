@@ -1,9 +1,32 @@
-import React, {useState} from "react";
-import {Box, Flex, MultiSelect, Text} from "@mantine/core";
-import {GrTextAlignCenter} from "react-icons/gr";
+// noinspection DuplicatedCode
+
+import React, {useContext, useEffect, useState} from 'react';
+import {Box, Flex, MultiSelect, Switch} from '@mantine/core';
+import {GrTextAlignCenter} from 'react-icons/gr';
+import {FiltersContext} from '../index';
 
 const ProcessedTextFilterBox = () => {
-    const [value, setValue] = useState<string[]>([]);
+    const [values, setValues] = useState<string[]>([]);
+    const [enabled, setEnabled] = useState(true);
+    const {filters, setFilters} = useContext(FiltersContext);
+
+    useEffect(() => {
+
+        if (filters) {
+            const newFilters = {...filters, processedText: enabled ? values : undefined};
+            setFilters(newFilters);
+        }
+
+    }, [values]);
+
+    const onChangeSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEnabled(event.currentTarget.checked);
+        setValues([...values]);
+    }
+
+    const onChangeValues = (values: string[]) => {
+        setValues(values);
+    }
 
     return <Box
         sx={(theme) => ({
@@ -14,27 +37,34 @@ const ProcessedTextFilterBox = () => {
             height: '100%'
         })}>
         <Flex
-            gap="md"
-            justify="center"
-            align="center"
-            direction="row"
-            wrap="wrap">
-            <Text><b>Processed Text</b></Text>
+            gap='md'
+            justify='center'
+            align='center'
+            direction='row'
+            wrap='wrap'>
+            <Switch
+                onLabel="ON"
+                offLabel="OFF"
+                defaultChecked={true}
+                onChange={onChangeSwitch}
+                label={<b>Processed Text</b>}
+            />
             <MultiSelect
                 icon={<GrTextAlignCenter/>}
                 style={{flex: 'fit-content'}}
                 transitionDuration={150}
-                transition="pop-top-left"
-                transitionTimingFunction="ease"
-                placeholder="write processed text"
-                onChange={setValue}
-                data={value}
+                transition='pop-top-left'
+                transitionTimingFunction='ease'
+                placeholder='write any word'
                 searchable
                 creatable
                 clearable
+                disabled={!enabled}
+                onChange={onChangeValues}
+                data={values}
                 getCreateLabel={(query) => `+ Add ${query}`}
                 onCreate={(query) => {
-                    setValue([...value, query]);
+                    setValues([...values, query]);
                     return query;
                 }}
             />

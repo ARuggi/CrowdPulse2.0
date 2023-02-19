@@ -1,9 +1,32 @@
-import React, {useState} from 'react';
-import {Box, Flex, MultiSelect, Text} from '@mantine/core';
+// noinspection DuplicatedCode
+
+import React, {useContext, useEffect, useState} from 'react';
+import {Box, Flex, MultiSelect, Switch} from '@mantine/core';
 import {AiFillTag} from 'react-icons/ai';
+import {FiltersContext} from '../index';
 
 const TagsFilterBox = () => {
-    const [value, setValue] = useState<string[]>([]);
+    const [values, setValues] = useState<string[]>([]);
+    const [enabled, setEnabled] = useState(true);
+    const {filters, setFilters} = useContext(FiltersContext);
+
+    useEffect(() => {
+
+        if (filters) {
+            const newFilters = {...filters, tags: enabled ? values : undefined};
+            setFilters(newFilters);
+        }
+
+    }, [values]);
+
+    const onChangeSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEnabled(event.currentTarget.checked);
+        setValues([...values]);
+    }
+
+    const onChangeValues = (values: string[]) => {
+        setValues(values);
+    }
 
     return <Box
         sx={(theme) => ({
@@ -19,7 +42,13 @@ const TagsFilterBox = () => {
             align='center'
             direction='row'
             wrap='wrap'>
-            <Text><b>Tags</b></Text>
+            <Switch
+                onLabel="ON"
+                offLabel="OFF"
+                defaultChecked={true}
+                onChange={onChangeSwitch}
+                label={<b>Tags</b>}
+            />
             <MultiSelect
                 icon={<AiFillTag/>}
                 style={{flex: 'fit-content'}}
@@ -27,14 +56,15 @@ const TagsFilterBox = () => {
                 transition='pop-top-left'
                 transitionTimingFunction='ease'
                 placeholder='write tags'
-                onChange={setValue}
-                data={value}
                 searchable
                 creatable
                 clearable
+                disabled={!enabled}
+                onChange={onChangeValues}
+                data={values}
                 getCreateLabel={(query) => `+ Add ${query}`}
                 onCreate={(query) => {
-                    setValue([...value, query]);
+                    setValues([...values, query]);
                     return query;
                 }}
             />

@@ -3,10 +3,10 @@ import {Flex} from '@mantine/core';
 import SentimentBarChart from './SentimentBarChart';
 import SentimentCakeChart from './SentimentCakeChart';
 import Filters from '../filters';
-import {DatabasesContext} from "../index";
-import api from "../../../api";
-import {SentimentResponse} from "../../../api/SentimentResponse";
-import {useTranslation} from "react-i18next";
+import {DatabasesContext, FiltersContext} from '../index';
+import api from '../../../api';
+import {SentimentResponse} from '../../../api/SentimentResponse';
+import {useTranslation} from 'react-i18next';
 
 export const SentimentContext = createContext<SentimentResponse | null>(null);
 
@@ -16,34 +16,29 @@ const SentimentTab = () => {
     const dbs = useContext(DatabasesContext);
     const [isError, setError] = useState(false);
     const [sentimentData, setSentimentData] = useState<SentimentResponse | null>(null);
-
-    const algorithm = "sent-it";
-    const dataFrom = undefined;
-    const dataTo = undefined;
-    const tags = undefined;
-    const processedText = undefined;
-    const hashtags = undefined;
-    const usernames = undefined;
+    const {filters} = useContext(FiltersContext);
 
     useEffect(() => {
+        setSentimentData(null);
+
         (async () => {
             try {
                 const result = await api.GetSentiment(
                     dbs,
-                    algorithm,
-                    dataFrom,
-                    dataTo,
-                    tags,
-                    processedText,
-                    hashtags,
-                    usernames);
+                    filters.algorithm,
+                    filters.dateFrom,
+                    filters.dateTo,
+                    filters.tags,
+                    filters.processedText,
+                    filters.hashtags,
+                    filters.usernames);
                 setSentimentData(result);
             } catch(error) {
                 console.log(error);
                 setError(true);
             }
         })();
-    }, []);
+    }, [filters]);
 
     if (isError) {
         return <p>{t('serverNotRespondingError')}</p>
