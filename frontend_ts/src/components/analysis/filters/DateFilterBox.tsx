@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Box, Flex, Switch} from '@mantine/core';
 import {DateRangePicker, DateRangePickerValue} from '@mantine/dates';
 import {FiltersContext} from '../index';
+import isEqual from "lodash.isequal";
 
 const getDates = (): DateRangePickerValue => {
     const now = new Date();
@@ -12,9 +13,13 @@ const getDates = (): DateRangePickerValue => {
 }
 
 const DateFilterBox = () => {
-    const [value, setValue] = useState<DateRangePickerValue>(getDates());
-    const [enabled, setEnabled] = useState(false);
+
     const {filters, setFilters} = useContext(FiltersContext);
+    const dateFrom: Date | null = filters.dateFrom === undefined ? null : filters.dateFrom;
+    const dateTo:   Date | null = filters.dateTo   === undefined ? null : filters.dateTo;
+
+    const [value, setValue] = useState<DateRangePickerValue>(dateFrom && dateTo ? [dateFrom, dateTo] : getDates());
+    const [enabled, setEnabled] = useState(false);
 
     useEffect(() => {
         if (filters) {
@@ -22,15 +27,20 @@ const DateFilterBox = () => {
             const dateTo   = value[1];
             let newFilters = {...filters};
 
-            if (enabled && dateFrom && dateTo) {
-                newFilters.dateFrom = dateFrom;
-                newFilters.dateTo =  dateTo;
+            if (enabled) {
+                if (dateFrom && dateTo) {
+                    newFilters.dateFrom = dateFrom;
+                    newFilters.dateTo   = dateTo;
+                } else {
+                    newFilters.dateFrom = filters.dateFrom;
+                    newFilters.dateTo   =  filters.dateTo;
+                }
             } else {
                 newFilters.dateFrom = undefined;
-                newFilters.dateTo =  undefined;
+                newFilters.dateTo   = undefined;
             }
 
-            setFilters(newFilters);
+            setFilters(isEqual(filters, newFilters) ? filters : newFilters);
         }
     }, [value]);
 

@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import {Box, Flex, SegmentedControl, Text} from '@mantine/core';
 import {FiltersContext} from '../index';
+import isEqual from 'lodash.isequal';
 
 interface IProps {
     disableAllLabel: boolean | undefined
@@ -11,7 +12,7 @@ const AlgorithmFilterBox:React.FC<IProps> = ({disableAllLabel = false}) => {
 
     const onChange = (value: string) => {
         const newFilters = {...filters, algorithm: value};
-        setFilters(newFilters);
+        setFilters(isEqual(filters, newFilters) ? filters : newFilters);
     }
 
     return <Box
@@ -39,7 +40,8 @@ const AlgorithmFilterBox:React.FC<IProps> = ({disableAllLabel = false}) => {
                     {label: 'all', value: 'all'},
                     {label: 'sent-it', value: 'sent-it'},
                     {label: 'feel-it', value: 'feel-it'}
-                ]}/>
+                ]}
+                defaultValue={filters ? filters.algorithm : undefined}/>
         </Flex>
     </Box>
 }

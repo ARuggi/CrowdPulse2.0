@@ -26,16 +26,16 @@ const SentimentTab = () => {
 
         (async () => {
             try {
-                const result = await api.GetSentiment(
-                    dbs,
-                    filters.algorithm,
-                    filters.dateFrom,
-                    filters.dateTo,
-                    filters.tags,
-                    filters.processedText,
-                    filters.hashtags,
-                    filters.usernames);
-                setSentimentData(result);
+                setSentimentData(
+                    await api.GetSentiment(
+                        dbs,
+                        filters.algorithm,
+                        filters.dateFrom,
+                        filters.dateTo,
+                        filters.tags,
+                        filters.processedText,
+                        filters.hashtags,
+                        filters.usernames));
             } catch(error) {
                 console.log(error);
                 setError(true);
@@ -49,10 +49,11 @@ const SentimentTab = () => {
 
     return <>
         <Filters
+            lock={!sentimentData}
             filters={{
                 showAlgorithm: true,
                 algorithm: {
-                  disableAllLabel: true
+                    disableAllLabel: true
                 },
                 showSentiment: false,
                 showType: false,

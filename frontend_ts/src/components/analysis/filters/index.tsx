@@ -1,19 +1,21 @@
 import React, {CSSProperties} from 'react';
-import {Box, Divider, Flex, Grid, Spoiler} from '@mantine/core';
+import {Box, Divider, Flex, Grid, LoadingOverlay, Spoiler, Text} from '@mantine/core';
 import {useMediaQuery} from '@mantine/hooks';
 import {TbFilter, TbFilterOff} from 'react-icons/tb';
 
 import AlgorithmFilterBox from './AlgorithmFilterBox';
-import SentimentFilterBox from "./SentimentFilterBox";
+import SentimentFilterBox from './SentimentFilterBox';
 import TypeFilterBox from './TypeFilterBox';
 import DateFilterBox from './DateFilterBox';
-import MultiSelectionFilterBox from "./MultiSelectionFilterBox";
+import MultiSelectionFilterBox from './MultiSelectionFilterBox';
 
-import {AiFillTag, AiOutlineUser} from "react-icons/ai";
-import {GrTextAlignCenter} from "react-icons/gr";
-import {HiHashtag} from "react-icons/hi";
+import {AiFillTag, AiOutlineUser} from 'react-icons/ai';
+import {GrTextAlignCenter} from 'react-icons/gr';
+import {HiHashtag} from 'react-icons/hi';
+import {BsLock} from 'react-icons/bs';
 
 interface IProps {
+    lock: boolean,
     divider?: boolean,
     style?: CSSProperties
     filters?: {
@@ -43,13 +45,15 @@ const defaultFilters = {
     showUsernames: true
 }
 
-const Filters:React.FC<IProps> = ({divider = true, style, filters = defaultFilters}) => {
+const Filters:React.FC<IProps> = ({lock, divider = true, style, filters = defaultFilters}) => {
     const mediaQueryLg = useMediaQuery('(min-width: 1200px)');
     const mediaQueryMd = useMediaQuery('(min-width: 992px)');
+    const maxHeight = mediaQueryLg ? 1000 : 0;
 
     return <>
         <Spoiler
-            maxHeight={mediaQueryLg ? 1000 : 0}
+            transitionDuration={500}
+            maxHeight={maxHeight}
             showLabel={
                 <Box
                     sx={(theme) => ({
@@ -63,10 +67,8 @@ const Filters:React.FC<IProps> = ({divider = true, style, filters = defaultFilte
                             backgroundColor:
                                 theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
                         }
-                    })}>
-                    <TbFilter color={'#1971c2'}/>
-                </Box>
-            }
+                    })}
+                    children={<TbFilter color={'#1971c2'}/>}/>}
             hideLabel={
                 <Box
                     sx={(theme) => ({
@@ -81,11 +83,17 @@ const Filters:React.FC<IProps> = ({divider = true, style, filters = defaultFilte
                             backgroundColor:
                                 theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
                         }
-                    })}>
-                    <TbFilterOff color={'#1971c2'}/>
-                </Box>
-            }
-            transitionDuration={500}>
+                    })}
+                    children={<TbFilterOff color={'#1971c2'}/>}/>}>
+            <LoadingOverlay
+                loader={<Flex gap="md" justify="center" align="center" direction="row" wrap="wrap">
+                    <BsLock size={50}/>
+                    <Text>Awaiting completion...</Text>
+                </Flex>}
+                style={{borderRadius: '2%', margin: '1%'}}
+                visible={lock}
+                overlayBlur={5}
+                zIndex={3}/>
             <Flex
                 gap='md'
                 justify='center'

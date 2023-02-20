@@ -9,6 +9,7 @@ const TimelineTab = () => {
 
     return <>
         <Filters
+            lock={false} //TODO: must be implemented
             filters={{
                 showAlgorithm: true,
                 showSentiment: true,

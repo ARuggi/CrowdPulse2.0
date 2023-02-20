@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Box, Flex, MultiSelect, Switch} from '@mantine/core';
 import {FiltersContext} from '../index';
+import isEqual from 'lodash.isequal';
 
 interface IProps {
     propertyName: string,
@@ -16,13 +17,11 @@ const MultiSelectionFilterBox:React.FC<IProps> = ({propertyName, label, placehol
     const {filters, setFilters} = useContext(FiltersContext);
 
     useEffect(() => {
-
         if (filters) {
-
-            const newFilters = {...filters, [propertyName]: enabled ? values : undefined};
-            setFilters(newFilters);
+            const newValues = values.length > 0 ? values : undefined;
+            const newFilters = {...filters, [propertyName]: enabled ? newValues : undefined};
+            setFilters(isEqual(filters, newFilters) ? filters : newFilters);
         }
-
     }, [values]);
 
     const onChangeSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
