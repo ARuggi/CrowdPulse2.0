@@ -1,8 +1,7 @@
 import {AbstractRoute} from './AbstractRoute';
 import {Request, Response} from 'express';
-import {getMongoConnection} from '../../database/database';
+import {getMongoConnection, AnalyzedTweetSchema} from '../../database/database';
 import {readArrayFromQuery} from '../../util/RequestUtil';
-import {AnalyzedTweetSchema} from '../../database/database';
 import {createMissingQueryParamResponse} from '../IRoute';
 
 interface Filters {
@@ -38,7 +37,7 @@ export class SentimentTimelineRoute extends AbstractRoute {
         };
 
         let data = [];
-        let filters = this.createFindFilters(queryFilters);
+        let filters = this.createFiltersPipeline(queryFilters);
 
         try {
 
@@ -50,12 +49,13 @@ export class SentimentTimelineRoute extends AbstractRoute {
                     .aggregate(this.createAggregationPipeline(queryFilters.algorithm, filters))
                     .sort('date');
 
-                (await dbAggregationQuery.exec()).map(current => {
+                (await dbAggregationQuery.exec()).forEach(current => {
                     data.push(current);
                 });
 
             }
 
+            data = data.sort((d1, d2) => d1.date.localeCompare(d2.date));
             res.send(data);
 
         } catch (error) {
@@ -138,7 +138,7 @@ export class SentimentTimelineRoute extends AbstractRoute {
         ];
     }
 
-    private createFindFilters = (queryFilters: Filters) => {
+    private createFiltersPipeline = (queryFilters: Filters) => {
         let filters: any = {};
 
         if (queryFilters.dateFrom && queryFilters.dateTo) {

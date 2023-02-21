@@ -1,8 +1,7 @@
 import {AbstractRoute} from './AbstractRoute';
 import {Request, Response} from 'express';
-import {getMongoConnection} from '../../database/database';
+import {getMongoConnection, AnalyzedTweetSchema} from '../../database/database';
 import {readArrayFromQuery} from '../../util/RequestUtil';
-import {AnalyzedTweetSchema} from '../../database/database';
 import {createMissingQueryParamResponse} from '../IRoute';
 
 interface Filters {
@@ -41,7 +40,7 @@ export class SentimentRoute extends AbstractRoute {
         let emotionData = {joy: 0, sadness: 0, anger: 0, fear: 0};
         let notProcessedCount = 0;
 
-        let filters = this.createFindFilters(queryFilters);
+        let filters = this.createFiltersPipeline(queryFilters);
 
         try {
 
@@ -52,7 +51,7 @@ export class SentimentRoute extends AbstractRoute {
                 let dbQuery = model.find(filters).lean();
                 let currentResults = await dbQuery.exec();
 
-                currentResults.map(current => {
+                currentResults.forEach(current => {
                     const sentiment = current?.sentiment;
 
                     if (!current?.processed) {
@@ -107,7 +106,7 @@ export class SentimentRoute extends AbstractRoute {
         }
     }
 
-    private createFindFilters = (queryFilters: Filters) => {
+    private createFiltersPipeline = (queryFilters: Filters) => {
         let filters: any = {};
 
         if (queryFilters.dateFrom && queryFilters.dateTo) {
