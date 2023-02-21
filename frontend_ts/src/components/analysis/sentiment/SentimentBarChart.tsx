@@ -26,7 +26,7 @@ type DataType = {
     color: string
 }
 
-function getWidthFromMediaQuery(mediaQueryLg: boolean,
+function getWidthFromMediaQuery(mediaQueryLg:    boolean,
                                 mediaQueryMdLg:  boolean,
                                 mediaQuerySmMd:  boolean,
                                 mediaQueryXsSm:  boolean,
@@ -53,8 +53,6 @@ const SentimentBarChart = () => {
     const mediaQuery2XsXs = useMediaQuery('(min-width: 300px) and (max-width: 576px)');
 
     let width = getWidthFromMediaQuery(mediaQueryLg, mediaQueryMdLg, mediaQuerySmMd, mediaQueryXsSm, mediaQuery2XsXs);
-
-    console.log(width);
     let height = filters.algorithm === 'sent-it' ? 300 : 150;
 
     const sentimentChartData = [
