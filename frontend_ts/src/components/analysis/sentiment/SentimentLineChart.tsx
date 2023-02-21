@@ -1,41 +1,35 @@
-import React, {useContext} from 'react';
-import {
-    Chart,
-    AxisLinearOptions,
-    AxisTimeOptions,
-} from 'react-charts';
+import React, {useContext, useEffect, useRef} from 'react';
 
 import {useMediaQuery} from '@mantine/hooks';
-import {Flex, Loader, useMantineColorScheme} from '@mantine/core';
-import {SentimentTimelineContext} from "./index";
-import {SentimentTimelineResponse} from "../../../api/SentimentTimelineResponse";
+import {Box, Flex, Loader, useMantineColorScheme} from '@mantine/core';
+import {createChart, CrosshairMode, IChartApi} from 'lightweight-charts';
 
-enum SentimentType {
-    POSITIVE = 'positive',
-    NEUTRAL  = 'neutral',
-    NEGATIVE = 'negative'
-}
-
-type DataType = {
-    date: Date,
-    value: number
-}
+import {SentimentTimelineContext} from './index';
+import {SentimentTimelineResponse} from '../../../api/SentimentTimelineResponse';
 
 function getWidthFromMediaQuery(mediaQueryLg:    boolean,
                                 mediaQueryMdLg:  boolean,
                                 mediaQuerySmMd:  boolean,
                                 mediaQueryXsSm:  boolean,
                                 mediaQuery2XsXs: boolean) {
-    if (mediaQueryLg)    return 80;
-    if (mediaQueryMdLg)  return 70;
-    if (mediaQuerySmMd)  return 50;
-    if (mediaQueryXsSm)  return 55;
-    if (mediaQuery2XsXs) return 35;
 
-    return 20;
+    let size = 20;
+
+    if (mediaQueryLg)    size = 70;
+    if (mediaQueryMdLg)  size = 60;
+    if (mediaQuerySmMd)  size = 55;
+    if (mediaQueryXsSm)  size = 55;
+    if (mediaQuery2XsXs) size = 50;
+
+    const width = window.innerWidth;
+    return width * (size / 100);
+
 }
 
 const SentimentLineChart = () => {
+
+    const chartContainerRef = useRef<HTMLDivElement>(null);
+    const chartRef = useRef<IChartApi>();
 
     const { colorScheme } = useMantineColorScheme();
     const sentimentTimelineData = useContext<SentimentTimelineResponse | null>(SentimentTimelineContext);
@@ -49,92 +43,103 @@ const SentimentLineChart = () => {
     let width = getWidthFromMediaQuery(mediaQueryLg, mediaQueryMdLg, mediaQuerySmMd, mediaQueryXsSm, mediaQuery2XsXs);
     let height = 300;
 
-    const positiveData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
-        ? sentimentTimelineData.map(current => {return {date: new Date(current.date), value: current.positiveCount}})
-        : [{date: new Date(), value: 0}];
-
-    const neutralData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
-        ? sentimentTimelineData.map(current => {return {date: new Date(current.date), value: current.neutralCount}})
-        : [{date: new Date(), value: 0}];
-
-    const negativeData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
-        ? sentimentTimelineData.map(current => {return {date: new Date(current.date), value: current.negativeCount}})
-        : [{date: new Date(), value: 0}];
-
-    const sentimentChartData = [
-        {
-            id: 'sentimentPositive',
-            label: SentimentType.POSITIVE,
-            data: positiveData
+    const layoutOptions = {
+        layout: {
+            background: {color: colorScheme === 'dark' ? 'rgb(26, 27, 30)' : '#FFF'},
+            textColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.9)' : '#000',
         },
-        {
-            id: 'sentimentNeutral',
-            label: SentimentType.NEUTRAL,
-            data: neutralData
-
+        grid: {
+            vertLines: {
+                color: '#334158',
+            },
+            horzLines: {
+                color: '#334158',
+            },
         },
-        {
-            id: 'sentimentNegative',
-            label: SentimentType.NEGATIVE,
-            data: negativeData
+        crosshair: {
+            mode: CrosshairMode.Normal,
+        },
+    }
+
+    if (chartRef.current) {
+        chartRef.current?.resize(width, height);
+    }
+
+    useEffect(() => {
+
+        if (sentimentTimelineData && chartContainerRef.current) {
+
+            if (chartRef.current) {
+                chartRef.current?.remove();
+            }
+
+            chartRef.current = createChart(chartContainerRef.current, {
+                width: width,
+                height: height,
+                ...layoutOptions
+            });
+            chartRef.current?.timeScale().fitContent();
+
+            const positiveData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
+                ? sentimentTimelineData.map(current => {return {time: current.date, value: current.positiveCount}})
+                : [{time: new Date().toLocaleDateString(), value: 0}];
+
+            const neutralData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
+                ? sentimentTimelineData.map(current => {return {time: current.date, value: current.neutralCount}})
+                : [{time: new Date().toLocaleDateString(), value: 0}];
+
+            const negativeData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
+                ? sentimentTimelineData.map(current => {return {time: current.date, value: current.negativeCount}})
+                : [{time: new Date().toLocaleDateString(), value: 0}];
+
+            const positiveSeries = chartRef.current.addLineSeries();
+            positiveSeries.setData(positiveData);
+            positiveSeries.applyOptions({color: '#FFC234'});
+
+            const neutralSeries = chartRef.current.addLineSeries();
+            neutralSeries.setData(neutralData);
+            neutralSeries.applyOptions({color: '#059BFF'});
+
+            const negativeSeries = chartRef.current.addLineSeries();
+            negativeSeries.setData(negativeData);
+            negativeSeries.applyOptions({color: '#FF4069'});
+
         }
-    ];
 
-    const xAxis = React.useMemo(
-        (): AxisTimeOptions<DataType> => ({
-            getValue: datum => datum.date,
-            scaleType: 'time',
-            showGrid: true,
-        }), []
-    );
+    }, [sentimentTimelineData]);
 
-    const yAxis = React.useMemo(
-        (): AxisLinearOptions<DataType>[] => [{
-            getValue: datum => datum.value,
-            showGrid: true,
-            min: 0
-        }], []
-    );
+    useEffect(() => {
+        if (chartRef.current) {
+            chartRef.current?.applyOptions({width: width, height: height, ...layoutOptions});
+        }
+    }, [colorScheme]);
 
-    return <>
-        <div style={{
-            display: 'inline-block',
-            width: 'auto',
-            borderRadius: '0.5rem',
-            boxShadow: '1px 1px rgba(0,0,0,.1)',
-        }}>
-            <div
-                style={{
-                    width: `${width}vh`,
-                    height: `${height}px`
-                }}>
-                {sentimentTimelineData
-                    ? <Chart
-                        options={{
-                            // the tooltip works fine on react-charts 3.0.0-beta.38
-                            // issue: https://github.com/TanStack/react-charts/issues/301
-                            tooltip: {show: true},
-                            dark: colorScheme === 'dark',
-                            data: sentimentChartData,
-                            primaryAxis: xAxis,
-                            secondaryAxes: yAxis,
-                            secondaryCursor: {show: false},
-                            primaryCursor: {showLabel: false},
-                            interactionMode: 'closest',
-                            defaultColors: ['#FFC234', '#059BFF', '#FF4069']
-                        }}/>
-                    : <Flex
-                        bg="rgba(0, 0, 0, .3)"
-                        gap="md"
-                        justify="center"
-                        align="center"
-                        direction="row"
-                        wrap="wrap">
-                        <Loader variant="bars" style={{height: `${height}px`}}/>
-                    </Flex>}
-            </div>
-        </div>
-    </>
+    return <Box
+        sx={(theme) => ({
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+            textAlign: 'center',
+            padding: theme.spacing.xs,
+            borderRadius: theme.radius.md,
+            cursor: 'pointer',
+
+            '&:hover': {
+                backgroundColor:
+                    theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
+            },
+        })}>
+        <Flex
+            style={{width: `${width}px`, height: `${height}px`}}
+            bg='rgba(0, 0, 0, .3)'
+            gap='md'
+            justify='center'
+            align='center'
+            direction='row'
+            wrap='wrap'>
+            {sentimentTimelineData
+                ? <div ref={chartContainerRef}/>
+                : <Loader variant='bars' style={{}}/>}
+        </Flex>
+    </Box>
 }
 
 export default SentimentLineChart;
