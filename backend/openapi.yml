@@ -50,7 +50,7 @@ paths:
           description: Invalid status value
   # TODO: [LEGACY] add missing endpoints...
 
-  # [v1] GET - /tweet/dbs
+  # [v1] GET - /v1/databases
   /v1/databases:
     get:
       tags: [v1]
@@ -71,7 +71,7 @@ paths:
                 $ref: '#/components/schemas/v1_dbs'
         '400':
           description: Invalid status value
-  # [v1] GET - /tweet/sentiment
+  # [v1] GET - /v1/sentiment
   /v1/sentiment:
     get:
       tags: [v1]
@@ -132,6 +132,73 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/v1_sentiment'
+        '400':
+          description: missing query parameter
+        '500':
+          description: Executing error
+  # [v1] GET - /v1/sentiment/timeline
+  /v1/sentiment/timeline:
+    get:
+      tags: [v1]
+      summary: Gets the sentiment timeline values.
+      parameters:
+        - name: dbs
+          in: query
+          description: MongoDB database names
+          required: true
+          schema:
+            type: array
+        - name: algorithm
+          in: query
+          description: sent-it or feel-it
+          required: true
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          description: ISO date like 2022-01-09T00:00:00.000Z (dateTo required)
+          required: false
+          schema:
+            type: string
+        - name: dateTo
+          in: query
+          description: ISO date like 2022-01-09T00:00:00.000Z (dateFrom required)
+          required: false
+          schema:
+            type: string
+        - name: tags
+          in: query
+          description: A list of tags
+          required: false
+          schema:
+            type: array
+        - name: processedText
+          in: query
+          description: A list processed words
+          required: false
+          schema:
+            type: array
+        - name: hashtags
+          in: query
+          description: A list of hashtags (# not required)
+          required: false
+          schema:
+            type: array
+        - name: usernames
+          in: query
+          description: A list of usernames
+          required: false
+          schema:
+            type: array
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1_sentiment_timeline'
+        '400':
+          description: missing query parameter
         '500':
           description: Executing error
 components:
@@ -199,3 +266,13 @@ components:
             "neutral": number,
             "negative": number
           }
+    v1_sentiment_timeline:
+      type: array
+      example: [
+        {
+          "positiveCount": number,
+          "neutralCount": number,
+          "negativeCount": number,
+          "date": '2023-02-21'
+        }
+      ]

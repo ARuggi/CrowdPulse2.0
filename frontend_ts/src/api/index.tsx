@@ -1,5 +1,6 @@
 import {DatabasesResponse} from './DatabasesResponse';
 import {SentimentResponse} from './SentimentResponse';
+import {SentimentTimelineResponse} from './SentimentTimelineResponse';
 
 type BodyGet = {
     key: string,
@@ -117,6 +118,66 @@ const api = {
         }
 
         return apiCall<SentimentResponse>('GET', '/v1/sentiment', body);
+    },
+
+    /**
+     * Gets information about sentiments.
+     * Endpoint: GET - /v1/sentiment
+     * @param dbs Specify an array of database names.
+     * @param algorithm sent-it (default value) or feel-it.
+     * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
+     * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
+     * @param tags An array of tags
+     * @param processedText An array processed words
+     * @param hashtags An array of hashtags (without #)
+     * @param usernames An array of usernames.
+     */
+    GetSentimentTimeline(dbs: string[],
+                 algorithm: string = 'sent-it',
+                 dateFrom:  Date | undefined = undefined,
+                 dateTo:    Date | undefined = undefined,
+                 tags:          string[] | undefined = undefined,
+                 processedText: string[] | undefined = undefined,
+                 hashtags:      string[] | undefined = undefined,
+                 usernames:     string[] | undefined = undefined): Promise<SentimentTimelineResponse | null> {
+        let body: Array<BodyGet> = [];
+
+        dbs.forEach((database) => {
+            body.push({key: 'dbs', value: database});
+        });
+
+        body.push({key: 'algorithm', value: algorithm});
+
+        if (dateFrom && dateTo) {
+            body.push({key: 'dateFrom', value: dateFrom.toISOString()});
+            body.push({key: 'dateTo', value: dateTo.toISOString()});
+        }
+
+        if (tags && tags.length > 0) {
+            tags.forEach((tag) => {
+                body.push({key: 'tags', value: tag});
+            });
+        }
+
+        if (processedText && processedText.length > 0) {
+            processedText.forEach((text) => {
+                body.push({key: 'processedText', value: text});
+            });
+        }
+
+        if (hashtags && hashtags.length > 0) {
+            hashtags.forEach((hashtag) => {
+                body.push({key: 'hashtags', value: hashtag});
+            });
+        }
+
+        if (usernames && usernames.length > 0) {
+            usernames.forEach((username) => {
+                body.push({key: 'usernames', value: username});
+            });
+        }
+
+        return apiCall<SentimentTimelineResponse>('GET', '/v1/sentiment/timeline', body);
     }
 }
 

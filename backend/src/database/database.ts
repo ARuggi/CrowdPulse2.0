@@ -10,7 +10,7 @@ export const loadDatabase = () => {
     return new Promise((resolve, reject) => {
         console.log(`Connecting to: ${process.env.DATABASE_ACCESS} ...`);
         mongoConnection = mongoose
-            .createConnection(process.env.DATABASE_ACCESS, {})
+            .createConnection(process.env.DATABASE_ACCESS, {readPreference: 'secondaryPreferred'})
             .on('error', (error) => {
                 reject(error);
             });
@@ -21,7 +21,7 @@ export const loadDatabase = () => {
                 console.log(`Connecting to: ${process.env.DATABASE_ACCESS}admin ...`);
 
                 adminConnection = mongoose
-                    .createConnection(process.env.DATABASE_ACCESS + "admin", {})
+                    .createConnection(process.env.DATABASE_ACCESS + "admin", {readPreference: 'secondaryPreferred'})
                     .on('error', (error) => {
                         reject(error);
                     });

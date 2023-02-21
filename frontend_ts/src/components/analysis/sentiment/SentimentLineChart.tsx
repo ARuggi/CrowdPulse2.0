@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
     Chart,
     AxisLinearOptions,
@@ -6,7 +6,9 @@ import {
 } from 'react-charts';
 
 import {useMediaQuery} from '@mantine/hooks';
-import {useMantineColorScheme} from '@mantine/core';
+import {Flex, Loader, useMantineColorScheme} from '@mantine/core';
+import {SentimentTimelineContext} from "./index";
+import {SentimentTimelineResponse} from "../../../api/SentimentTimelineResponse";
 
 enum SentimentType {
     POSITIVE = 'positive',
@@ -22,7 +24,7 @@ type DataType = {
 const SentimentLineChart = () => {
 
     const { colorScheme } = useMantineColorScheme();
-    //const sentimentData = useContext(SentimentContext);
+    const sentimentTimelineData = useContext<SentimentTimelineResponse | null>(SentimentTimelineContext);
 
     const mediaQueryMd = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
     const mediaQuerySm = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
@@ -31,52 +33,47 @@ const SentimentLineChart = () => {
     let width = mediaQueryMd ? 80 : mediaQuerySm ? 60 : mediaQueryXs ? 40 : 100;
     let height = 300;
 
+    const positiveData = !sentimentTimelineData
+        ? [{date: new Date(), value: 0}]
+        : sentimentTimelineData.map(current => {
+            return {date: new Date(current.date), value: current.positiveCount};
+        });
+
+    const neutralData = !sentimentTimelineData
+        ? [{date: new Date(), value: 0}]
+        : sentimentTimelineData.map(current => {
+            return {date: new Date(current.date), value: current.neutralCount};
+        });
+
+    const negativeData = !sentimentTimelineData
+        ? [{date: new Date(), value: 0}]
+        : sentimentTimelineData.map(current => {
+            return {date: new Date(current.date), value: current.negativeCount};
+        });
+
     const sentimentChartData = [
         {
             id: 'sentimentPositive',
             label: SentimentType.POSITIVE,
-            data: [
-                {date: new Date('2021-10-12'), value: 10},
-                {date: new Date('2021-11-12'), value: 20},
-                {date: new Date('2021-12-12'), value:  1},
-                {date: new Date('2022-01-15'), value: 17},
-                {date: new Date('2022-02-22'), value: 12},
-                {date: new Date('2022-03-11'), value: 25},
-            ]
+            data: positiveData
         },
         {
             id: 'sentimentNeutral',
             label: SentimentType.NEUTRAL,
-            data: [
-                {date: new Date('2021-10-12'), value: 20},
-                {date: new Date('2021-11-12'), value: 10},
-                {date: new Date('2021-12-12'), value: 14},
-                {date: new Date('2022-01-15'), value: 30},
-                {date: new Date('2022-02-22'), value: 17},
-                {date: new Date('2022-03-11'), value: 22},
-            ],
+            data: neutralData
 
         },
         {
             id: 'sentimentNegative',
             label: SentimentType.NEGATIVE,
-            data: [
-                {date: new Date('2021-10-12'), value: 15},
-                {date: new Date('2021-11-12'), value:  8},
-                {date: new Date('2021-12-12'), value:  5},
-                {date: new Date('2022-01-15'), value: 12},
-                {date: new Date('2022-02-22'), value: 20},
-                {date: new Date('2022-03-11'), value:  8},
-            ]
+            data: negativeData
         }
     ];
 
     const xAxis = React.useMemo(
         (): AxisTimeOptions<DataType> => ({
             getValue: datum => datum.date,
-            min: new Date('2021-10-12'),
-            max: new Date('2022-03-11'),
-            scaleType: 'localTime',
+            scaleType: 'time',
             showGrid: true,
         }), []
     );
@@ -101,20 +98,30 @@ const SentimentLineChart = () => {
                     width: `${width}vh`,
                     height: `${height}px`
                 }}>
-                <Chart
-                    options={{
-                        // the tooltip works fine on react-charts 3.0.0-beta.38
-                        // issue: https://github.com/TanStack/react-charts/issues/301
-                        tooltip: {show: true},
-                        dark: colorScheme === 'dark',
-                        data: sentimentChartData,
-                        primaryAxis: xAxis,
-                        secondaryAxes: yAxis,
-                        secondaryCursor: {show: false},
-                        primaryCursor: {showLabel: false},
-                        interactionMode: 'closest',
-                        defaultColors: ['#FFC234', '#059BFF', '#FF4069']
-                    }}/>
+                {sentimentTimelineData
+                    ? <Chart
+                        options={{
+                            // the tooltip works fine on react-charts 3.0.0-beta.38
+                            // issue: https://github.com/TanStack/react-charts/issues/301
+                            tooltip: {show: true},
+                            dark: colorScheme === 'dark',
+                            data: sentimentChartData,
+                            primaryAxis: xAxis,
+                            secondaryAxes: yAxis,
+                            secondaryCursor: {show: false},
+                            primaryCursor: {showLabel: false},
+                            interactionMode: 'closest',
+                            defaultColors: ['#FFC234', '#059BFF', '#FF4069']
+                        }}/>
+                    : <Flex
+                        bg="rgba(0, 0, 0, .3)"
+                        gap="md"
+                        justify="center"
+                        align="center"
+                        direction="row"
+                        wrap="wrap">
+                        <Loader variant="bars" style={{height: `${height}px`}}/>
+                    </Flex>}
             </div>
         </div>
     </>
