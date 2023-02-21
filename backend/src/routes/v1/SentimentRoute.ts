@@ -15,6 +15,7 @@ interface Filters {
     usernames: string[]
 }
 
+// noinspection DuplicatedCode
 export class SentimentRoute extends AbstractRoute {
 
     async handleRouteRequest(req: Request, res: Response): Promise<void> {

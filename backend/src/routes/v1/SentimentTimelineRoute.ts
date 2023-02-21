@@ -15,6 +15,7 @@ interface Filters {
     usernames: string[]
 }
 
+// noinspection DuplicatedCode
 export class SentimentTimelineRoute extends AbstractRoute {
 
     async handleRouteRequest(req: Request, res: Response): Promise<void> {
@@ -37,7 +38,7 @@ export class SentimentTimelineRoute extends AbstractRoute {
         };
 
         let data = [];
-        let filters = this.createFindFilters(queryFilters); //TODO: must be implemented.
+        let filters = this.createFindFilters(queryFilters);
 
         try {
 
@@ -45,80 +46,11 @@ export class SentimentTimelineRoute extends AbstractRoute {
 
                 let database = getMongoConnection().useDb(databaseName);
                 let model = database.model('Message', AnalyzedTweetSchema);
-                let dbQuery = model.aggregate([
-                    {
-                        $match: {
-                            processed: true,
-                        }
-                    },
-                    {
-                        $addFields: {
-                            date: {
-                                $dateFromString: {
-                                    dateString: '$created_at'
-                                }
-                            }
-                        }
-                    },
-                    {
-                        $group: {
-                            _id: {
-                                day: { $dateToString: { format: "%d", date: "$date" } },
-                                month: { $dateToString: { format: "%m", date: "$date" } },
-                                year: { $dateToString: { format: "%Y", date: "$date" } },
-                            },
-                            positiveCount: {
-                                $sum: {
-                                    $cond: {
-                                        if: { $eq: ["$sentiment.sent-it.sentiment", "positive"] },
-                                        then: 1,
-                                        else: 0
-                                    }
-                                }
-                            },
-                            neutralCount: {
-                                $sum: {
-                                    $cond: {
-                                        if: { $eq: ["$sentiment.sent-it.sentiment", "neutral"] },
-                                        then: 1,
-                                        else: 0
-                                    }
-                                }
-                            },
-                            negativeCount: {
-                                $sum: {
-                                    $cond: {
-                                        if: { $eq: ["$sentiment.sent-it.sentiment", "negative"] },
-                                        then: 1,
-                                        else: 0
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        $project: {
-                            _id: 0,
-                            date: {
-                                $concat: [
-                                    "$_id.year", "-", "$_id.month", "-", "$_id.day"
-                                ]
-                            },
-                            positiveCount: 1,
-                            neutralCount: 1,
-                            negativeCount: 1
-                        }
-                    },
-                    {
-                        $sort: {
-                            '_id.year': 1,
-                            '_id.month': 1,
-                            'id_day': 1
-                        }
-                    }
-                ]).sort('date');
+                let dbAggregationQuery = model
+                    .aggregate(this.createAggregationPipeline(queryFilters.algorithm, filters))
+                    .sort('date');
 
-                (await dbQuery.exec()).map(current => {
+                (await dbAggregationQuery.exec()).map(current => {
                     data.push(current);
                 });
 
@@ -131,6 +63,79 @@ export class SentimentTimelineRoute extends AbstractRoute {
             res.status(500);
             res.send({error: error.message});
         }
+    }
+
+    private createAggregationPipeline(algorithm: string, filters: any): any {
+        return [
+            {
+                $match: {...filters, processed: true}
+            },
+            {
+                $addFields: {
+                    date: {
+                        $dateFromString: {
+                            dateString: '$created_at'
+                        }
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        day: { $dateToString: { format: '%d', date: '$date' } },
+                        month: { $dateToString: { format: '%m', date: '$date' } },
+                        year: { $dateToString: { format: '%Y', date: '$date' } },
+                    },
+                    positiveCount: {
+                        $sum: {
+                            $cond: {
+                                if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'positive'] },
+                                then: 1,
+                                else: 0
+                            }
+                        }
+                    },
+                    neutralCount: {
+                        $sum: {
+                            $cond: {
+                                if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'neutral'] },
+                                then: 1,
+                                else: 0
+                            }
+                        }
+                    },
+                    negativeCount: {
+                        $sum: {
+                            $cond: {
+                                if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'negative'] },
+                                then: 1,
+                                else: 0
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    date: {
+                        $concat: [
+                            '$_id.year', '-', '$_id.month', '-', '$_id.day'
+                        ]
+                    },
+                    positiveCount: 1,
+                    neutralCount: 1,
+                    negativeCount: 1
+                }
+            },
+            {
+                $sort: {
+                    '_id.year': 1,
+                    '_id.month': 1,
+                    'id_day': 1
+                }
+            }
+        ];
     }
 
     private createFindFilters = (queryFilters: Filters) => {

@@ -72,7 +72,7 @@ const SentimentTab = () => {
 
     return <>
         <Filters
-            lock={!sentimentData}
+            lock={!sentimentData || !sentimentTimelineData}
             filters={{
                 showAlgorithm: true,
                 algorithm: {

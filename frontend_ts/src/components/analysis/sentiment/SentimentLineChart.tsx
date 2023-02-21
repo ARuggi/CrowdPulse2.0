@@ -21,35 +21,45 @@ type DataType = {
     value: number
 }
 
+function getWidthFromMediaQuery(mediaQueryLg:    boolean,
+                                mediaQueryMdLg:  boolean,
+                                mediaQuerySmMd:  boolean,
+                                mediaQueryXsSm:  boolean,
+                                mediaQuery2XsXs: boolean) {
+    if (mediaQueryLg)    return 80;
+    if (mediaQueryMdLg)  return 70;
+    if (mediaQuerySmMd)  return 50;
+    if (mediaQueryXsSm)  return 55;
+    if (mediaQuery2XsXs) return 35;
+
+    return 20;
+}
+
 const SentimentLineChart = () => {
 
     const { colorScheme } = useMantineColorScheme();
     const sentimentTimelineData = useContext<SentimentTimelineResponse | null>(SentimentTimelineContext);
 
-    const mediaQueryMd = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
-    const mediaQuerySm = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
-    const mediaQueryXs = useMediaQuery('(max-width: 768px)');
+    const mediaQueryLg    = useMediaQuery('(min-width: 1200px)');
+    const mediaQueryMdLg  = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
+    const mediaQuerySmMd  = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
+    const mediaQueryXsSm  = useMediaQuery('(min-width: 576px) and (max-width: 768px)');
+    const mediaQuery2XsXs = useMediaQuery('(min-width: 300px) and (max-width: 576px)');
 
-    let width = mediaQueryMd ? 80 : mediaQuerySm ? 60 : mediaQueryXs ? 40 : 100;
+    let width = getWidthFromMediaQuery(mediaQueryLg, mediaQueryMdLg, mediaQuerySmMd, mediaQueryXsSm, mediaQuery2XsXs);
     let height = 300;
 
-    const positiveData = !sentimentTimelineData
-        ? [{date: new Date(), value: 0}]
-        : sentimentTimelineData.map(current => {
-            return {date: new Date(current.date), value: current.positiveCount};
-        });
+    const positiveData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
+        ? sentimentTimelineData.map(current => {return {date: new Date(current.date), value: current.positiveCount}})
+        : [{date: new Date(), value: 0}];
 
-    const neutralData = !sentimentTimelineData
-        ? [{date: new Date(), value: 0}]
-        : sentimentTimelineData.map(current => {
-            return {date: new Date(current.date), value: current.neutralCount};
-        });
+    const neutralData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
+        ? sentimentTimelineData.map(current => {return {date: new Date(current.date), value: current.neutralCount}})
+        : [{date: new Date(), value: 0}];
 
-    const negativeData = !sentimentTimelineData
-        ? [{date: new Date(), value: 0}]
-        : sentimentTimelineData.map(current => {
-            return {date: new Date(current.date), value: current.negativeCount};
-        });
+    const negativeData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
+        ? sentimentTimelineData.map(current => {return {date: new Date(current.date), value: current.negativeCount}})
+        : [{date: new Date(), value: 0}];
 
     const sentimentChartData = [
         {
