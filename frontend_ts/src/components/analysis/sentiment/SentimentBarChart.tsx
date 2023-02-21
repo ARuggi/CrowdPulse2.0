@@ -26,17 +26,35 @@ type DataType = {
     color: string
 }
 
+function getWidthFromMediaQuery(mediaQueryLg: boolean,
+                                mediaQueryMdLg:  boolean,
+                                mediaQuerySmMd:  boolean,
+                                mediaQueryXsSm:  boolean,
+                                mediaQuery2XsXs: boolean) {
+    if (mediaQueryLg)    return 80;
+    if (mediaQueryMdLg)  return 70;
+    if (mediaQuerySmMd)  return 50;
+    if (mediaQueryXsSm)  return 55;
+    if (mediaQuery2XsXs) return 35;
+
+    return 20;
+}
+
 const SentimentBarChart = () => {
 
     const { colorScheme } = useMantineColorScheme();
     const {filters} = useContext(FiltersContext);
     const sentimentData = useContext(SentimentContext);
 
-    const mediaQueryMd = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
-    const mediaQuerySm = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
-    const mediaQueryXs = useMediaQuery('(max-width: 768px)');
+    const mediaQueryLg    = useMediaQuery('(min-width: 1200px)');
+    const mediaQueryMdLg  = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
+    const mediaQuerySmMd  = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
+    const mediaQueryXsSm  = useMediaQuery('(min-width: 576px) and (max-width: 768px)');
+    const mediaQuery2XsXs = useMediaQuery('(min-width: 300px) and (max-width: 576px)');
 
-    let width = mediaQueryMd ? 80 : mediaQuerySm ? 60 : mediaQueryXs ? 40 : 100;
+    let width = getWidthFromMediaQuery(mediaQueryLg, mediaQueryMdLg, mediaQuerySmMd, mediaQueryXsSm, mediaQuery2XsXs);
+
+    console.log(width);
     let height = filters.algorithm === 'sent-it' ? 300 : 150;
 
     const sentimentChartData = [
