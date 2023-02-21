@@ -50,12 +50,21 @@ export class SentimentTimelineRoute extends AbstractRoute {
                     .sort('date');
 
                 (await dbAggregationQuery.exec()).forEach(current => {
-                    data.push(current);
+
+                    if (data.find(element => element.date === current.date)) {
+                        data.forEach(element => {
+                            if (element.date === current.date) {
+                                element.value += current.value;
+                            }
+                        });
+                    } else {
+                        data.push(current);
+                    }
                 });
 
             }
 
-            data = data.sort((d1, d2) => d1.date.localeCompare(d2.date));
+            data = data.sort((d1, d2) => new Date(d1.date).getTime() - new Date(d2.date).getTime());
             res.send(data);
 
         } catch (error) {
