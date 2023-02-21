@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Flex} from '@mantine/core';
+import isEqual from 'lodash.isequal';
 
 import api from '../../../api';
 import {SentimentResponse} from '../../../api/SentimentResponse';
@@ -32,7 +33,7 @@ const SentimentTab = () => {
         (async () => {
 
             try {
-                setSentimentData(
+                const result =
                     await api.GetSentiment(
                         dbs,
                         filters.algorithm,
@@ -41,14 +42,15 @@ const SentimentTab = () => {
                         filters.tags,
                         filters.processedText,
                         filters.hashtags,
-                        filters.usernames));
+                        filters.usernames);
+                setSentimentData(isEqual(sentimentData, result) ? sentimentData : result);
             } catch(error) {
                 console.log(error);
                 setError(true);
             }
 
             try {
-                setSentimentTimelineData(
+                const result =
                     await api.GetSentimentTimeline(
                         dbs,
                         filters.algorithm,
@@ -57,7 +59,8 @@ const SentimentTab = () => {
                         filters.tags,
                         filters.processedText,
                         filters.hashtags,
-                        filters.usernames));
+                        filters.usernames);
+                setSentimentTimelineData(isEqual(sentimentTimelineData, result) ? sentimentTimelineData : result);
             } catch(error) {
                 console.log(error);
                 setError(true);

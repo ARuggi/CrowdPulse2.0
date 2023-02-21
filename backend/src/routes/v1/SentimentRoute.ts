@@ -36,11 +36,23 @@ export class SentimentRoute extends AbstractRoute {
             usernames:     readArrayFromQuery(req.query?.usernames)
         };
 
-        let sentimentData = {positive: 0, neutral: 0, negative: 0};
-        let emotionData = {joy: 0, sadness: 0, anger: 0, fear: 0};
-        let notProcessedCount = 0;
-
         let filters = this.createFiltersPipeline(queryFilters);
+        let data = {
+            algorithm: queryFilters.algorithm,
+            processed: 0,
+            notProcessed: 0,
+            sentimentData: {
+                positive: 0,
+                neutral:  0,
+                negative: 0
+            },
+            emotionData: {
+                joy: 0,
+                sadness: 0,
+                anger: 0,
+                fear: 0
+            }
+        }
 
         try {
 
@@ -48,56 +60,65 @@ export class SentimentRoute extends AbstractRoute {
 
                 let database = getMongoConnection().useDb(databaseName);
                 let model = database.model('Message', AnalyzedTweetSchema);
-                let dbQuery = model.find(filters).lean();
-                let currentResults = await dbQuery.exec();
 
-                currentResults.forEach(current => {
-                    const sentiment = current?.sentiment;
-
-                    if (!current?.processed) {
-                        notProcessedCount++;
-                        return;
-                    }
-
-                    if (sentiment) {
-                        const typeContent = sentiment[queryFilters.algorithm];
-
-                        if (typeContent) {
-                            switch (typeContent.sentiment) {
-                                case 'positive': sentimentData.positive++; break;
-                                case 'neutral':  sentimentData.neutral++;  break;
-                                case 'negative': sentimentData.negative++; break;
-                            }
-
-                            if (queryFilters.algorithm === 'feel-it') {
-                                switch (typeContent.emotion) {
-                                    case 'joy':     emotionData.joy++;     break;
-                                    case 'sadness': emotionData.sadness++; break;
-                                    case 'anger':   emotionData.anger++;   break;
-                                    case 'fear':    emotionData.fear++;    break;
+                let dbQuery = model.aggregate([
+                    {
+                        $facet: {
+                            processedCount: [
+                                { $match: { processed: true } },
+                                { $count: 'processed' }
+                            ],
+                            notProcessedCount: [
+                                { $match: { processed: false } },
+                                { $count: 'processed' }
+                            ],
+                            data: [
+                                { $match: filters },
+                                {
+                                    $group: {
+                                        _id: "$sentiment.sentiment",
+                                        positive: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'positive'] }, 1, 0] } },
+                                        neutral:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'neutral']  }, 1, 0] } },
+                                        negative: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'negative'] }, 1, 0] } },
+                                        joy:      { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'joy']      }, 1, 0] } },
+                                        sadness:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'sadness']  }, 1, 0] } },
+                                        anger:    { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'anger']    }, 1, 0] } },
+                                        fear:     { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'fear']     }, 1, 0] } },
+                                    }
                                 }
-                            }
+                            ]
+                        }
+                    },
+                    {
+                        $project: {
+                            processedCount: 1,
+                            notProcessedCount: 1,
+                            data: 1
                         }
                     }
-                });
+                ]);
+
+                let result = await dbQuery.exec();
+                const [aggregationResult] = result;
+
+                if (aggregationResult) {
+                    const [processedCountResult] = aggregationResult.processedCount;
+                    const [notProcessedCountResult] = aggregationResult.notProcessedCount;
+                    const [dataResult] = aggregationResult.data;
+
+                    data.processed    += processedCountResult?.processed    ? processedCountResult.processed    : 0;
+                    data.notProcessed += notProcessedCountResult?.processed ? notProcessedCountResult.processed : 0;
+                    data.sentimentData.positive += dataResult?.positive ? dataResult?.positive : 0;
+                    data.sentimentData.neutral  += dataResult?.neutral  ? dataResult?.neutral  : 0;
+                    data.sentimentData.negative += dataResult?.negative ? dataResult?.negative : 0;
+                    data.emotionData.joy     += dataResult?.joy     ? dataResult?.joy     : 0;
+                    data.emotionData.sadness += dataResult?.sadness ? dataResult?.sadness : 0;
+                    data.emotionData.anger   += dataResult?.anger   ? dataResult?.anger   : 0;
+                    data.emotionData.fear    += dataResult?.fear    ? dataResult?.fear    : 0;
+                }
             }
 
-            let processedCount = sentimentData.positive + sentimentData.neutral + sentimentData.negative;
-
-            const percentages = {
-                positive: sentimentData.positive === 0 ? '0' : ((sentimentData.positive / processedCount) * 100).toFixed(2),
-                neutral:  sentimentData.neutral  === 0 ? '0' : ((sentimentData.neutral  / processedCount) * 100).toFixed(2),
-                negative: sentimentData.negative === 0 ? '0' : ((sentimentData.negative / processedCount) * 100).toFixed(2)
-            }
-
-            res.send({
-                algorithm: queryFilters.algorithm,
-                processed: processedCount,
-                notProcessed: notProcessedCount,
-                data: sentimentData,
-                emotion: emotionData,
-                percentages: percentages
-            });
+            res.send(data);
 
         } catch (error) {
             console.log(error)

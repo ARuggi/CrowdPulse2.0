@@ -244,27 +244,20 @@ components:
           type: number
         notProcessed:
           type: number
-        data:
+        sentimentData:
           type: object
           example: {
             "positive": number,
             "neutral": number,
             "negative": number
           }
-        emotion:
+        emotionData:
           type: object
           example: {
             "joy": number,
             "sadness": number,
             "anger": number,
             "fear": number
-          }
-        percentages:
-          type: object
-          example: {
-            "positive": number,
-            "neutral": number,
-            "negative": number
           }
     v1_sentiment_timeline:
       type: array

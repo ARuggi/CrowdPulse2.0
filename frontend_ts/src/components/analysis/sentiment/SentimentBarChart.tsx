@@ -1,11 +1,11 @@
 import React, {useContext} from 'react';
 import {AxisBandOptions, AxisOptions, Chart} from 'react-charts';
-import {Datum, DatumFocusStatus, DatumStyles} from "react-charts/types/types";
-import {useMediaQuery} from "@mantine/hooks";
-import SentimentTotalBox from "./SentimentTotalBox";
-import {Flex, Loader, useMantineColorScheme} from "@mantine/core";
-import {SentimentContext} from "./index";
-import {FiltersContext} from "../index";
+import {Datum, DatumFocusStatus, DatumStyles} from 'react-charts/types/types';
+import {useMediaQuery} from '@mantine/hooks';
+import SentimentTotalBox from './SentimentTotalBox';
+import {Flex, Loader, useMantineColorScheme} from '@mantine/core';
+import {SentimentContext} from './index';
+import {FiltersContext} from '../index';
 
 enum SentimentType {
     POSITIVE = 'positive',
@@ -60,9 +60,9 @@ const SentimentBarChart = () => {
             id: 'sentiment',
             label: 'Sentiment',
             data: [
-                {type: SentimentType.POSITIVE, value: sentimentData ? sentimentData.data.positive : 0, color: '#FFC234'},
-                {type: SentimentType.NEUTRAL,  value: sentimentData ? sentimentData.data.neutral  : 0, color: '#059BFF'},
-                {type: SentimentType.NEGATIVE, value: sentimentData ? sentimentData.data.negative : 0, color: '#FF4069'}
+                {type: SentimentType.POSITIVE, value: sentimentData ? sentimentData.sentimentData.positive : 0, color: '#FFC234'},
+                {type: SentimentType.NEUTRAL,  value: sentimentData ? sentimentData.sentimentData.neutral  : 0, color: '#059BFF'},
+                {type: SentimentType.NEGATIVE, value: sentimentData ? sentimentData.sentimentData.negative : 0, color: '#FF4069'}
             ],
         }
     ];
@@ -72,10 +72,10 @@ const SentimentBarChart = () => {
             id: 'emotion',
             label: 'Emotion',
             data: [
-                {type: EmotionType.JOY,     value: sentimentData ? sentimentData.emotion.joy     : 0, color: 'rgba(255,165,0,0.51)'},
-                {type: EmotionType.SADNESS, value: sentimentData ? sentimentData.emotion.sadness : 0, color: 'rgba(0,0,255,0.49)'},
-                {type: EmotionType.ANGER,   value: sentimentData ? sentimentData.emotion.anger   : 0, color: 'rgba(255,0,0,0.55)'},
-                {type: EmotionType.FEAR,    value: sentimentData ? sentimentData.emotion.fear    : 0, color: 'rgba(128,0,128,0.56)'}
+                {type: EmotionType.JOY,     value: sentimentData ? sentimentData.emotionData.joy     : 0, color: 'rgba(255,165,0,0.51)'},
+                {type: EmotionType.SADNESS, value: sentimentData ? sentimentData.emotionData.sadness : 0, color: 'rgba(0,0,255,0.49)'},
+                {type: EmotionType.ANGER,   value: sentimentData ? sentimentData.emotionData.anger   : 0, color: 'rgba(255,0,0,0.55)'},
+                {type: EmotionType.FEAR,    value: sentimentData ? sentimentData.emotionData.fear    : 0, color: 'rgba(128,0,128,0.56)'}
             ],
         }
     ];
@@ -117,10 +117,10 @@ const SentimentBarChart = () => {
 
     return <>
         <div style={{
-            display: "inline-block",
-            width: "auto",
-            borderRadius: "0.5rem",
-            boxShadow: "1px 1px rgba(0,0,0,.1)",
+            display: 'inline-block',
+            width: 'auto',
+            borderRadius: '0.5rem',
+            boxShadow: '1px 1px rgba(0,0,0,.1)',
         }}>
             <div
                 style={{
@@ -143,13 +143,13 @@ const SentimentBarChart = () => {
                             getDatumStyle: datumStyle
                         }}/>
                     : <Flex
-                        bg="rgba(0, 0, 0, .3)"
-                        gap="md"
-                        justify="center"
-                        align="center"
-                        direction="row"
-                        wrap="wrap">
-                        <Loader variant="bars" style={{height: `${height}px`}}/>
+                        bg='rgba(0, 0, 0, .3)'
+                        gap='md'
+                        justify='center'
+                        align='center'
+                        direction='row'
+                        wrap='wrap'>
+                        <Loader variant='bars' style={{height: `${height}px`}}/>
                     </Flex>}
             </div>
             <div
@@ -175,13 +175,13 @@ const SentimentBarChart = () => {
                                 getDatumStyle: datumStyle
                             }}/>
                         : <Flex
-                            bg="rgba(0, 0, 0, .3)"
-                            gap="md"
-                            justify="center"
-                            align="center"
-                            direction="row"
-                            wrap="wrap">
-                            <Loader variant="bars" style={{height: `${height}px`}}/>
+                            bg='rgba(0, 0, 0, .3)'
+                            gap='md'
+                            justify='center'
+                            align='center'
+                            direction='row'
+                            wrap='wrap'>
+                            <Loader variant='bars' style={{height: `${height}px`}}/>
                         </Flex>
                     : <></>}
             </div>

@@ -26,6 +26,10 @@ function getWidthFromMediaQuery(mediaQueryLg:    boolean,
 
 }
 
+const getCurrentLocalDate = () => {
+    return new Date().toISOString().slice(0, 10);
+}
+
 const SentimentLineChart = () => {
 
     const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -82,15 +86,15 @@ const SentimentLineChart = () => {
 
             const positiveData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
                 ? sentimentTimelineData.map(current => {return {time: current.date, value: current.positiveCount}})
-                : [{time: new Date().toLocaleDateString(), value: 0}];
+                : [{time: getCurrentLocalDate(), value: 0}];
 
             const neutralData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
                 ? sentimentTimelineData.map(current => {return {time: current.date, value: current.neutralCount}})
-                : [{time: new Date().toLocaleDateString(), value: 0}];
+                : [{time: getCurrentLocalDate(), value: 0}];
 
             const negativeData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
                 ? sentimentTimelineData.map(current => {return {time: current.date, value: current.negativeCount}})
-                : [{time: new Date().toLocaleDateString(), value: 0}];
+                : [{time: getCurrentLocalDate(), value: 0}];
 
             const positiveSeries = chartRef.current.addLineSeries();
             positiveSeries.setData(positiveData);
