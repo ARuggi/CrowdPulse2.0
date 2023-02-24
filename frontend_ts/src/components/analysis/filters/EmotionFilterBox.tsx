@@ -3,11 +3,11 @@ import {Box, Flex, SegmentedControl, Text} from '@mantine/core';
 import {FiltersContext} from "../index";
 import isEqual from "lodash.isequal";
 
-const TypeFilterBox = () => {
+const EmotionFilterBox = () => {
     const {filters, setFilters} = useContext(FiltersContext);
 
     const onChange = (value: string) => {
-        const newFilters = {...filters, type: value};
+        const newFilters = {...filters, emotion: value};
         setFilters(isEqual(filters, newFilters) ? filters : newFilters);
     }
 
@@ -25,18 +25,21 @@ const TypeFilterBox = () => {
             align='center'
             direction='row'
             wrap='wrap'>
-            <Text><b>Type</b></Text>
+            <Text><b>Emotion</b></Text>
             <SegmentedControl
+                disabled={filters.algorithm !== 'feel-it'}
                 style={{flex: 'fit-content'}}
                 onChange={onChange}
                 data={[
-                    {label: 'text',     value: 'text'},
-                    {label: 'tags',     value: 'tags'},
-                    {label: 'hashtags', value: 'hashtags'}
+                    {label: 'all',     value: 'all'},
+                    {label: 'joy',     value: 'joy'},
+                    {label: 'sadness', value: 'sadness'},
+                    {label: 'anger',   value: 'anger'},
+                    {label: 'fear',    value: 'fear'}
                 ]}
-                defaultValue={filters ? filters.type : undefined}/>
+                defaultValue={filters ? filters.emotion : undefined}/>
         </Flex>
     </Box>
 }
 
-export default TypeFilterBox;
+export default EmotionFilterBox;

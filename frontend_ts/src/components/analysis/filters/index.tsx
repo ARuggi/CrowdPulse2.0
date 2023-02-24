@@ -5,6 +5,7 @@ import {TbFilter, TbFilterOff} from 'react-icons/tb';
 
 import AlgorithmFilterBox from './AlgorithmFilterBox';
 import SentimentFilterBox from './SentimentFilterBox';
+import EmotionFilterBox from './EmotionFilterBox';
 import TypeFilterBox from './TypeFilterBox';
 import DateFilterBox from './DateFilterBox';
 import MultiSelectionFilterBox from './MultiSelectionFilterBox';
@@ -24,6 +25,7 @@ interface IProps {
             disableAllLabel?: boolean
         }
         showSentiment?: boolean,
+        showEmotion?: boolean,
         showType?: boolean,
         showDataRangePicker?: boolean,
         showTags?: boolean,
@@ -37,6 +39,7 @@ const defaultFilters = {
     showAlgorithm: true,
     algorithm: {disableAllLabel: false},
     showSentiment: true,
+    showEmotion: false,
     showType: true,
     showDataRangePicker: true,
     showTags: true,
@@ -86,7 +89,7 @@ const Filters:React.FC<IProps> = ({lock, divider = true, style, filters = defaul
                     })}
                     children={<TbFilterOff color={'#1971c2'}/>}/>}>
             <LoadingOverlay
-                loader={<Flex gap="md" justify="center" align="center" direction="row" wrap="wrap">
+                loader={<Flex gap='md' justify='center' align='center' direction='row' wrap='wrap'>
                     <BsLock size={50}/>
                     <Text>Awaiting completion...</Text>
                 </Flex>}
@@ -111,6 +114,11 @@ const Filters:React.FC<IProps> = ({lock, divider = true, style, filters = defaul
                     {filters?.showSentiment &&
                         <Grid.Col span={mediaQueryMd ? 4 : 8}>
                             <SentimentFilterBox/>
+                        </Grid.Col>}
+
+                    {filters?.showEmotion &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <EmotionFilterBox/>
                         </Grid.Col>}
 
                     {filters?.showType &&
