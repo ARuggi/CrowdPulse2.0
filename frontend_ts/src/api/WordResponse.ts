@@ -1,4 +1,4 @@
 export type WordResponse = [
-    word: string,  // The word.
-    count: number, // Count of words.
+    text:  string,  // The word.
+    value: number, // Count of words.
 ]

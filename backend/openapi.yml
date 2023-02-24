@@ -350,7 +350,7 @@ components:
       type: array
       example: [
         {
-          "word": string,
-          "count": number
+          "text": string,
+          "value": number
         }
       ]

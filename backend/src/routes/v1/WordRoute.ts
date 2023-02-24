@@ -1,8 +1,11 @@
 import {AbstractRoute} from './AbstractRoute';
-import {Request, Response} from 'express';
+import {createMissingQueryParamResponse} from '../IRoute';
 import {getMongoConnection, AnalyzedTweetSchema} from '../../database/database';
 import {readArrayFromQuery} from '../../util/RequestUtil';
-import {createMissingQueryParamResponse} from '../IRoute';
+
+import {Request, Response} from 'express';
+import emojiRegex from 'emoji-regex';
+import {removeStopwords, ita} from 'stopword';
 
 interface Filters {
     algorithm: string,
@@ -16,6 +19,9 @@ interface Filters {
     hashtags: string[],
     usernames: string[]
 }
+
+// The word must contain at least one letter and only alphanumeric characters.
+const PATTERN = /^(?=.*[a-zA-Z])[a-zA-Z0-9]+$/;
 
 // noinspection DuplicatedCode
 export class WordRoute extends AbstractRoute {
@@ -42,6 +48,7 @@ export class WordRoute extends AbstractRoute {
             usernames:     readArrayFromQuery(req.query?.usernames)
         };
 
+        const emojiRegexPattern = emojiRegex();
         let filters = this.createFiltersPipeline(queryFilters);
         let data = [];
 
@@ -95,7 +102,16 @@ export class WordRoute extends AbstractRoute {
 
                 if (result && result.length > 0) {
                     result.forEach(current => {
-                        data.push(current);
+                        const obj = current as { word: string, count: number };
+                        const {word} = obj;
+
+                        if (word.length > 1 && PATTERN.test(word) && !emojiRegexPattern.test(obj.word)) {
+                            const result = removeStopwords([word], ita);
+
+                            if (result && result.length > 0) {
+                                data.push({text: obj.word, value: obj.count});
+                            }
+                        }
                     });
                 }
             }

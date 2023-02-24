@@ -1,32 +1,22 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {WordContext} from './index';
 import ReactWordcloud, {Word} from 'react-wordcloud';
 import {WordResponse} from '../../../api/WordResponse';
-import {Box} from '@mantine/core';
+import {Box, Center, Loader} from '@mantine/core';
 
 const WORDCLOUD_MAX_ELEMENTS = 50;
 
 const WordcloudBox = () => {
 
     const wordData = useContext<WordResponse | null>(WordContext);
-    const words: Word[] = [];
+    const [words, setWords] = useState<Word[] | undefined>(undefined);
 
     useEffect(() => {
-
-        words.splice(0); // remove all elements from the array.
-        let count = 0;
-
-        for (const current of wordData || []) {
-
-            if (count >= WORDCLOUD_MAX_ELEMENTS) {
-                break;
-            }
-
-            const obj = current as unknown as { word: string, count: number };
-            words.push({ text: obj.word, value: obj.count });
-            count++;
+        if (wordData) {
+            setWords((wordData as unknown as Word[]).slice(0, WORDCLOUD_MAX_ELEMENTS));
+        } else if (words) {
+            setWords(undefined);
         }
-
     }, [wordData]);
 
     return <Box style={{width: '80%'}}
@@ -37,14 +27,16 @@ const WordcloudBox = () => {
                     borderRadius: theme.radius.md,
                     height: '100%'
                 })}>
-        <ReactWordcloud
-            words={words}
-            options={{
-                fontFamily: 'monospace',
-                rotations: 1,
-                rotationAngles: [0, 0],
-                fontSizes: [20, 60]
-            }}/>
+        {words
+            ? <ReactWordcloud
+                words={words.length > 0 ? words : [{text: 'no results :(', value: 1}]}
+                options={{
+                    fontFamily: 'monospace',
+                    rotations: 1,
+                    rotationAngles: [0, 0],
+                    fontSizes: [20, 60]
+                }}/>
+            : <Center><Loader size="xl" variant="bars" /></Center>}
     </Box>
 }
 
