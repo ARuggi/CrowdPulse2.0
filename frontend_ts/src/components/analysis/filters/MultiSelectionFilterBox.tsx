@@ -17,6 +17,14 @@ const MultiSelectionFilterBox:React.FC<IProps> = ({propertyName, label, placehol
     const {filters, setFilters} = useContext(FiltersContext);
 
     useEffect(() => {
+        const propertyValue = filters[propertyName];
+
+        if (propertyValue) {
+            setValues(propertyValue);
+        }
+    }, []);
+
+    useEffect(() => {
         if (filters) {
             const newValues = values.length > 0 ? values : undefined;
             const newFilters = {...filters, [propertyName]: enabled ? newValues : undefined};
@@ -66,6 +74,8 @@ const MultiSelectionFilterBox:React.FC<IProps> = ({propertyName, label, placehol
                 clearable
                 disabled={!enabled}
                 onChange={onChangeValues}
+                defaultValue={values}
+                value={values}
                 data={values}
                 getCreateLabel={(query) => `+ Add ${query}`}
                 onCreate={(query) => {

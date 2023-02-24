@@ -64,6 +64,7 @@ const api = {
     /**
      * Gets information about sentiments.
      * Endpoint: GET - /v1/sentiment
+     *
      * @param dbs Specify an array of database names.
      * @param algorithm sent-it (default value) or feel-it.
      * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
@@ -122,8 +123,9 @@ const api = {
     },
 
     /**
-     * Gets information about sentiments.
-     * Endpoint: GET - /v1/sentiment
+     * Gets information about sentiment timeline.
+     * Endpoint: GET - /v1/sentiment/timeline
+     *
      * @param dbs Specify an array of database names.
      * @param algorithm sent-it (default value) or feel-it.
      * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
@@ -182,8 +184,9 @@ const api = {
     },
 
     /**
-     * Gets information about sentiments.
-     * Endpoint: GET - /v1/sentiment
+     * Gets a list of words and their number.
+     * Endpoint: GET - /v1/word
+     *
      * @param dbs Specify an array of database names.
      * @param algorithm all (default value), sent-it or feel-it.
      * @param sentiment The sentiment: 'all', 'positive', 'neutral' or 'negative'.
@@ -198,9 +201,9 @@ const api = {
      */
     GetWord(dbs: string[],
             algorithm: string = 'all',
-            sentiment: string = 'all',
-            emotion: string = 'all',
-            type: string = 'text',
+            sentiment: string | undefined = undefined,
+            emotion:   string | undefined = undefined,
+            type:      string = 'text',
             dateFrom:  Date | undefined = undefined,
             dateTo:    Date | undefined = undefined,
             tags:          string[] | undefined = undefined,
@@ -214,9 +217,10 @@ const api = {
         });
 
         body.push({key: 'algorithm', value: algorithm});
-        body.push({key: 'sentiment', value: sentiment});
         body.push({key: 'type',      value: type});
-        body.push({key: 'emotion',   value: emotion})
+
+        if (sentiment) body.push({key: 'sentiment', value: sentiment});
+        if (emotion)   body.push({key: 'emotion',   value: emotion})
 
         if (dateFrom && dateTo) {
             body.push({key: 'dateFrom', value: dateFrom.toISOString()});

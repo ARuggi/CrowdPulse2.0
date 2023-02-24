@@ -19,6 +19,7 @@ import SettingsTab from './settings';
 import {useMediaQuery} from '@mantine/hooks';
 
 export type FiltersContextType = {
+    [key: string]: any,
     algorithm: string,
     sentiment: string | undefined,
     emotion:   string | undefined,
@@ -61,8 +62,8 @@ const Analysis = () => {
     const [query] = useSearchParams();
     const [reload, setReload] = useState(false);
 
-    const [sentimentFilters, setSentimentFilters] = useState<FiltersContextType>(defaultFilters);
-    const [wordFilters, setWordFilters] = useState<FiltersContextType>(defaultFilters);
+    const [sentimentFilters, setSentimentFilters] = useState<FiltersContextType>({...defaultFilters});
+    const [wordFilters, setWordFilters] = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
 
     useEffect(() => {
         if (!reload) setReload(true);
