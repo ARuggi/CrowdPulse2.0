@@ -19,6 +19,7 @@ import {TweetGetAnalyzedSentimentDatesRoute} from './routes/legacy/TweetGetAnaly
 import {DatabasesRoute} from './routes/v1/DatabasesRoute';
 import {SentimentRoute} from './routes/v1/SentimentRoute';
 import {SentimentTimelineRoute} from "./routes/v1/SentimentTimelineRoute";
+import {WordRoute} from "./routes/v1/WordRoute";
 
 class App {
 
@@ -41,6 +42,7 @@ class App {
         new DatabasesRoute(),         // GET - /v1/databases
         new SentimentRoute(),         // GET - /v1/sentiment
         new SentimentTimelineRoute(), // GET - /v1/sentiment/timeline
+        new WordRoute(),              // GET - /v1/word
     ];
 
     express: express.Application;
