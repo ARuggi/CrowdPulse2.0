@@ -1,8 +1,14 @@
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import {createChart, CrosshairMode, IChartApi, LineStyle} from 'lightweight-charts';
 
+import {
+    Box,
+    Flex,
+    Loader,
+    Switch,
+    useMantineColorScheme
+} from '@mantine/core';
 import {useMediaQuery} from '@mantine/hooks';
-import {Box, Flex, Loader, useMantineColorScheme} from '@mantine/core';
-import {createChart, CrosshairMode, IChartApi} from 'lightweight-charts';
 
 import {SentimentTimelineContext} from './index';
 import {SentimentTimelineResponse} from '../../../api/SentimentTimelineResponse';
@@ -30,6 +36,12 @@ const getCurrentLocalDate = () => {
     return new Date().toISOString().slice(0, 10);
 }
 
+interface Visibility {
+    showPositiveLine: boolean,
+    showNeutralLine: boolean,
+    showNegativeLine: boolean
+}
+
 const SentimentLineChart = () => {
 
     const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -37,6 +49,7 @@ const SentimentLineChart = () => {
 
     const { colorScheme } = useMantineColorScheme();
     const sentimentTimelineData = useContext<SentimentTimelineResponse | null>(SentimentTimelineContext);
+    const [visibility, setVisibility] = useState<Visibility>({showNeutralLine: true, showPositiveLine: true, showNegativeLine: true});
 
     const mediaQueryLg    = useMediaQuery('(min-width: 1200px)');
     const mediaQueryMdLg  = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
@@ -47,27 +60,25 @@ const SentimentLineChart = () => {
     let width = getWidthFromMediaQuery(mediaQueryLg, mediaQueryMdLg, mediaQuerySmMd, mediaQueryXsSm, mediaQuery2XsXs);
     let height = 300;
 
+    const onChangeSwitch = (event: React.ChangeEvent<HTMLInputElement>, propertyName: string) => {
+        setVisibility({...visibility, [propertyName]: event.currentTarget.checked});
+    }
+
     const layoutOptions = {
         layout: {
-            background: {color: colorScheme === 'dark' ? 'rgb(26, 27, 30)' : '#FFF'},
-            textColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.9)' : '#000',
+            background: {color: colorScheme === 'dark' ? '#25262b' : '#F8F9FA'},
+            textColor: colorScheme === 'dark' ? '#FFFFFFE5' : '#000',
         },
         grid: {
-            vertLines: {
-                color: '#334158',
-            },
-            horzLines: {
-                color: '#334158',
-            },
-        },
-        crosshair: {
-            mode: CrosshairMode.Normal,
+            vertLines: {visible: false},
+            horzLines: {visible: false}
         },
     }
 
     if (chartRef.current) {
         chartRef.current?.resize(width, height);
     }
+
 
     useEffect(() => {
 
@@ -80,9 +91,21 @@ const SentimentLineChart = () => {
             chartRef.current = createChart(chartContainerRef.current, {
                 width: width,
                 height: height,
+                crosshair: {
+                    mode: CrosshairMode.Magnet,
+                    vertLine: {
+                        width: 4,
+                        color: '#C3BCDB44',
+                        style: LineStyle.Solid,
+                        labelBackgroundColor: '#9B7DFF',
+                    },
+                    horzLine: {
+                        color: '#9B7DFF',
+                        labelBackgroundColor: '#9B7DFF',
+                    }
+                },
                 ...layoutOptions
             });
-            chartRef.current?.timeScale().fitContent();
 
             const positiveData = sentimentTimelineData && (sentimentTimelineData as Array<any>).length > 0
                 ? sentimentTimelineData.map(current => {return {time: current.date, value: current.positiveCount}})
@@ -96,21 +119,37 @@ const SentimentLineChart = () => {
                 ? sentimentTimelineData.map(current => {return {time: current.date, value: current.negativeCount}})
                 : [{time: getCurrentLocalDate(), value: 0}];
 
-            const positiveSeries = chartRef.current.addLineSeries();
-            positiveSeries.setData(positiveData);
-            positiveSeries.applyOptions({color: '#FFC234'});
+            if (visibility.showPositiveLine) {
+                chartRef.current?.addAreaSeries({
+                    topColor: '#FFF200FF',
+                    bottomColor: '#FFCD39A5',
+                    lineColor: '#FFC234',
+                    lineWidth: 2
+                }).setData(positiveData);
+            }
 
-            const neutralSeries = chartRef.current.addLineSeries();
-            neutralSeries.setData(neutralData);
-            neutralSeries.applyOptions({color: '#059BFF'});
+            if (visibility.showNeutralLine) {
+                chartRef.current.addAreaSeries({
+                    topColor: '#0077FF',
+                    bottomColor: '#399CFF99',
+                    lineColor: '#059BFF',
+                    lineWidth: 2
+                }).setData(neutralData);
+            }
 
-            const negativeSeries = chartRef.current.addLineSeries();
-            negativeSeries.setData(negativeData);
-            negativeSeries.applyOptions({color: '#FF4069'});
+            if (visibility.showNegativeLine) {
+                chartRef.current.addAreaSeries({
+                    topColor: '#ff0000',
+                    bottomColor: '#FF39390A',
+                    lineColor: '#FF4069',
+                    lineWidth: 2
+                }).setData(negativeData);
+            }
 
+            chartRef.current?.timeScale().fitContent();
         }
 
-    }, [sentimentTimelineData]);
+    }, [sentimentTimelineData, visibility]);
 
     useEffect(() => {
         if (chartRef.current) {
@@ -124,23 +163,39 @@ const SentimentLineChart = () => {
             textAlign: 'center',
             padding: theme.spacing.xs,
             borderRadius: theme.radius.md,
-            cursor: 'pointer',
-
-            '&:hover': {
-                backgroundColor:
-                    theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
-            },
+            cursor: 'pointer'
         })}>
         <Flex
             style={{width: `${width}px`, height: `${height}px`}}
-            bg='rgba(0, 0, 0, .3)'
             gap='md'
             justify='center'
             align='center'
             direction='row'
             wrap='wrap'>
             {sentimentTimelineData
-                ? <div ref={chartContainerRef}/>
+                ? <>
+                    <Switch label='positive'
+                            disabled={!visibility.showNeutralLine && !visibility.showNegativeLine}
+                            defaultChecked={true}
+                            size='xs'
+                            color='yellow'
+                            onChange={(event) => onChangeSwitch(event, 'showPositiveLine')}
+                            style={{zIndex: 10}}/>
+                    <Switch label='neutral'
+                            disabled={!visibility.showPositiveLine && !visibility.showNegativeLine}
+                            defaultChecked={true}
+                            size='xs'
+                            color='blue'
+                            style={{zIndex: 10}}
+                            onChange={(event) => onChangeSwitch(event, 'showNeutralLine')}/>
+                    <Switch label='negative'
+                            disabled={!visibility.showPositiveLine && !visibility.showNeutralLine}
+                            defaultChecked={true}
+                            size='xs' color='red'
+                            style={{zIndex: 10}}
+                            onChange={(event) => onChangeSwitch(event, 'showNegativeLine')}/>
+                    <div ref={chartContainerRef} style={{marginTop: '-30px', paddingBottom: '100px'}}/>
+                </>
                 : <Loader variant='bars' style={{}}/>}
         </Flex>
     </Box>
