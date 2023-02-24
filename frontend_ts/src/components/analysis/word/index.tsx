@@ -1,10 +1,14 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import Filters from '../filters';
 import {DatabasesContext, FiltersContext} from '../index';
 import {WordResponse} from '../../../api/WordResponse';
 import api from '../../../api';
 import isEqual from 'lodash.isequal';
 import {useTranslation} from 'react-i18next';
+import {Flex} from '@mantine/core';
+import WordcloudBox from './WordcloudBox';
+
+export const WordContext = createContext<WordResponse | null>(null);
 
 const WordTab = () => {
 
@@ -47,8 +51,6 @@ const WordTab = () => {
         return <p>{t('serverNotRespondingError')}</p>
     }
 
-    console.log(wordData)
-
     return <>
         <Filters
             lock={!wordData}
@@ -63,6 +65,17 @@ const WordTab = () => {
                 showHashTags: true,
                 showUsernames: true
             }}/>
+        <Flex
+            style={{marginTop: '50px'}}
+            gap='md'
+            justify='center'
+            align='center'
+            direction='row'
+            wrap='wrap'>
+            <WordContext.Provider value={wordData}>
+                <WordcloudBox/>
+            </WordContext.Provider>
+        </Flex>
     </>
 }
 
