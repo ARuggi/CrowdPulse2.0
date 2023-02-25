@@ -64,6 +64,7 @@ const Analysis = () => {
 
     const [sentimentFilters, setSentimentFilters] = useState<FiltersContextType>({...defaultFilters});
     const [wordFilters, setWordFilters] = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
+    const [timelineFilters, setTimelineFilters] = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
 
     useEffect(() => {
         if (!reload) setReload(true);
@@ -94,7 +95,10 @@ const Analysis = () => {
                 <Tabs.Panel value='word' pt='xs'><WordTab/></Tabs.Panel>
             </FiltersContext.Provider>
 
-            <Tabs.Panel value='timeline' pt='xs'><TimelineTab/></Tabs.Panel>
+            <FiltersContext.Provider value={{filters: timelineFilters, setFilters: setTimelineFilters}}>
+                <Tabs.Panel value='timeline' pt='xs'><TimelineTab/></Tabs.Panel>
+            </FiltersContext.Provider>
+
             <Tabs.Panel value='tweet_list' pt='xs'><TweetListTab/></Tabs.Panel>
             <Tabs.Panel value='map' pt='xs'><MapTab/></Tabs.Panel>
             <Tabs.Panel value='settings' pt='xs'><SettingsTab/></Tabs.Panel>

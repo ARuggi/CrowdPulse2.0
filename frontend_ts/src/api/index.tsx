@@ -2,6 +2,7 @@ import {DatabasesResponse} from './DatabasesResponse';
 import {SentimentResponse} from './SentimentResponse';
 import {SentimentTimelineResponse} from './SentimentTimelineResponse';
 import {WordResponse} from './WordResponse';
+import {TweetsTimelineResponse} from './TweetsTimelineResponse'
 
 type BodyGet = {
     key: string,
@@ -252,7 +253,78 @@ const api = {
         }
 
         return apiCall<WordResponse>('GET', '/v1/word', body);
-    }
+    },
+
+    /**
+     * Get the number of tweets per date.
+     * Endpoint: GET - /v1/tweets/timeline
+     *
+     * @param dbs Specify an array of database names.
+     * @param algorithm all (default value), sent-it or feel-it.
+     * @param sentiment The sentiment: 'all', 'positive', 'neutral' or 'negative'.
+     * @param emotion (Only if algorithm = 'feel-it'): 'all', 'joy', 'sadness', 'anger', 'fear'.
+     * @param type 'text', 'tags' or 'hashtags'.
+     * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
+     * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
+     * @param tags An array of tags
+     * @param processedText An array processed words
+     * @param hashtags An array of hashtags (without #)
+     * @param usernames An array of usernames.
+     */
+    GetTweetsTimeline(dbs: string[],
+            algorithm: string = 'all',
+            sentiment: string | undefined = undefined,
+            emotion:   string | undefined = undefined,
+            type:      string = 'text',
+            dateFrom:  Date | undefined = undefined,
+            dateTo:    Date | undefined = undefined,
+            tags:          string[] | undefined = undefined,
+            processedText: string[] | undefined = undefined,
+            hashtags:      string[] | undefined = undefined,
+            usernames:     string[] | undefined = undefined): Promise<TweetsTimelineResponse | null> {
+        let body: Array<BodyGet> = [];
+
+        dbs.forEach((database) => {
+            body.push({key: 'dbs', value: database});
+        });
+
+        body.push({key: 'algorithm', value: algorithm});
+        body.push({key: 'type',      value: type});
+
+        if (sentiment) body.push({key: 'sentiment', value: sentiment});
+        if (emotion)   body.push({key: 'emotion',   value: emotion})
+
+        if (dateFrom && dateTo) {
+            body.push({key: 'dateFrom', value: dateFrom.toISOString()});
+            body.push({key: 'dateTo', value: dateTo.toISOString()});
+        }
+
+        if (tags && tags.length > 0) {
+            tags.forEach((tag) => {
+                body.push({key: 'tags', value: tag});
+            });
+        }
+
+        if (processedText && processedText.length > 0) {
+            processedText.forEach((text) => {
+                body.push({key: 'processedText', value: text});
+            });
+        }
+
+        if (hashtags && hashtags.length > 0) {
+            hashtags.forEach((hashtag) => {
+                body.push({key: 'hashtags', value: hashtag});
+            });
+        }
+
+        if (usernames && usernames.length > 0) {
+            usernames.forEach((username) => {
+                body.push({key: 'usernames', value: username});
+            });
+        }
+
+        return apiCall<TweetsTimelineResponse>('GET', '/v1/tweets/timeline', body);
+    },
 }
 
 export default api;

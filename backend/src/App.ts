@@ -18,8 +18,9 @@ import {TweetGetAnalyzedSentimentRoute} from './routes/legacy/TweetGetAnalyzedSe
 import {TweetGetAnalyzedSentimentDatesRoute} from './routes/legacy/TweetGetAnalyzedSentimentDatesRoute';
 import {DatabasesRoute} from './routes/v1/DatabasesRoute';
 import {SentimentRoute} from './routes/v1/SentimentRoute';
-import {SentimentTimelineRoute} from "./routes/v1/SentimentTimelineRoute";
-import {WordRoute} from "./routes/v1/WordRoute";
+import {SentimentTimelineRoute} from './routes/v1/SentimentTimelineRoute';
+import {WordRoute} from './routes/v1/WordRoute';
+import {TweetsTimelineRoute} from './routes/v1/TweetsTimelineRoute';
 
 class App {
 
@@ -43,6 +44,7 @@ class App {
         new SentimentRoute(),         // GET - /v1/sentiment
         new SentimentTimelineRoute(), // GET - /v1/sentiment/timeline
         new WordRoute(),              // GET - /v1/word
+        new TweetsTimelineRoute(),    // GET - /v1/tweets/timeline
     ];
 
     express: express.Application;
@@ -89,7 +91,7 @@ class App {
         App.ROUTES.forEach(route => {
             const method = Reflect.get(this.express, route.getMethod()) as (path: string, perform: void) => {};
             Reflect.apply(method, this.express, [route.getPath(), async (req, res) => route.handleRequest(req, res)]);
-            console.log("Registered endpoint: [" + route.getMethod().toUpperCase() + "] " + route.getPath());
+            console.log('Registered endpoint: [' + route.getMethod().toUpperCase() + '] ' + route.getPath());
         })
 
         // handle 404 for unknown URLs.
