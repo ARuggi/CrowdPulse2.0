@@ -2,7 +2,6 @@ import React, {useContext, useState} from 'react';
 import {Flex, Table, Loader, Box, Input, Text} from '@mantine/core';
 import isEqual from 'lodash.isequal';
 
-import {TablePreferencesContext, TweetListContext} from './index';
 import {TweetsListResponse} from '../../../api/TweetsListResponse';
 
 import {TbBrandPagekit} from 'react-icons/tb';
@@ -11,6 +10,7 @@ import {BsArrowRight} from 'react-icons/bs';
 import TablePageButton from './TablePageButton';
 import {getHotkeyHandler} from '@mantine/hooks';
 import {IoNavigateSharp} from 'react-icons/io5';
+import {TablePreferencesContext, TweetListContext} from "./TweetListTab";
 
 const TweetListTable = () => {
     const tweetListData = useContext<TweetsListResponse | null>(TweetListContext);
