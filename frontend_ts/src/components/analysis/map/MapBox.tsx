@@ -1,5 +1,6 @@
-import React from "react";
-import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet'
+import React from 'react';
+import {MapContainer, TileLayer} from 'react-leaflet'
+import HeatMapOverlay from './HeatMapOverlay';
 
 const MapBox = () => {
     return <MapContainer
@@ -11,11 +12,9 @@ const MapBox = () => {
         scrollWheelZoom={true}>
         <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            url='https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png'
         />
-        <Marker position={[42.500, 12.900]}>
-            <Popup>Centre of Italy</Popup>
-        </Marker>
+        <HeatMapOverlay/>
     </MapContainer>
 }
 
