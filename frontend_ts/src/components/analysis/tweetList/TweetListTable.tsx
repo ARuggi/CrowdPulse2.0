@@ -129,9 +129,8 @@ const TweetListTable = () => {
                                     content={<i>{maxPages}</i>}
                                     onClick={() => triggerChangePage(maxPages)}/></>}
 
-                            <TablePageButton
-                                content={<MdOutlineKeyboardArrowRight/>}
-                                onClick={() => triggerChangePage(tablePreferences.page + 1)}/>
+                            {tablePreferences.page < maxPages && <TablePageButton content={<MdOutlineKeyboardArrowRight/>}
+                                                                                   onClick={() => triggerChangePage(tablePreferences.page + 1)}/>}
                             <Input
                                 style={{width: '80px'}}
                                 icon={<IoNavigateSharp/>}
