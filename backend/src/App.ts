@@ -21,6 +21,7 @@ import {SentimentRoute} from './routes/v1/SentimentRoute';
 import {SentimentTimelineRoute} from './routes/v1/SentimentTimelineRoute';
 import {WordRoute} from './routes/v1/WordRoute';
 import {TweetsTimelineRoute} from './routes/v1/TweetsTimelineRoute';
+import {TweetsListRoute} from './routes/v1/TweetsListRoute';
 
 class App {
 
@@ -45,6 +46,7 @@ class App {
         new SentimentTimelineRoute(), // GET - /v1/sentiment/timeline
         new WordRoute(),              // GET - /v1/word
         new TweetsTimelineRoute(),    // GET - /v1/tweets/timeline
+        new TweetsListRoute(),        // GET - /v1/tweets/list
     ];
 
     express: express.Application;
