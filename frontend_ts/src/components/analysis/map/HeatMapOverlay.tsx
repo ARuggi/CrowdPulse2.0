@@ -1,89 +1,102 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {useMap} from "react-leaflet";
-import * as PIXI from 'pixi.js';
+import React, {useEffect} from 'react';
+import {createRoot} from "react-dom/client";
 
-// Geographic coordinates of the center of Italy.
-const centerLat = 42.5;
-const centerLng = 12.5;
+import {useMap, GeoJSON} from 'react-leaflet';
+import {Tooltip as LeafletTooltip} from 'leaflet'
 
-const HeatMapOverlay = () => {
+import HeatMapTooltip from "./HeatMapTooltip";
 
-    const map = useMap();
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [overlayPane, setOverlayPane] = useState<HTMLElement | null>(null);
-    const [application, setApplication] = useState<PIXI.Application | null>(null);
-    const [container, setContainer] = useState<PIXI.Container | null>(null);
+const getRandomColor = () => {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
 
-    useEffect(() => {
-        if (canvasRef.current) return;
-
-        const canvas = document
-            .createElement('canvas');
-        // Set the canvas size to match the map size.
-
-        const mapSize = map.getSize();
-        canvas.width = mapSize.x;
-        canvas.height = mapSize.y;
-        canvasRef.current = canvas;
-
-        setApplication(
-            new PIXI.Application({
-                view: canvas,
-                resizeTo: window,
-                backgroundColor: 'red',
-                backgroundAlpha: 0.1
-            }));
-
-        const overlayPane = map.createPane('pixiOverlay');
-        overlayPane.appendChild(canvasRef.current);
-        setOverlayPane(overlayPane);
-
-        const pixiContainer = new PIXI.Container();
-        application?.stage.addChild(pixiContainer);
-        setContainer(pixiContainer);
-    }, [canvasRef]);
-
-    useEffect(() => {
-        if (map && application && container && overlayPane) {
-            // Set the initial position of the canvas.
-            const canvasElement = overlayPane.firstChild as HTMLCanvasElement;
-
-            const move = () => {
-                const topLeft = map.latLngToLayerPoint([centerLat, centerLng]);
-                const bottomRight = map.latLngToLayerPoint([centerLat - 2, centerLng + 2]);
-                canvasElement.style.left = `${topLeft.x}px`;
-                canvasElement.style.top = `${topLeft.y}px`;
-                canvasElement.width = bottomRight.x - topLeft.x;
-                canvasElement.height = bottomRight.y - topLeft.y;
-            }
-
-            const zoomStartHandler = () => {
-                application.stage.alpha = 0;
-                overlayPane.style.opacity = '0';
-            };
-
-            const zoomEndHandler = () => {
-                application.stage.alpha = 1;
-                overlayPane.style.opacity = '1';
-                move();
-            };
-
-            move();
-
-            // Update the position of the canvas every time the map is panned or resized.
-            map.on('move',      move);
-            map.on('zoomstart', zoomStartHandler);
-            map.on('zoomend',   zoomEndHandler);
-
-            return () => {
-                map.off('move',      move);
-                map.off('zoomstart', zoomStartHandler);
-                map.off('zoomend',   zoomEndHandler);
-            };
+type Region = {
+    feature: {
+        properties: {
+            reg_name: string
         }
-    }, [map, application, container, overlayPane]);
+    }
+    options: {
+        color: string
+    }
+}
 
-    return <></>;
+interface IProps {
+    mapData: any
+}
+
+/*
+ * I never found an official way to remove the browser's boring
+ * rectangle around each map layer (region).
+ *
+ * >> Very raw implementation.
+ */
+const hideBrowserOutlineFromLayers = (map: any) => {
+    // Get the SVG elements inside the map container
+    const svgElements = map.getContainer().getElementsByTagName('svg');
+    // Retrieve the first SVG element that contains all layers paths.
+    const svgLayersElement = svgElements.item(0);
+
+    if (svgLayersElement) {
+        const layers = svgLayersElement.getElementsByTagName('path') as HTMLCollection;
+
+        for (let i = 0 ; i < layers.length ; i++) {
+            const layer = layers.item(i)! as HTMLElement;
+            layer.style.outline = 'none'; // Remove the outline of the current layer
+        }
+    }
+}
+
+const HeatMapOverlay:React.FC<IProps> = ({mapData}) => {
+    const map = useMap();
+
+    useEffect(() => {
+        hideBrowserOutlineFromLayers(map);
+    }, [map]);
+
+    const onEachFeature = (feature: any, layer: LeafletTooltip) => {
+        const region = layer as unknown as Region;
+        region.options.color = `${getRandomColor()}`;
+
+        const reg_name = feature.properties.reg_name;
+
+        const contentLayer = (): HTMLElement => {
+            const tooltipContent = document.createElement('div');
+            const root = createRoot(tooltipContent);
+            root.render(<HeatMapTooltip regionName={reg_name}/>);
+            return tooltipContent;
+        }
+
+        layer.bindTooltip(contentLayer, {
+            permanent: false,
+            direction: 'top',
+            opacity: 0.9,
+            offset: [0, 0],
+            className: ''
+        });
+
+        layer.on({
+            mousemove: (event: any) => {
+                layer.getTooltip()?.setLatLng(event.latlng);
+            }
+        });
+    }
+
+    return <>
+        <GeoJSON
+            data={mapData}
+            onEachFeature={onEachFeature}
+            style={{
+                lineJoin: 'miter',
+                lineCap: 'round',
+                weight: 1,
+            }}/>
+    </>;
 }
 
 export default HeatMapOverlay;
