@@ -1,16 +1,32 @@
 import React, {useEffect, useState} from 'react';
 import {MapContainer, TileLayer} from 'react-leaflet'
+import {ColorScheme, Loader, useMantineColorScheme} from '@mantine/core';
+import {GeoJsonObject} from 'geojson';
+
 import HeatMapOverlay from './HeatMapOverlay';
-import {GeoJsonObject} from "geojson";
-import {Loader, useMantineColorScheme} from "@mantine/core";
 
 const DARK_MAP_URL  = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 const LIGHT_MAP_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 
-const MapBox = () => {
+/*
+ * Force the AnalysisMap component to change the background color
+ * when the theme is changed.
+ */
+const changeMapBackgroundColor = (colorScheme: ColorScheme) => {
+    const mapElement = document.getElementById('AnalysisMap');
 
+    if (mapElement) {
+        mapElement.style.backgroundColor = colorScheme === 'dark' ? '#222327' : '#d0cfd3';
+    }
+}
+
+const MapBox = () => {
     const { colorScheme } = useMantineColorScheme();
     const [mapData, setMapData] = useState<GeoJsonObject | null>(null);
+
+    useEffect(() => {
+        changeMapBackgroundColor(colorScheme);
+    }, [colorScheme]);
 
     useEffect(() => {
         (async () => {
@@ -22,7 +38,11 @@ const MapBox = () => {
     return mapData
         ? <MapContainer
             id='AnalysisMap'
-            style={{height: '800px', width: '100%'}}
+            style={{
+                backgroundColor: colorScheme === 'dark' ? '#222327' : '#d0cfd3',
+                height: `${window.innerHeight / 1.75}px`,
+                width: '90%',
+                marginBottom: '200px'}}
             center={[42.500, 12.900]}
             zoom={6}
             maxZoom={7}

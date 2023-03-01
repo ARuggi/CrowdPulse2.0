@@ -63,9 +63,10 @@ const Analysis = () => {
     const [reload, setReload] = useState(false);
 
     const [sentimentFilters, setSentimentFilters] = useState<FiltersContextType>({...defaultFilters});
-    const [wordFilters, setWordFilters] = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
-    const [timelineFilters, setTimelineFilters] = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
+    const [wordFilters, setWordFilters]           = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
+    const [timelineFilters, setTimelineFilters]   = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
     const [tweetListFilters, setTweetListFilters] = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
+    const [mapFilters, setMapFilters]             = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
 
     useEffect(() => {
         if (!reload) setReload(true);
@@ -104,10 +105,12 @@ const Analysis = () => {
                 <Tabs.Panel value='tweet_list' pt='xs'><TweetListTab/></Tabs.Panel>
             </FiltersContext.Provider>
 
-            <Tabs.Panel value='map' pt='xs'><MapTab/></Tabs.Panel>
+            <FiltersContext.Provider value={{filters: mapFilters, setFilters: setMapFilters}}>
+                <Tabs.Panel value='map' pt='xs'><MapTab/></Tabs.Panel>
+            </FiltersContext.Provider>
+
             <Tabs.Panel value='settings' pt='xs'><SettingsTab/></Tabs.Panel>
         </Tabs>
-
     </DatabasesContext.Provider>
 }
 

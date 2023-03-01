@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {CSSProperties} from 'react';
 import {UnstyledButton} from '@mantine/core';
 
 interface IProps {
-    selected: boolean;
-    onClick: any;
-    content: any;
+    selected: boolean,
+    onClick: any,
+    content: any,
+    style?: CSSProperties
 }
 
 const buttonTheme = (theme: any) => ({
@@ -20,8 +21,9 @@ const buttonTheme = (theme: any) => ({
     },
 });
 
-const FrameItem:React.FC<IProps> = ({selected, onClick, content}) => {
+const FrameItem:React.FC<IProps> = ({selected, onClick, content, style}) => {
     return <UnstyledButton
+        style={style}
         sx={buttonTheme}
         onClick={onClick}
         fw={selected ? 700 : 300}>

@@ -62,12 +62,13 @@ const AppFrame:React.FC<IProps> = ({children}) => {
                     hidden={!menuOpen}
                     width={{ sm: 250, lg: 250 }}
                     p='lg'
-                    style={{ cursor: 'pointer', zIndex: '10000' }}>
+                    style={{ zIndex: '10000' }}>
                 <Navbar.Section>
                     <FrameItem
                         selected={isSelectedItem('/')}
                         onClick={() => triggerNavigation('/')}
                         content={<Text inline>{t('home')}</Text>}
+                        style={{cursor: 'pointer'}}
                     />
                 </Navbar.Section>
                 <Divider my='sm' />
@@ -76,6 +77,7 @@ const AppFrame:React.FC<IProps> = ({children}) => {
                         selected={isSelectedItem('/databases')}
                         onClick={() => triggerNavigation('/databases')}
                         content={<Text inline>{t('databases')}</Text>}
+                        style={{cursor: 'pointer'}}
                     />
                 </Navbar.Section>
                 <Navbar.Section
@@ -98,6 +100,7 @@ const AppFrame:React.FC<IProps> = ({children}) => {
                                         key={analyse.name}
                                         selected={isSelectedItem(analysisUrl)}
                                         onClick={() => triggerNavigation(analysisUrl)}
+                                        style={{cursor: 'pointer'}}
                                         content={
                                             <Box style={{
                                                 borderRadius: '5px',
@@ -120,7 +123,7 @@ const AppFrame:React.FC<IProps> = ({children}) => {
                 </Navbar.Section>
             </Navbar>}
         header={
-            <Header height={{ base: 50, md: 70}} p='md'>
+            <Header height={{ base: 50, md: 70}} p='md' style={{zIndex: 10000}}>
                 <Flex align='center' h='100%'>
                     <MediaQuery largerThan='sm' styles={{ display: 'none' }}>
                         <Burger

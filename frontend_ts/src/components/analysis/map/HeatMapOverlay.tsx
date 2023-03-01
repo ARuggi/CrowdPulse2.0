@@ -1,14 +1,14 @@
 import React, {useEffect} from 'react';
-import {createRoot} from "react-dom/client";
+import {createRoot} from 'react-dom/client';
 
 import {useMap, GeoJSON} from 'react-leaflet';
 import {Tooltip as LeafletTooltip} from 'leaflet'
 
-import HeatMapTooltip from "./HeatMapTooltip";
+import HeatMapTooltip from './HeatMapTooltip';
 
 const getRandomColor = () => {
-    const letters = "0123456789ABCDEF";
-    let color = "#";
+    const letters = '0123456789ABCDEF';
+    let color = '#';
     for (let i = 0; i < 6; i++) {
         color += letters[Math.floor(Math.random() * 16)];
     }
