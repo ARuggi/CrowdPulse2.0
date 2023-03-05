@@ -1,4 +1,4 @@
-import mongoose, {Connection, Schema} from "mongoose";
+import mongoose, {Connection, Schema} from 'mongoose';
 
 // disable auto-pluralize Mongoose.
 mongoose.pluralize(null);
@@ -17,18 +17,18 @@ export const loadDatabase = () => {
 
         mongoConnection.asPromise()
             .then(() => {
-                console.log("Connected to the database!");
+                console.log('Connected to the database!');
                 console.log(`Connecting to: ${process.env.DATABASE_ACCESS}admin ...`);
 
                 adminConnection = mongoose
-                    .createConnection(process.env.DATABASE_ACCESS + "admin", {readPreference: 'secondaryPreferred'})
+                    .createConnection(process.env.DATABASE_ACCESS + 'admin', {readPreference: 'secondaryPreferred'})
                     .on('error', (error) => {
                         reject(error);
                     });
 
                 adminConnection.asPromise()
                     .then(() => {
-                        console.log("Connected to the admin database!")
+                        console.log('Connected to the admin database!')
                         resolve(true);
                     })
             });
@@ -56,6 +56,13 @@ export const AnalyzedTweetSchema = new Schema({
     twitter_entities: {
         hashtags: [],
         mentions: []
+    },
+    geo: {
+        user_location: String,
+        coordinates: {
+            latitude: Number,
+            longitude: Number,
+        }
     },
     metrics: {
         retweet_count: Number,

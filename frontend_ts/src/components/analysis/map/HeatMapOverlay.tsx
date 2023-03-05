@@ -1,19 +1,12 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {createRoot} from 'react-dom/client';
 
+import {FiltersContext} from '../index';
 import {useMap, GeoJSON} from 'react-leaflet';
 import {Tooltip as LeafletTooltip} from 'leaflet'
 
 import HeatMapTooltip from './HeatMapTooltip';
-
-const getRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
+import {MapResponse} from '../../../api/MapResponse';
 
 type Region = {
     feature: {
@@ -27,7 +20,8 @@ type Region = {
 }
 
 interface IProps {
-    mapData: any
+    geoJsonData: any,
+    mapData: MapResponse
 }
 
 /*
@@ -52,7 +46,16 @@ const hideBrowserOutlineFromLayers = (map: any) => {
     }
 }
 
-const HeatMapOverlay:React.FC<IProps> = ({mapData}) => {
+const fromGeoRegionNameToResponseRegionName = (reg_name: string) => {
+    switch (reg_name.toLowerCase()) {
+        case 'valle d\'aosta': return 'valle aosta';
+        case 'friuli venezia giulia': return 'friuli giulia';
+        default: return reg_name.toLowerCase();
+    }
+}
+
+const HeatMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
+    const {filters} = useContext(FiltersContext);
     const map = useMap();
 
     useEffect(() => {
@@ -61,14 +64,57 @@ const HeatMapOverlay:React.FC<IProps> = ({mapData}) => {
 
     const onEachFeature = (feature: any, layer: LeafletTooltip) => {
         const region = layer as unknown as Region;
-        region.options.color = `${getRandomColor()}`;
 
-        const reg_name = feature.properties.reg_name;
+        const regionName = feature.properties.reg_name;
+        const regionData = mapData[fromGeoRegionNameToResponseRegionName(regionName)];
+
+        if (regionData) {
+            if (regionData.sentimentPositive === regionData.sentimentNeutral
+                && regionData.sentimentPositive === regionData.sentimentNegative) {
+                region.options.color = '#6B6B6B';
+            } else if (regionData.sentimentPositive >= regionData.sentimentNeutral
+                && regionData.sentimentPositive >= regionData.sentimentNegative) {
+                region.options.color = '#FFCB52';
+            } else if (regionData.sentimentNegative >= regionData.sentimentPositive
+                && regionData.sentimentNegative >= regionData.sentimentNeutral) {
+                region.options.color = '#FF5C7F';
+            } else if (regionData.sentimentNeutral >= regionData.sentimentPositive
+                && regionData.sentimentNeutral >= regionData.sentimentNegative) {
+                region.options.color = '#2AAAFF';
+            }
+
+            if (filters.algorithm === 'feel-it') {
+                if (regionData.emotionJoy === regionData.emotionSadness
+                    && regionData.emotionJoy === regionData.emotionAnger
+                    && regionData.emotionJoy === regionData.emotionFear) {
+                    region.options.color = '#6B6B6B';
+                } else if (regionData.emotionJoy >= regionData.emotionSadness
+                    && regionData.emotionJoy >= regionData.emotionAnger
+                    && regionData.emotionJoy >= regionData.emotionFear) {
+                    region.options.color = '#FFA50082';
+                } else if (regionData.emotionSadness >= regionData.emotionJoy
+                    && regionData.emotionSadness >= regionData.emotionAnger
+                    && regionData.emotionSadness >= regionData.emotionFear) {
+                    region.options.color = '#0000FF7C';
+                } else if (regionData.emotionAnger >= regionData.emotionJoy
+                    && regionData.emotionAnger >= regionData.emotionSadness
+                    && regionData.emotionAnger >= regionData.emotionFear) {
+                    region.options.color = '#FF00008C';
+                } else if (regionData.emotionFear >= regionData.emotionJoy
+                    && regionData.emotionFear >= regionData.emotionSadness
+                    && regionData.emotionFear >= regionData.emotionAnger) {
+                    region.options.color = '#8000808E';
+                }
+            }
+        }
 
         const contentLayer = (): HTMLElement => {
             const tooltipContent = document.createElement('div');
             const root = createRoot(tooltipContent);
-            root.render(<HeatMapTooltip regionName={reg_name}/>);
+            root.render(<HeatMapTooltip
+                regionName={regionName}
+                regionData={regionData}
+                includeEmotion={filters.algorithm === 'feel-it'}/>);
             return tooltipContent;
         }
 
@@ -89,7 +135,7 @@ const HeatMapOverlay:React.FC<IProps> = ({mapData}) => {
 
     return <>
         <GeoJSON
-            data={mapData}
+            data={geoJsonData}
             onEachFeature={onEachFeature}
             style={{
                 lineJoin: 'miter',

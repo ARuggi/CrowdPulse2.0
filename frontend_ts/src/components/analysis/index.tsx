@@ -66,7 +66,7 @@ const Analysis = () => {
     const [wordFilters, setWordFilters]           = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
     const [timelineFilters, setTimelineFilters]   = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
     const [tweetListFilters, setTweetListFilters] = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
-    const [mapFilters, setMapFilters]             = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
+    const [mapFilters, setMapFilters]             = useState<FiltersContextType>({...defaultFilters});
 
     useEffect(() => {
         if (!reload) setReload(true);

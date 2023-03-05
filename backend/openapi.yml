@@ -452,6 +452,83 @@ paths:
           description: missing query parameter
         '500':
           description: Executing error
+  # [v1] GET - /v1/map
+  /v1/map:
+    get:
+      tags: [v1]
+      summary: Get map data of tweets.
+      parameters:
+        - name: dbs
+          in: query
+          description: MongoDB database names
+          required: true
+          schema:
+            type: array
+        - name: algorithm
+          in: query
+          description: sent-it or feel-it
+          required: true
+          schema:
+            type: string
+        - name: sentiment
+          in: query
+          description: all, positive, neutral or negative
+          required: false
+          schema:
+            type: string
+        - name: emotion
+          in: query
+          description: (only if algorithm = 'feel-it'), all, joy, sadness anger or fear
+          required: false
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          description: ISO date like 2022-01-09T00:00:00.000Z (dateTo required)
+          required: false
+          schema:
+            type: string
+        - name: dateTo
+          in: query
+          description: ISO date like 2022-01-09T00:00:00.000Z (dateFrom required)
+          required: false
+          schema:
+            type: string
+        - name: tags
+          in: query
+          description: A list of tags
+          required: false
+          schema:
+            type: array
+        - name: processedText
+          in: query
+          description: A list processed words
+          required: false
+          schema:
+            type: array
+        - name: hashtags
+          in: query
+          description: A list of hashtags (# not required)
+          required: false
+          schema:
+            type: array
+        - name: usernames
+          in: query
+          description: A list of usernames
+          required: false
+          schema:
+            type: array
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1_map'
+        '400':
+          description: missing query parameter
+        '500':
+          description: Executing error
 components:
   schemas:
     # [LEGACY]
@@ -550,4 +627,17 @@ components:
             "tags": Array
           }
         ]
+      }
+    v1_map:
+      type: object
+      example: {
+        "Abruzzo": {
+          "sentimentPositive": number,
+          "sentimentNeutral": number,
+          "sentimentNegative": number,
+          "emotionJoy": number,
+          "emotionSadness": number,
+          "emotionAnger": number,
+          "emotionFear": number
+        }
       }
