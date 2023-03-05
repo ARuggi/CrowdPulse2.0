@@ -54,7 +54,7 @@ const fromGeoRegionNameToResponseRegionName = (reg_name: string) => {
     }
 }
 
-const HeatMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
+const NationMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
     const {filters} = useContext(FiltersContext);
     const map = useMap();
 
@@ -145,4 +145,4 @@ const HeatMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
     </>;
 }
 
-export default HeatMapOverlay;
+export default NationMapOverlay;

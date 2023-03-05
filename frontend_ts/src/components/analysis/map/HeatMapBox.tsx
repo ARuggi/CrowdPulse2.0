@@ -1,12 +1,9 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {MapContainer, TileLayer} from 'react-leaflet'
-import {ColorScheme, Loader, useMantineColorScheme} from '@mantine/core';
-import {GeoJsonObject} from 'geojson';
+import {ColorScheme, useMantineColorScheme} from '@mantine/core';
 
-import NationMapOverlay from './NationMapOverlay';
 import MapPanel, {Position} from './MapPanel';
 import HeatMapPanel from './HeatMapPanel';
-import {MapContext} from './index';
 
 const DARK_MAP_URL  = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 const LIGHT_MAP_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
@@ -19,29 +16,18 @@ const changeMapBackgroundColor = (colorScheme: ColorScheme) => {
     const mapElement = document.getElementById('AnalysisMap');
 
     if (mapElement) {
-        mapElement.style.backgroundColor = colorScheme === 'dark' ? '#222327' : '#d0cfd3';
+        mapElement.style.backgroundColor = colorScheme === 'dark' ? '#222327' : '#D0CFD3';
     }
 }
 
-const MapBox = () => {
-    
+const HeatMapBox = () => {
     const { colorScheme } = useMantineColorScheme();
-    const [geoJsonData, setGeoJsonData] = useState<GeoJsonObject | null>(null);
-    const mapData = useContext(MapContext);
-    
+
     useEffect(() => {
         changeMapBackgroundColor(colorScheme);
     }, [colorScheme]);
 
-    useEffect(() => {
-        (async () => {
-            const response = await fetch('/map/limits_IT_regions.geojson');
-            setGeoJsonData(await response.json());
-        })();
-    }, []);
-
-    return geoJsonData && mapData
-        ? <MapContainer
+    return <MapContainer
             id='AnalysisMap'
             style={{
                 backgroundColor: colorScheme === 'dark' ? '#222327' : '#D0CFD3',
@@ -54,11 +40,9 @@ const MapBox = () => {
             minZoom={4}
             scrollWheelZoom={true}>
             <TileLayer url={colorScheme === 'dark' ? DARK_MAP_URL : LIGHT_MAP_URL}/>
-            <NationMapOverlay geoJsonData={geoJsonData} mapData={mapData}/>
             <MapPanel position={[Position.TOP, Position.RIGHT]} content={<HeatMapPanel/>}/>
         </MapContainer>
-        : <Loader/>
 
 }
 
-export default MapBox;
+export default HeatMapBox;
