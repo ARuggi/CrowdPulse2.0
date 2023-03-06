@@ -1,12 +1,12 @@
 import React, {useContext, useEffect} from 'react';
 import {createRoot} from 'react-dom/client';
 
-import {FiltersContext} from '../index';
+import {FiltersContext} from '../../index';
 import {useMap, GeoJSON} from 'react-leaflet';
 import {Tooltip as LeafletTooltip} from 'leaflet'
 
-import HeatMapTooltip from './HeatMapTooltip';
-import {MapResponse} from '../../../api/MapResponse';
+import RegionMapTooltip from './RegionMapTooltip';
+import {MapResponse} from '../../../../api/MapResponse';
 
 type Region = {
     feature: {
@@ -54,7 +54,7 @@ const fromGeoRegionNameToResponseRegionName = (reg_name: string) => {
     }
 }
 
-const NationMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
+const RegionMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
     const {filters} = useContext(FiltersContext);
     const map = useMap();
 
@@ -111,7 +111,7 @@ const NationMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
         const contentLayer = (): HTMLElement => {
             const tooltipContent = document.createElement('div');
             const root = createRoot(tooltipContent);
-            root.render(<HeatMapTooltip
+            root.render(<RegionMapTooltip
                 regionName={regionName}
                 regionData={regionData}
                 includeEmotion={filters.algorithm === 'feel-it'}/>);
@@ -145,4 +145,4 @@ const NationMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
     </>;
 }
 
-export default NationMapOverlay;
+export default RegionMapOverlay;

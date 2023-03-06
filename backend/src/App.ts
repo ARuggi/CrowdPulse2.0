@@ -23,6 +23,7 @@ import {WordRoute} from './routes/v1/WordRoute';
 import {TweetsTimelineRoute} from './routes/v1/TweetsTimelineRoute';
 import {TweetsListRoute} from './routes/v1/TweetsListRoute';
 import {MapRoute} from './routes/v1/MapRoute';
+import {HeatMapRoute} from './routes/v1/HeatMapRoute';
 
 class App {
 
@@ -49,6 +50,7 @@ class App {
         new TweetsTimelineRoute(),    // GET - /v1/tweets/timeline
         new TweetsListRoute(),        // GET - /v1/tweets/list
         new MapRoute(),               // GET - /v1/map
+        new HeatMapRoute(),           // GET - /v1/heatmap
     ];
 
     express: express.Application;

@@ -13,6 +13,10 @@ export type City = {
     name: string,    // City name
     region: string[] // a region name can be "Emilia Romagna"
     type?: string    // Primary (eg. Rome), admin (eg. Firenze) or minor (eg. Pisa)
+    coordinates: {
+        latitude: number,
+        longitude: number
+    }
 }
 
 export const loadCities = (country: Country): City[] => {
@@ -27,12 +31,16 @@ export const loadCities = (country: Country): City[] => {
     const result = JSON.parse(read) as [];
 
     return result
-        .map((current: {city: string, admin_name: string, capital: string}) => {
+        .map((current: {[key: string]: any}) => {
 
             return {
-                name: current.city,
-                region: typeof(current.admin_name) === 'object' ? current.admin_name as unknown as string[] : [current.admin_name],
-                type: current.capital && current.capital.length > 0 ? current.capital.toLowerCase() : undefined
+                name: current.city as string,
+                region: typeof(current.admin_name) === 'object' ? current.admin_name as unknown as string[] : [current.admin_name as string],
+                type: current.capital && current.capital.length > 0 ? current.capital.toLowerCase() : undefined,
+                coordinates: {
+                    latitude: current.lat,
+                    longitude: current.lng
+                }
             }
         })
         .sort((c1: City, c2: City) => {

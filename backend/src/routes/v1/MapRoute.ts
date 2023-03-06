@@ -154,10 +154,11 @@ export class MapRoute extends AbstractRoute {
                     let { location } = entry;
                     location = location.toLowerCase();
 
-                    province.forEach(city => {
+                    for (const city of province) {
                         if (location.includes(city.name) || city.region.some(r => location.includes(r))) {
 
                             const regionName = city.region.join(' ');
+
                             data[regionName].sentimentPositive += entry.sentimentPositive ? 1 : 0;
                             data[regionName].sentimentNeutral  += entry.sentimentNeutral  ? 1 : 0;
                             data[regionName].sentimentNegative += entry.sentimentNegative ? 1 : 0;
@@ -165,8 +166,9 @@ export class MapRoute extends AbstractRoute {
                             data[regionName].emotionSadness += entry.emotionSadness ? 1 : 0;
                             data[regionName].emotionAnger   += entry.emotionAnger   ? 1 : 0;
                             data[regionName].emotionFear    += entry.emotionFear    ? 1 : 0;
+                            break;
                         }
-                    });
+                    }
                 });
 
             }

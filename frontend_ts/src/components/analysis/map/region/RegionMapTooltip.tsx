@@ -7,7 +7,7 @@ interface IProps {
     includeEmotion: boolean,
 }
 
-const HeatMapTooltip:React.FC<IProps> = ({regionName, regionData, includeEmotion}) => {
+const RegionMapTooltip:React.FC<IProps> = ({regionName, regionData, includeEmotion}) => {
 
     const createSvgBox = (color: string) => {
         return <svg viewBox='0 0 16 16' width='16' height='16'>
@@ -70,4 +70,4 @@ const HeatMapTooltip:React.FC<IProps> = ({regionName, regionData, includeEmotion
     </Box>;
 }
 
-export default HeatMapTooltip;
+export default RegionMapTooltip;

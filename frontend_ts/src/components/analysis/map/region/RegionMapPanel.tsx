@@ -1,8 +1,8 @@
 import React, {useContext} from 'react';
 import {Box, Table} from '@mantine/core';
-import {FiltersContext} from '../index';
+import {FiltersContext} from '../../index';
 
-const HeatMapPanel = () => {
+const RegionMapPanel = () => {
     const {filters} = useContext(FiltersContext);
 
     const createSvgBox = (color: string) => {
@@ -60,4 +60,4 @@ const HeatMapPanel = () => {
     </Box>;
 }
 
-export default HeatMapPanel;
+export default RegionMapPanel;

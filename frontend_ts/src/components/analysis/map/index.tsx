@@ -4,34 +4,40 @@ import {Flex, Tabs} from '@mantine/core';
 import {useMediaQuery} from '@mantine/hooks';
 import isEqual from 'lodash.isequal';
 
-import {AiFillInfoCircle} from 'react-icons/ai';
+import {AiOutlineHeatMap} from 'react-icons/ai';
+import {BsMap} from 'react-icons/bs';
 
 import {DatabasesContext, FiltersContext} from '../index';
 import {MapResponse} from '../../../api/MapResponse';
+import {HeatMapResponse} from '../../../api/HeatMapResponse';
 import api from '../../../api';
 
 import Filters from '../filters';
-import MapBox from './MapBox';
-import HeatMapBox from './HeatMapBox';
+import RegionMapBox from './region/RegionMapBox';
+import HeatMapBox from './heatmap/HeatMapBox';
 
-
-export const MapContext = createContext<MapResponse | null>(null);
+export const RegionMapContext = createContext<MapResponse | null>(null);
+export const HeatMapContext = createContext<HeatMapResponse | null>(null);
 
 const MapTab = () => {
 
     const { t } = useTranslation();
     const dbs = useContext(DatabasesContext);
     const [isError, setError] = useState(false);
-    const [mapData, setMapData] = useState<MapResponse | null>(null);
+    const [regionMapData, setRegionMapData] = useState<MapResponse | null>(null);
+    const [heatMapData, setHeatMapData] = useState<HeatMapResponse | null>(null);
     const {filters} = useContext(FiltersContext);
     const mediaQueryMd = useMediaQuery('(min-width: 992px)');
 
     useEffect(() => {
-        setMapData(null);
+
+        setRegionMapData(null);
+        setHeatMapData(null);
 
         (async () => {
             try {
-                const result =
+
+                const regionMDataResult =
                     await api.GetMap(
                         dbs,
                         filters.algorithm,
@@ -43,7 +49,22 @@ const MapTab = () => {
                         filters.processedText,
                         filters.hashtags,
                         filters.usernames);
-                setMapData(isEqual(mapData, result) ? mapData : result);
+                setRegionMapData(isEqual(regionMapData, regionMDataResult) ? regionMapData : regionMDataResult);
+
+                const heatMapDataResult =
+                    await api.GetHeatMap(
+                        dbs,
+                        filters.algorithm,
+                        filters.sentiment,
+                        filters.emotion,
+                        filters.dateFrom,
+                        filters.dateTo,
+                        filters.tags,
+                        filters.processedText,
+                        filters.hashtags,
+                        filters.usernames);
+                setHeatMapData(isEqual(heatMapData, heatMapDataResult) ? heatMapData : heatMapDataResult);
+
             } catch(error) {
                 console.log(error);
                 setError(true);
@@ -58,7 +79,7 @@ const MapTab = () => {
 
     return <>
         <Filters
-            lock={!mapData}
+            lock={!regionMapData}
             filters={{
                 showAlgorithm: true,
                 algorithm: {
@@ -73,35 +94,37 @@ const MapTab = () => {
                 showHashTags: true,
                 showUsernames: true
             }}/>
-        <Tabs keepMounted={false} variant='default' defaultValue='map'>
+        <Tabs keepMounted={false} variant='default' defaultValue='regionMap'>
             <Tabs.List>
-                <Tabs.Tab value='map'     icon={<AiFillInfoCircle size={14} />}>{mediaQueryMd ? 'Map'     : ''}</Tabs.Tab>
-                <Tabs.Tab value='heatmap' icon={<AiFillInfoCircle size={14} />}>{mediaQueryMd ? 'Heatmap' : ''}</Tabs.Tab>
+                <Tabs.Tab value='regionMap' icon={<BsMap            size={14} />}>{mediaQueryMd ? 'Regions' : ''}</Tabs.Tab>
+                <Tabs.Tab value='heatmap'   icon={<AiOutlineHeatMap size={14} />}>{mediaQueryMd ? 'Heatmap' : ''}</Tabs.Tab>
             </Tabs.List>
 
-            <MapContext.Provider value={mapData}>
-                <Tabs.Panel value='map' pt='xs'>
+            <RegionMapContext.Provider value={regionMapData}>
+                <Tabs.Panel value='regionMap' pt='xs'>
                     <Flex
                         gap='md'
                         justify='center'
                         align='center'
                         direction='row'
                         wrap='wrap'>
-                        <MapBox/>
+                        <RegionMapBox/>
                     </Flex>
                 </Tabs.Panel>
-            </MapContext.Provider>
+            </RegionMapContext.Provider>
 
-            <Tabs.Panel value='heatmap' pt='xs'>
-                <Flex
-                    gap='md'
-                    justify='center'
-                    align='center'
-                    direction='row'
-                    wrap='wrap'>
-                    <HeatMapBox/>
-                </Flex>
-            </Tabs.Panel>
+            <HeatMapContext.Provider value={heatMapData}>
+                <Tabs.Panel value='heatmap' pt='xs'>
+                    <Flex
+                        gap='md'
+                        justify='center'
+                        align='center'
+                        direction='row'
+                        wrap='wrap'>
+                        <HeatMapBox/>
+                    </Flex>
+                </Tabs.Panel>
+            </HeatMapContext.Provider>
         </Tabs>
     </>
 }
