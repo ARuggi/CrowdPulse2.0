@@ -66,7 +66,13 @@ class App {
                 this.port = parseInt(process.env.SERVER_PORT);
                 this.express = express();
                 this.express.use(express.json());
-                this.express.use(cors());
+                //his.express.use(cors({ optionsSuccessStatus: 204 }));
+                this.express.use(cors({
+                    origin: '*',
+                    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+                    allowedHeaders: ['Content-Type', 'Authorization']
+                }));
+
                 this.registerRoutes();
 
                 this.server = this.express.listen(this.port, () => {
