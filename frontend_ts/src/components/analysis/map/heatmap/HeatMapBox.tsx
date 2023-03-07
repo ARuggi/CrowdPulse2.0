@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useMemo} from 'react';
 import {MapContainer, TileLayer} from 'react-leaflet'
 import {ColorScheme, Loader, useMantineColorScheme} from '@mantine/core';
 
@@ -26,14 +26,32 @@ const changeMapBackgroundColor = (colorScheme: ColorScheme) => {
 }
 
 const HeatMapBox = () => {
+
     const { colorScheme } = useMantineColorScheme();
     const heatMapData = useContext(HeatMapContext);
+
+    const points = useMemo(() => {
+        const points: [number, number, number][] = [];
+
+        if (heatMapData) {
+            heatMapData.forEach(current => {
+
+                for (let c = 0 ; c < current.count ; c++) {
+                    points.push([current.coordinates.latitude, current.coordinates.longitude, 1]);
+                }
+
+            });
+        }
+
+        return points;
+    }, [heatMapData]);
+
 
     useEffect(() => {
         changeMapBackgroundColor(colorScheme);
     }, [colorScheme]);
 
-    return heatMapData
+    return heatMapData && points
         ? <MapContainer
             id='AnalysisMap'
             style={{
@@ -48,10 +66,10 @@ const HeatMapBox = () => {
             scrollWheelZoom={true}>
             <TileLayer url={colorScheme === 'dark' ? DARK_MAP_URL : LIGHT_MAP_URL}/>
             <HeatmapLayer
-                aggregateType={'count'}
-                opacity={0.6}
-                useLocalExtrema={false}
-                points={heatMapData.map(current => [current.coordinates.latitude, current.coordinates.longitude, current.count])}
+                aggregateType={'mean'}
+                opacity={0.75}
+                radius={40}
+                points={points}
                 latitudeExtractor={m => m[0]}
                 longitudeExtractor={m => m[1]}
                 intensityExtractor={(m) => m[2]} />
