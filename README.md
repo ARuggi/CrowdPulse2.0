@@ -1,68 +1,51 @@
-# Introduction
+# What is CrowdPulse?
+> CrowdPulse is software designed to analyse MongoDB databases containing AI-processed data.
 
-The software is divided into two macro-components, the "Frontend" package and the "Backend" package. Both will need to be launched at the same time to run correctly the software.
-The Frontend component will be reachable at port 3000. The Backend component will be reachable at port 4000.
+**TODO**: continue the description...
 
-# Dependencies
-MongoDB : 5.0 -
-Node.js : 14.18.0 -
-Npm : 6.14.15 
+## Global requirements
+To use this software, you'll need to install the following software and components:
+- [Node.js](https://nodejs.org/it/download/) version **14.18.x** is recommended
+- [TypeScript](https://www.typescriptlang.org/): `npm install -g typescript`
+- [MongoDB](https://www.mongodb.com/try/download/community): version **5.x.x** is recommended
 
-# Tweet cleaning
-Before launching to use the software it is recommended to launch the stopwords cleaning script. The script can be cloned [here](https://github.com/GiovTemp/clearTextTweet).
+Now you're ready to install and use CrowdPulse by following the documentation.
 
-## Installation Frontend
+## Project structure
+Firstly, CrowdPulse has been completely rewritten from the ground up in TypeScript using Node.js.
+<br>In this repository you'll find two subprojects:
+- **Backend**: An [Express](https://expressjs.com/) implementation for managing front-end requests hosted by default on port _4000_.
+- **Frontend**: A [React](https://it.reactjs.org/) implementation using [Mantine](https://mantine.dev/) as a component framework hosted by default on port _3000_.
+-------------------
 
-Use the package manager [npm](https://www.npmjs.com/) to install the sofwtare.
-
-```bash
-cd frontend 
-npm install
-npm run build
-# if run build fails due to permission denied
-npm install react-scripts --save
+### Backend
+**Installation and usage**
+<br>From the root folder type `cd backend` and then `npm install`.
+<br>Configure your `.env` file by editing the following properties:
 ```
-
-## Installation Backend
-
-Use the package manager [npm](https://www.npmjs.com/) to install the sofwtare.
-
-```bash
-cd backend 
-npm install
-
+SERVER_PORT=4000
+DATABASE_ACCESS="mongodb://localhost:27017/"
 ```
+**Running**: type `npm start` to start it on the preferred port.
 
-## Run
+-------------------
+### Frontend
+- **Installation**: from the root folder type `cd frontend` and then `npm install`.
+- **Running**: type `npm start` to start it.
+<br>The software is now reachable on http://localhost:3000/
+- **Building**: type `npm build` and you'll find a new folder called `build`
+<br>If you want to use the built-in application, you will need a web server such as [nginx](https://www.nginx.com/).
+
+-------------------
+### Forever Run
+[npm forever](https://www.npmjs.com/package/forever) is an option to run the software continuously without using a [screen](https://linuxize.com/post/how-to-use-linux-screen/) or anything else.
 
 ```bash
-
-# Start frontend 
-cd frontend
-npm start 
-
-# Start backend 
-cd backend
-npm start 
-
-```
-
-## Forever Run
-Use the [npm forever](https://www.npmjs.com/package/forever) to runs continuously the software.
-```bash
-
-# Start frontend 
 cd frontend
 sudo npm install forever -g
 forever start -c "npm start" ./
 
-# Start backend 
 cd backend
 sudo npm install forever -g
 forever start -c "npm start" ./
-
 ```
-
-## Test
-The software is now reachable on http://localhost:3000/
-
