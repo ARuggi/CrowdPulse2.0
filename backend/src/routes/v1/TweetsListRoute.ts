@@ -98,7 +98,7 @@ export class TweetsListRoute extends AbstractRoute {
                         sensitive: current.possibly_sensitive,
                         created_at: current.created_at,
                         tags: current.tags
-                            .map(tag => tag.split(' : ')[0].trim().toLowerCase())
+                            ?.map(tag => tag.split(' : ')[0].trim().toLowerCase())
                             .filter(tag => !tag.includes(' '))
                     }));
                 }
