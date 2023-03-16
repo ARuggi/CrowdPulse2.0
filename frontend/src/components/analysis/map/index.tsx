@@ -15,6 +15,7 @@ import api from '../../../api';
 import Filters from '../filters';
 import RegionMapBox from './region/RegionMapBox';
 import HeatMapBox from './heatmap/HeatMapBox';
+import Error from '../../error';
 
 export const RegionMapContext = createContext<MapResponse | null>(null);
 export const HeatMapContext = createContext<HeatMapResponse | null>(null);
@@ -74,7 +75,7 @@ const MapTab = () => {
     }, [filters]);
 
     if (isError) {
-        return <p>{t('serverNotRespondingError')}</p>
+        return <Error message={t('serverNotRespondingError')!}/>
     }
 
     return <>
@@ -96,8 +97,8 @@ const MapTab = () => {
             }}/>
         <Tabs keepMounted={false} variant='default' defaultValue='regionMap'>
             <Tabs.List>
-                <Tabs.Tab value='regionMap' icon={<BsMap            size={14} />}>{mediaQueryMd ? 'Regions' : ''}</Tabs.Tab>
-                <Tabs.Tab value='heatmap'   icon={<AiOutlineHeatMap size={14} />}>{mediaQueryMd ? 'Heatmap' : ''}</Tabs.Tab>
+                <Tabs.Tab value='regionMap' icon={<BsMap            size={14} />}>{mediaQueryMd ? t('tab.map.regions') : ''}</Tabs.Tab>
+                <Tabs.Tab value='heatmap'   icon={<AiOutlineHeatMap size={14} />}>{mediaQueryMd ? t('tab.map.heatmap') : ''}</Tabs.Tab>
             </Tabs.List>
 
             <RegionMapContext.Provider value={regionMapData}>

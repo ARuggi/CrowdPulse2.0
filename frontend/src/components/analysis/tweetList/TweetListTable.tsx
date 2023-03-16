@@ -1,18 +1,22 @@
 import React, {useContext, useState} from 'react';
-import {Flex, Table, Loader, Box, Input, Text} from '@mantine/core';
+import {useTranslation} from 'react-i18next';
 import isEqual from 'lodash.isequal';
 
-import {TweetsListResponse} from '../../../api/TweetsListResponse';
-
-import {TbBrandPagekit} from 'react-icons/tb';
-import {MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight} from 'react-icons/md';
-import {BsArrowRight} from 'react-icons/bs';
-import TablePageButton from './TablePageButton';
+import {Flex, Table, Loader, Box, Input, Text} from '@mantine/core';
 import {getHotkeyHandler} from '@mantine/hooks';
+
+import {BsArrowRight} from 'react-icons/bs';
+import {TbBrandPagekit} from 'react-icons/tb';
 import {IoNavigateSharp} from 'react-icons/io5';
-import {TablePreferencesContext, TweetListContext} from "./TweetListTab";
+import {MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight} from 'react-icons/md';
+
+import {TablePreferencesContext, TweetListContext} from './TweetListTab';
+import {TweetsListResponse} from '../../../api/TweetsListResponse';
+import TablePageButton from './TablePageButton';
+
 
 const TweetListTable = () => {
+    const { t } = useTranslation();
     const tweetListData = useContext<TweetsListResponse | null>(TweetListContext);
     const {tablePreferences, setTablePreferences} = useContext(TablePreferencesContext);
     const [pageSize, setPageSize] = useState(tablePreferences.pageSize);
@@ -70,12 +74,12 @@ const TweetListTable = () => {
                         verticalSpacing='xs'>
                         <thead>
                         <tr>
-                            <th>N.</th>
-                            <th>Author</th>
-                            <th>Text</th>
-                            <th>Tags</th>
-                            <th>Created At</th>
-                            <th>Lang</th>
+                            <th>{t('tab.tweetList.index')}</th>
+                            <th>{t('tab.tweetList.author')}</th>
+                            <th>{t('tab.tweetList.text')}</th>
+                            <th>{t('tab.tweetList.tags')}</th>
+                            <th>{t('tab.tweetList.createdAt')}</th>
+                            <th>{t('tab.tweetList.lang')}</th>
                         </tr>
                         </thead>
                         <tbody>{rows}</tbody>
@@ -91,7 +95,7 @@ const TweetListTable = () => {
                             align='center'
                             direction='row'
                             wrap='wrap'>
-                            <Text>Page size</Text>
+                            <Text>{t('tab.tweetList.pageSize')}</Text>
                             <Input
                                 style={{width: '60px'}}
                                 icon={<TbBrandPagekit/>}
@@ -110,7 +114,11 @@ const TweetListTable = () => {
                             direction='row'
                             wrap='wrap'>
 
-                            <Text>Page {tablePreferences.page} of {maxPages}</Text>
+                            <Text>
+                                {t('tab.tweetList.pageOf')
+                                    ?.replace('%current_page%', `${tablePreferences.page}`)
+                                    ?.replace('%max_page%', `${maxPages}`)}
+                            </Text>
                             {tablePreferences.page > 1 && <TablePageButton content={<MdOutlineKeyboardArrowLeft/>}
                                                                            onClick={() => triggerChangePage(tablePreferences.page - 1)}/>}
 
@@ -130,7 +138,7 @@ const TweetListTable = () => {
                                     onClick={() => triggerChangePage(maxPages)}/></>}
 
                             {tablePreferences.page < maxPages && <TablePageButton content={<MdOutlineKeyboardArrowRight/>}
-                                                                                   onClick={() => triggerChangePage(tablePreferences.page + 1)}/>}
+                                                                                  onClick={() => triggerChangePage(tablePreferences.page + 1)}/>}
                             <Input
                                 style={{width: '80px'}}
                                 icon={<IoNavigateSharp/>}

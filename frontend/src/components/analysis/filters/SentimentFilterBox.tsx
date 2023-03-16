@@ -1,9 +1,12 @@
 import React, {useContext} from 'react';
+import {useTranslation} from 'react-i18next';
+import isEqual from 'lodash.isequal';
+
 import {Box, Flex, SegmentedControl, Text} from '@mantine/core';
-import {FiltersContext} from "../index";
-import isEqual from "lodash.isequal";
+import {FiltersContext} from '../index';
 
 const SentimentFilterBox = () => {
+    const { t } = useTranslation();
     const {filters, setFilters} = useContext(FiltersContext);
 
     const onChange = (value: string) => {
@@ -25,16 +28,16 @@ const SentimentFilterBox = () => {
             align='center'
             direction='row'
             wrap='wrap'>
-            <Text><b>Sentiment</b></Text>
+            <Text><b>{t('tab.filters.sentiment.sentiment')}</b></Text>
             <SegmentedControl
                 disabled={filters.algorithm === 'all'}
                 style={{flex: 'fit-content'}}
                 onChange={onChange}
                 data={[
-                    {label: 'all',      value: 'all'},
-                    {label: 'positive', value: 'positive'},
-                    {label: 'neutral',  value: 'neutral'},
-                    {label: 'negative', value: 'negative'}
+                    {label: t('tab.filters.sentiment.all'),      value: 'all'},
+                    {label: t('tab.filters.sentiment.positive'), value: 'positive'},
+                    {label: t('tab.filters.sentiment.neutral'),  value: 'neutral'},
+                    {label: t('tab.filters.sentiment.negative'), value: 'negative'}
                 ]}
                 defaultValue={filters ? filters.sentiment : undefined}/>
         </Flex>

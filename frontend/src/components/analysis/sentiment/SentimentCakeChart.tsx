@@ -1,8 +1,10 @@
 import React, {useContext} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Loader, RingProgress, Text} from '@mantine/core';
 import {SentimentContext} from './index';
 
 const SentimentCakeChart = () => {
+    const { t } = useTranslation();
     const sentimentData = useContext(SentimentContext);
 
     if (!sentimentData) {
@@ -35,13 +37,13 @@ const SentimentCakeChart = () => {
         thickness={30}
         label={
             <Text size='xs' align='center' px='xs' sx={{pointerEvents: 'none'}}>
-                <b>Percentage</b>
+                <b>{t('tab.sentiment.percentage')}</b>
             </Text>
         }
         sections={[
-            {value: percentages.positive, color: '#ffc234', tooltip: `Positive: ${percentages.positive}%`},
-            {value: percentages.neutral, color: '#059bff', tooltip: `Neutral: ${percentages.neutral}%`},
-            {value: percentages.negative, color: '#ff4069',  tooltip: `Negative: ${percentages.negative}%`}
+            {value: percentages.positive, color: '#ffc234', tooltip: `${t('tab.sentiment.positive')}: ${percentages.positive}%`},
+            {value: percentages.neutral,  color: '#059bff', tooltip: `${t('tab.sentiment.neutral')}: ${percentages.neutral}%`},
+            {value: percentages.negative, color: '#ff4069', tooltip: `${t('tab.sentiment.negative')}: ${percentages.negative}%`}
         ]}/>
 }
 

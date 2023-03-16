@@ -10,11 +10,11 @@
     "home": "Home",
     "pageNotFound": "Pagina non trovata",
     "databases": "Lista database",
-    "analysis": "Analisi dati",
+    "analysis": "Lista analisi",
     "connectingToServer": "Connessione al server in corso...",
     "welcome": "Benvenuto su CrowdPulse!",
     "selectDatabases": "Seleziona i database che vuoi analizzare",
-    "serverNotRespondingError": "Il server non risponde",
+    "serverNotRespondingError": "Il server non è al momento raggiungibile",
     "analyse": "Analizza",
     "analysisOfDbs": "Analisi di %dbs%",
     "filters": "Filtri",
@@ -25,8 +25,8 @@
     "noDatabaseSelected": "Nessun database selezionato",
     "loadingDatabases": "Attendere il caricamento dei database",
     "name": "Nome",
-    "releaseDate": "Rilasciato il",
-    "lastUpdate": "Aggiornato il",
+    "releaseDate": "Data di rilasciato",
+    "lastUpdate": "Ultimo aggiornamento",
     "version": "Versione",
     "sizeOnDisk": "Dimensione",
     "info": "Informazioni",
@@ -42,14 +42,14 @@
     "delete": "Elimina",
     "homepage": {
       "title": "Benvenuto su CrowdPulse",
-      "description": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-      "first-list-item": {
+      "description": "Ti consente di ottenere informazioni su qualsiasi marchio, nome o qualunque cosa tu voglia.",
+      "firstListItem": {
         "title": "Sviluppato con TypeScript",
-        "description": " – l'uso di questo linguaggio ha permesso la realizzazione di questo software."
+        "description": " – Questo software è stato sviluppato utilizzando React e TypeScript."
       },
-      "second-list-item": {
+      "secondListItem": {
         "title": "Gratuito ed open source",
-        "description": " – Puoi esplorare e usare il codice sorgente di questo programma senza alcun vincolo!"
+        "description": " – Sei libero e utilizzare e modificare il codice sorgente senza alcun vincolo!"
       },
       "get-started": "Iniziamo!",
       "source-code": "Codice sorgente"
@@ -65,6 +65,100 @@
     },
     "deleteModal": {
       "alert": "Stai per eliminare:"
+    },
+    "tab": {
+      "filters": {
+        "algorithm": {
+          "algorithm": "Algoritmo",
+          "all": "Entrambi",
+          "sentIt": "sent it",
+          "feelIt": "feel it"
+        },
+        "sentiment": {
+          "sentiment": "Sentimenti",
+          "all": "Tutti",
+          "positive": "Positivi",
+          "neutral": "Neutrali",
+          "negative": "Negativi"
+        },
+        "emotion": {
+          "emotion": "Emozioni",
+          "all": "Tutte",
+          "joy": "Gioia",
+          "sadness": "Tristezza",
+          "anger": "Rabbia",
+          "fear": "Paura"
+        },
+        "date": "Date",
+        "tags": "Tag",
+        "tagsPlaceholder": "Scrivi qualunque tag",
+        "processedText": "Testo",
+        "processedTextPlaceholder": "Scrivi qualunque parola",
+        "hashtags": "Hashtag",
+        "hashtagsPlaceholder": "Scrivi qualunque hashtag (senza #)",
+        "usernames": "Nomi utente",
+        "usernamesPlaceholder": "Scrivi qualunque username",
+        "type": {
+          "type": "Filtra per",
+          "text": "Testo",
+          "tags": "Tag",
+          "hashtags": "Hashtag"
+        }
+      },
+      "sentiment": {
+        "sentiment": "Sentimenti",
+        "emotion": "Emozioni",
+        "processed": "Processati",
+        "notProcessed": "Non processati",
+        "percentage": "Percentuali",
+        "positive": "Positivi",
+        "neutral": "Neutrali",
+        "negative": "Negativi"
+      },
+      "timeline": {
+        "tweets": "Numero di tweet totali",
+        "avg": "Media giornaliera"
+      },
+      "tweetList": {
+        "index": "N.",
+        "author": "Autore",
+        "text": "Testo",
+        "tags": "Tag",
+        "createdAt": "Creato il",
+        "lang": "Lingua",
+        "pageSize": "Grandezza pagina",
+        "pageOf": "Pagina %current_page% di %max_page%"
+      },
+      "map": {
+        "noData": "Nessun dato",
+        "regions": "Regioni",
+        "heatmap": "mappa di calore",
+        "regionsPanel": {
+          "positive": "Positivi",
+          "neutral": "Neutrali",
+          "negative": "Negativi",
+          "joy": "Gioia",
+          "sadness": "Tristezza",
+          "anger": "Rabbia",
+          "fear": "Paura"
+        },
+        "regionsTooltip": {
+          "positive": "S. Positivi",
+          "neutral": "S. Neutrali",
+          "negative": "S. Negativi",
+          "joy": "E. Gioia",
+          "sadness": "E. Tristezza",
+          "anger": "E. Rabbia",
+          "fear": "E. Paura",
+          "noData": "Nessun dato disponibile"
+        },
+        "heatmapPanel": {
+          "many": "Molti",
+          "some": "un po'",
+          "few": "Pochi",
+          "total": "Tweet conteggiati"
+        }
+      }
     }
   }
 }

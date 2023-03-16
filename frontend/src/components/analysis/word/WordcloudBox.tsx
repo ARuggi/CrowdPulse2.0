@@ -1,8 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {WordContext} from './index';
+import {Box, Center, Loader} from '@mantine/core';
+
 import ReactWordcloud, {Word} from 'react-wordcloud';
 import {WordResponse} from '../../../api/WordResponse';
-import {Box, Center, Loader} from '@mantine/core';
+import {WordContext} from './index';
 
 const WORDCLOUD_MAX_ELEMENTS = 50;
 
@@ -36,7 +37,7 @@ const WordcloudBox = () => {
                     rotationAngles: [0, 0],
                     fontSizes: [20, 60]
                 }}/>
-            : <Center><Loader size="xl" variant="bars" /></Center>}
+            : <Center><Loader size='xl' variant='bars' /></Center>}
     </Box>
 }
 

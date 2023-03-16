@@ -1,12 +1,15 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import Filters from '../filters';
-import {DatabasesContext, FiltersContext} from '../index';
-import {WordResponse} from '../../../api/WordResponse';
-import api from '../../../api';
-import isEqual from 'lodash.isequal';
 import {useTranslation} from 'react-i18next';
+import isEqual from 'lodash.isequal';
 import {Flex} from '@mantine/core';
+
+import api from '../../../api';
+import {WordResponse} from '../../../api/WordResponse';
+
+import {DatabasesContext, FiltersContext} from '../index';
 import WordcloudBox from './WordcloudBox';
+import Filters from '../filters';
+import Error from '../../error';
 
 export const WordContext = createContext<WordResponse | null>(null);
 
@@ -48,7 +51,7 @@ const WordTab = () => {
     }, [filters]);
 
     if (isError) {
-        return <p>{t('serverNotRespondingError')}</p>
+        return <Error message={t('serverNotRespondingError')!}/>
     }
 
     return <>

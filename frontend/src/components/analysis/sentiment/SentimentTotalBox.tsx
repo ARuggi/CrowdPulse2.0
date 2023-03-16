@@ -1,8 +1,10 @@
-import React, {useContext} from "react";
-import {Box, Flex, Loader, Text} from "@mantine/core";
-import {SentimentContext} from "./index";
+import React, {useContext} from 'react';
+import {useTranslation} from 'react-i18next';
+import {Box, Flex, Loader, Text} from '@mantine/core';
+import {SentimentContext} from './index';
 
 const SentimentTotalBox = () => {
+    const { t } = useTranslation();
     const sentimentData = useContext(SentimentContext);
 
     return <Box
@@ -13,19 +15,19 @@ const SentimentTotalBox = () => {
             borderRadius: theme.radius.sm
         })}>
         <Flex
-            gap="md"
-            justify="center"
-            align="center"
-            direction="row"
-            wrap="wrap">
-            <Text><b>Processed</b></Text>
+            gap='md'
+            justify='center'
+            align='center'
+            direction='row'
+            wrap='wrap'>
+            <Text><b>{t('tab.sentiment.processed')}</b></Text>
             {sentimentData
                 ? <Text>{sentimentData?.processed}</Text>
-                : <Loader size="sm" variant="dots"/>}
-            <Text><b>Not processed</b></Text>
+                : <Loader size='sm' variant='dots'/>}
+            <Text><b>{t('tab.sentiment.notProcessed')}</b></Text>
             {sentimentData
                 ? <Text>{sentimentData?.notProcessed}</Text>
-                : <Loader size="sm" variant="dots"/>}
+                : <Loader size='sm' variant='dots'/>}
         </Flex>
     </Box>
 }

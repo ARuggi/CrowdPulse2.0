@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {Box, Flex, Loader, Text} from '@mantine/core';
 import {TimelineContext} from './index';
 import {TweetsTimelineResponse} from '../../../api/TweetsTimelineResponse';
+import {useTranslation} from "react-i18next";
 
 const countTweets = (response: TweetsTimelineResponse) => {
     let count = 0;
@@ -23,6 +24,7 @@ const calcAVG = (response: TweetsTimelineResponse) => {
 }
 
 const TimelineInfoBox = () => {
+    const { t } = useTranslation();
     const timelineData = useContext<TweetsTimelineResponse | null>(TimelineContext);
 
     return <Box
@@ -38,11 +40,11 @@ const TimelineInfoBox = () => {
             align='center'
             direction='row'
             wrap='wrap'>
-            <Text><b>Tweets</b></Text>
+            <Text><b>{t('tab.timeline.tweets')}</b></Text>
             {timelineData
                 ? <Text>{countTweets(timelineData)}</Text>
                 : <Loader size='sm' variant='dots'/>}
-            <Text><b>AVG</b></Text>
+            <Text><b>{t('tab.timeline.avg')}</b></Text>
             {timelineData
                 ? <Text>{calcAVG(timelineData)}</Text>
                 : <Loader size='sm' variant='dots'/>}

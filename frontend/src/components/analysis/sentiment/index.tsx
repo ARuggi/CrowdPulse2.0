@@ -12,6 +12,7 @@ import SentimentBarChart from './SentimentBarChart';
 
 import SentimentCakeChart from './SentimentCakeChart';
 import SentimentLineChart from './SentimentLineChart';
+import Error from '../../error';
 
 export const SentimentContext = createContext<SentimentResponse | null>(null);
 export const SentimentTimelineContext = createContext<SentimentTimelineResponse | null>(null);
@@ -70,7 +71,7 @@ const SentimentTab = () => {
     }, [filters]);
 
     if (isError) {
-        return <p>{t('serverNotRespondingError')}</p>
+        return <Error message={t('serverNotRespondingError')!}/>
     }
 
     return <>

@@ -1,9 +1,11 @@
 import React, {useContext} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Box, Table} from '@mantine/core';
 import {FiltersContext} from '../../index';
 
 const RegionMapPanel = () => {
-    const {filters} = useContext(FiltersContext);
+    const { t } = useTranslation();
+    const { filters } = useContext(FiltersContext);
 
     const createSvgBox = (color: string) => {
         return <svg viewBox='0 0 16 16' width='16' height='16'>
@@ -21,38 +23,38 @@ const RegionMapPanel = () => {
         <Table verticalSpacing={2} fontSize='xs'>
             <tbody>
             <tr>
-                <td>Positive</td>
+                <td>{t('tab.map.regionsPanel.positive')}</td>
                 <td>{createSvgBox('#FFCB52')}</td>
             </tr>
             <tr>
-                <td>Neutral</td>
+                <td>{t('tab.map.regionsPanel.neutral')}</td>
                 <td>{createSvgBox('#2AAAFF')}</td>
             </tr>
             <tr>
-                <td>Negative</td>
+                <td>{t('tab.map.regionsPanel.negative')}</td>
                 <td>{createSvgBox('#FF5C7F')}</td>
             </tr>
             {filters.algorithm === 'feel-it'
                 && <>
                     <tr>
-                        <td>Joy</td>
+                        <td>{t('tab.map.regionsPanel.joy')}</td>
                         <td>{createSvgBox('#FFA50082')}</td>
                     </tr>
                     <tr>
-                        <td>Sadness</td>
+                        <td>{t('tab.map.regionsPanel.sadness')}</td>
                         <td>{createSvgBox('#0000FF7C')}</td>
                     </tr>
                     <tr>
-                        <td>Anger</td>
+                        <td>{t('tab.map.regionsPanel.anger')}</td>
                         <td>{createSvgBox('#FF00008C')}</td>
                     </tr>
                     <tr>
-                        <td>Fear</td>
+                        <td>{t('tab.map.regionsPanel.fear')}</td>
                         <td>{createSvgBox('#8000808E')}</td>
                     </tr>
                 </>}
             <tr>
-                <td>No data</td>
+                <td>{t('tab.map.noData')}</td>
                 <td>{createSvgBox('#6B6B6B')}</td>
             </tr>
             </tbody>

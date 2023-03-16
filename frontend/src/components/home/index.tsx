@@ -91,10 +91,10 @@ const Home = () => {
                         </ThemeIcon>
                     }>
                     <List.Item>
-                        <b>{t('homepage.first-list-item.title')}</b>{t('homepage.first-list-item.description')}
+                        <b>{t('homepage.firstListItem.title')}</b>{t('homepage.firstListItem.description')}
                     </List.Item>
                     <List.Item>
-                        <b>{t('homepage.second-list-item.title')}</b>{t('homepage.second-list-item.description')}
+                        <b>{t('homepage.secondListItem.title')}</b>{t('homepage.secondListItem.description')}
                     </List.Item>
                 </List>
 

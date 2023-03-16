@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {createChart, CrosshairMode, IChartApi, LineStyle} from 'lightweight-charts';
+import {useTranslation} from 'react-i18next';
 
 import {
     Box,
@@ -43,10 +44,11 @@ interface Visibility {
 }
 
 const SentimentLineChart = () => {
-
+    
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const chartRef = useRef<IChartApi>();
 
+    const { t } = useTranslation();
     const { colorScheme } = useMantineColorScheme();
     const sentimentTimelineData = useContext<SentimentTimelineResponse | null>(SentimentTimelineContext);
     const [visibility, setVisibility] = useState<Visibility>({showNeutralLine: true, showPositiveLine: true, showNegativeLine: true});
@@ -174,24 +176,25 @@ const SentimentLineChart = () => {
             wrap='wrap'>
             {sentimentTimelineData
                 ? <>
-                    <Switch label='positive'
+                    <Switch label={t('tab.sentiment.positive')}
                             disabled={!visibility.showNeutralLine && !visibility.showNegativeLine}
                             defaultChecked={true}
                             size='xs'
                             color='yellow'
                             onChange={(event) => onChangeSwitch(event, 'showPositiveLine')}
                             style={{zIndex: 10}}/>
-                    <Switch label='neutral'
+                    <Switch label={t('tab.sentiment.neutral')}
                             disabled={!visibility.showPositiveLine && !visibility.showNegativeLine}
                             defaultChecked={true}
                             size='xs'
                             color='blue'
                             style={{zIndex: 10}}
                             onChange={(event) => onChangeSwitch(event, 'showNeutralLine')}/>
-                    <Switch label='negative'
+                    <Switch label={t('tab.sentiment.negative')}
                             disabled={!visibility.showPositiveLine && !visibility.showNeutralLine}
                             defaultChecked={true}
-                            size='xs' color='red'
+                            size='xs'
+                            color='red'
                             style={{zIndex: 10}}
                             onChange={(event) => onChangeSwitch(event, 'showNegativeLine')}/>
                     <div ref={chartContainerRef} style={{marginTop: '-30px', paddingBottom: '100px'}}/>

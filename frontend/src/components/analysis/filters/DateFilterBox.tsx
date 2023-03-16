@@ -1,8 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
+import isEqual from 'lodash.isequal';
+import {useTranslation} from 'react-i18next';
+
 import {Box, Flex, Switch} from '@mantine/core';
 import {DateRangePicker, DateRangePickerValue} from '@mantine/dates';
 import {FiltersContext} from '../index';
-import isEqual from "lodash.isequal";
 
 const getDates = (): DateRangePickerValue => {
     const now = new Date();
@@ -13,7 +15,7 @@ const getDates = (): DateRangePickerValue => {
 }
 
 const DateFilterBox = () => {
-
+    const { t } = useTranslation();
     const {filters, setFilters} = useContext(FiltersContext);
     const dateFrom: Date | null = filters.dateFrom === undefined ? null : filters.dateFrom;
     const dateTo:   Date | null = filters.dateTo   === undefined ? null : filters.dateTo;
@@ -68,10 +70,10 @@ const DateFilterBox = () => {
             direction='row'
             wrap='wrap'>
             <Switch
-                onLabel="ON"
-                offLabel="OFF"
+                onLabel='ON'
+                offLabel='OFF'
                 onChange={onChangeSwitch}
-                label={<b>Date filter</b>}
+                label={<b>{t('tab.filters.date')}</b>}
             />
             <DateRangePicker
                 placeholder='Pick dates range'

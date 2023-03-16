@@ -1,13 +1,16 @@
 import React, {useContext} from 'react';
+import {useTranslation} from 'react-i18next';
+import isEqual from 'lodash.isequal';
+
 import {Box, Flex, SegmentedControl, Text} from '@mantine/core';
 import {FiltersContext} from '../index';
-import isEqual from 'lodash.isequal';
 
 interface IProps {
     disableAllLabel: boolean | undefined
 }
 
 const AlgorithmFilterBox:React.FC<IProps> = ({disableAllLabel = false}) => {
+    const { t } = useTranslation();
     const {filters, setFilters} = useContext(FiltersContext);
 
     const onChange = (value: string) => {
@@ -29,17 +32,17 @@ const AlgorithmFilterBox:React.FC<IProps> = ({disableAllLabel = false}) => {
             align='center'
             direction='row'
             wrap='wrap'>
-            <Text><b>Algorithm</b></Text>
+            <Text><b>{t('tab.filters.algorithm.algorithm')}</b></Text>
             <SegmentedControl
                 style={{flex: 'fit-content'}}
                 onChange={onChange}
                 data={disableAllLabel ? [
-                    {label: 'sent-it', value: 'sent-it'},
-                    {label: 'feel-it', value: 'feel-it'}
+                    {label: t('tab.filters.algorithm.sentIt'), value: 'sent-it'},
+                    {label: t('tab.filters.algorithm.feelIt'), value: 'feel-it'}
                 ] : [
-                    {label: 'all', value: 'all'},
-                    {label: 'sent-it', value: 'sent-it'},
-                    {label: 'feel-it', value: 'feel-it'}
+                    {label: t('tab.filters.algorithm.all'),    value: 'all'},
+                    {label: t('tab.filters.algorithm.sentIt'), value: 'sent-it'},
+                    {label: t('tab.filters.algorithm.feelIt'), value: 'feel-it'}
                 ]}
                 defaultValue={filters ? filters.algorithm : undefined}/>
         </Flex>

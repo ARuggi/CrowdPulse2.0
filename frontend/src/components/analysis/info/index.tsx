@@ -14,7 +14,8 @@ import {
     Title,
     TypographyStylesProvider
 } from '@mantine/core';
-import {TbFileDatabase} from "react-icons/tb";
+import {TbFileDatabase} from 'react-icons/tb';
+import Error from '../../error';
 
 const bytesToKiloBytes = (bytes: number) => {
     return bytes / 1024;
@@ -44,7 +45,7 @@ const InfoTab = () => {
     }, []);
 
     if (isError) {
-        return <p>{t('serverNotRespondingError')}</p>
+        return <Error message={t('serverNotRespondingError')!}/>
     }
 
     if (!databasesData) {
@@ -56,18 +57,18 @@ const InfoTab = () => {
             return <div key={database.name}>
                 <Container>
                     <Flex
-                        gap="md"
-                        justify="left"
-                        align="center"
-                        direction="row"
-                        wrap="wrap">
+                        gap='md'
+                        justify='left'
+                        align='center'
+                        direction='row'
+                        wrap='wrap'>
                         <TbFileDatabase size={30} style={{
                             marginTop: '5px',
                             color: '#38a0df',
                         }}/>
                         <Title order={1}>
                             <Highlight
-                                align="center"
+                                align='center'
                                 highlight={database.name}
                                 highlightStyles={(theme) => ({
                                     backgroundImage: theme.fn.linearGradient(45, theme.colors.cyan[5], theme.colors.indigo[5]),

@@ -8,6 +8,7 @@ import Filters from '../filters';
 import TimelineLineChart from './TimelineLineChart';
 import {DatabasesContext, FiltersContext} from '../index';
 import {TweetsTimelineResponse} from '../../../api/TweetsTimelineResponse';
+import Error from '../../error';
 
 
 export const TimelineContext = createContext<TweetsTimelineResponse | null>(null);
@@ -49,7 +50,7 @@ const TimelineTab = () => {
     }, [filters]);
 
     if (isError) {
-        return <p>{t('serverNotRespondingError')}</p>
+        return <Error message={t('serverNotRespondingError')!}/>
     }
 
     return <>

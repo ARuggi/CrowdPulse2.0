@@ -12,6 +12,7 @@ import {DatabasesResponse} from '../../api/DatabasesResponse';
 
 import DatabaseCardsContainer from '../databases/DatabaseCardContainer';
 import DatabaseCardContainerSkeleton from '../databases/DatabaseCardContainerSkeleton';
+import Error from '../error';
 
 const Databases = () => {
 
@@ -32,7 +33,7 @@ const Databases = () => {
     }, []);
 
     if (isError) {
-        return <p>{t('serverNotRespondingError')}</p>
+        return <Error message={t('serverNotRespondingError')!}/>
     }
 
     if (!databasesData) {

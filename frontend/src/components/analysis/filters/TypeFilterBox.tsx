@@ -1,9 +1,12 @@
 import React, {useContext} from 'react';
+import {useTranslation} from 'react-i18next';
+import isEqual from 'lodash.isequal';
+
 import {Box, Flex, SegmentedControl, Text} from '@mantine/core';
-import {FiltersContext} from "../index";
-import isEqual from "lodash.isequal";
+import {FiltersContext} from '../index';
 
 const TypeFilterBox = () => {
+    const { t } = useTranslation();
     const {filters, setFilters} = useContext(FiltersContext);
 
     const onChange = (value: string) => {
@@ -25,14 +28,14 @@ const TypeFilterBox = () => {
             align='center'
             direction='row'
             wrap='wrap'>
-            <Text><b>Type</b></Text>
+            <Text><b>{t('tab.filters.type.type')}</b></Text>
             <SegmentedControl
                 style={{flex: 'fit-content'}}
                 onChange={onChange}
                 data={[
-                    {label: 'text',     value: 'text'},
-                    {label: 'tags',     value: 'tags'},
-                    {label: 'hashtags', value: 'hashtags'}
+                    {label: t('tab.filters.type.text'),     value: 'text'},
+                    {label: t('tab.filters.type.tags'),     value: 'tags'},
+                    {label: t('tab.filters.type.hashtags'), value: 'hashtags'}
                 ]}
                 defaultValue={filters ? filters.type : undefined}/>
         </Flex>

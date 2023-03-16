@@ -1,9 +1,12 @@
 import React, {useContext} from 'react';
 import {AxisBandOptions, AxisOptions, Chart} from 'react-charts';
+import {useTranslation} from 'react-i18next';
+
 import {Datum, DatumFocusStatus, DatumStyles} from 'react-charts/types/types';
-import {useMediaQuery} from '@mantine/hooks';
-import SentimentTotalBox from './SentimentTotalBox';
 import {Flex, Loader, useMantineColorScheme} from '@mantine/core';
+import {useMediaQuery} from '@mantine/hooks';
+
+import SentimentTotalBox from './SentimentTotalBox';
 import {SentimentContext} from './index';
 import {FiltersContext} from '../index';
 
@@ -42,8 +45,9 @@ function getWidthFromMediaQuery(mediaQueryLg:    boolean,
 
 const SentimentBarChart = () => {
 
+    const { t } = useTranslation();
     const { colorScheme } = useMantineColorScheme();
-    const {filters} = useContext(FiltersContext);
+    const { filters } = useContext(FiltersContext);
     const sentimentData = useContext(SentimentContext);
 
     const mediaQueryLg    = useMediaQuery('(min-width: 1200px)');
@@ -58,7 +62,7 @@ const SentimentBarChart = () => {
     const sentimentChartData = [
         {
             id: 'sentiment',
-            label: 'Sentiment',
+            label: t('tab.sentiment.sentiment'),
             data: [
                 {type: SentimentType.POSITIVE, value: sentimentData ? sentimentData.sentimentData.positive : 0, color: '#FFC234'},
                 {type: SentimentType.NEUTRAL,  value: sentimentData ? sentimentData.sentimentData.neutral  : 0, color: '#059BFF'},
@@ -70,7 +74,7 @@ const SentimentBarChart = () => {
     const emotionChartData = [
         {
             id: 'emotion',
-            label: 'Emotion',
+            label: t('tab.sentiment.emotion'),
             data: [
                 {type: EmotionType.JOY,     value: sentimentData ? sentimentData.emotionData.joy     : 0, color: 'rgba(255,165,0,0.51)'},
                 {type: EmotionType.SADNESS, value: sentimentData ? sentimentData.emotionData.sadness : 0, color: 'rgba(0,0,255,0.49)'},

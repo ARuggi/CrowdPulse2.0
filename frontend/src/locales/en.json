@@ -10,12 +10,12 @@
         "home": "Home",
         "pageNotFound": "Page not found",
         "databases": "Databases",
-        "analysis": "Analysis",
+        "analysis": "Analysis list",
         "connectingToServer": "Connecting to the server...",
         "welcome": "Welcome to CrowdPulse!",
         "selectDatabases": "Select the database(s) that you would like to analyse",
         "serverNotRespondingError": "Server is not responding",
-        "analyse": "Analyse",
+        "analyse": "Start analysing",
         "analysisOfDbs": "Analysis of %dbs%",
         "filters": "Filters",
         "search": "Search",
@@ -42,14 +42,14 @@
         "delete": "Delete",
         "homepage": {
             "title": "Welcome to CrowdPulse",
-            "description": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
-            "first-list-item": {
+            "description": "It allows you to analyse data on any brand, any name, anything you like.",
+            "firstListItem": {
                 "title": "TypeScript based",
-                "description": " – this software has been made possible by the use of this language."
+                "description": " – This software has been written with the use of React and TypeScript."
             },
-            "second-list-item": {
+            "secondListItem": {
                 "title": "Free and open source",
-                "description": " – The source code of this programme is at your disposal without any restrictions!"
+                "description": " – You are free to use and modify the source code as you wish!"
             },
             "get-started": "Get started!",
             "source-code": "Source code"
@@ -65,6 +65,100 @@
         },
         "deleteModal": {
             "alert": "You are going to delete:"
+        },
+        "tab": {
+            "filters": {
+                "algorithm": {
+                    "algorithm": "Algorithm",
+                    "all": "Both",
+                    "sentIt": "sent it",
+                    "feelIt": "feel it"
+                },
+                "sentiment": {
+                    "sentiment": "Sentiment",
+                    "all": "All",
+                    "positive": "Positive",
+                    "neutral": "Neutral",
+                    "negative": "Negative"
+                },
+                "emotion": {
+                    "emotion": "Emotion",
+                    "all": "All",
+                    "joy": "Joy",
+                    "sadness": "Sadness",
+                    "anger": "Anger",
+                    "fear": "Fear"
+                },
+                "date": "Date",
+                "tags": "Tags",
+                "tagsPlaceholder": "write tags",
+                "processedText": "Processed Text",
+                "processedTextPlaceholder": "write any word",
+                "hashtags": "Hashtags",
+                "hashtagsPlaceholder": "write hashtags (without #)",
+                "usernames": "Usernames",
+                "usernamesPlaceholder": "write usernames",
+                "type": {
+                    "type": "Type",
+                    "text": "Text",
+                    "tags": "Tags",
+                    "hashtags": "Hashtags"
+                }
+            },
+            "sentiment": {
+                "sentiment": "Sentiment",
+                "emotion": "Emotion",
+                "processed": "Processed",
+                "notProcessed": "Not processed",
+                "percentage": "Percentage",
+                "positive": "Positive",
+                "neutral": "Neutral",
+                "negative": "Negative"
+            },
+            "timeline": {
+                "tweets": "Tweets",
+                "avg": "Daily AVG"
+            },
+            "tweetList": {
+                "index": "Index",
+                "author": "Author",
+                "text": "Text",
+                "tags": "Tags",
+                "createdAt": "Created at",
+                "lang": "Lang",
+                "pageSize": "Page size",
+                "pageOf": "Page %current_page% of %max_page%"
+            },
+            "map": {
+                "noData": "No data",
+                "regions": "Regions",
+                "heatmap": "Heatmap",
+                "regionsPanel": {
+                    "positive": "Positive",
+                    "neutral": "Neutral",
+                    "negative": "Negative",
+                    "joy": "Joy",
+                    "sadness": "Sadness",
+                    "anger": "Anger",
+                    "fear": "Fear"
+                },
+                "regionsTooltip": {
+                    "positive": "S. Positive",
+                    "neutral": "S. Neutral",
+                    "negative": "S. Negative",
+                    "joy": "E. Joy",
+                    "sadness": "E. Sadness",
+                    "anger": "E. Anger",
+                    "fear": "E. Fear",
+                    "noData": "No data available"
+                },
+                "heatmapPanel": {
+                    "many": "Many",
+                    "some": "Some",
+                    "few": "Few",
+                    "total": "Total tweets"
+                }
+            }
         }
     }
 }

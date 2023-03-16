@@ -1,11 +1,12 @@
-import React, {createContext, useContext, useEffect, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {TweetsListResponse} from "../../../api/TweetsListResponse";
-import {FiltersContext} from "../index";
-import api from "../../../api";
-import isEqual from "lodash.isequal";
-import Filters from "../filters";
-import TweetListTable from "./TweetListTable";
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {TweetsListResponse} from '../../../api/TweetsListResponse';
+import {FiltersContext} from '../index';
+import api from '../../../api';
+import isEqual from 'lodash.isequal';
+import Filters from '../filters';
+import TweetListTable from './TweetListTable';
+import Error from '../../error';
 
 interface IProps {
     db: string
@@ -67,7 +68,7 @@ const TweetListTab:React.FC<IProps> = ({db}) => {
     }, [filters, tablePreferences]);
 
     if (isError) {
-        return <p>{t('serverNotRespondingError')}</p>
+        return <Error message={t('serverNotRespondingError')!}/>
     }
 
     return <>

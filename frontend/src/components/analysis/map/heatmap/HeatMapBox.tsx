@@ -56,7 +56,7 @@ const HeatMapBox = () => {
             id='AnalysisMap'
             style={{
                 backgroundColor: colorScheme === 'dark' ? '#222327' : '#D0CFD3',
-                height: `${window.innerHeight / 1.75}px`,
+                height: `${window.innerHeight / 1.25}px`,
                 width: '90%',
                 marginBottom: '200px'}}
             center={[42.500, 12.900]}

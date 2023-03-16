@@ -1,7 +1,22 @@
 import React, {CSSProperties} from 'react';
-import {Box, Divider, Flex, Grid, LoadingOverlay, Spoiler, Text} from '@mantine/core';
+import {useTranslation} from 'react-i18next';
+import {
+    Box,
+    Divider,
+    Flex,
+    Grid,
+    LoadingOverlay,
+    Spoiler,
+    Text
+} from '@mantine/core';
 import {useMediaQuery} from '@mantine/hooks';
+
+
 import {TbFilter, TbFilterOff} from 'react-icons/tb';
+import {AiFillTag, AiOutlineUser} from 'react-icons/ai';
+import {GrTextAlignCenter} from 'react-icons/gr';
+import {HiHashtag} from 'react-icons/hi';
+import {BsLock} from 'react-icons/bs';
 
 import AlgorithmFilterBox from './AlgorithmFilterBox';
 import SentimentFilterBox from './SentimentFilterBox';
@@ -9,11 +24,6 @@ import EmotionFilterBox from './EmotionFilterBox';
 import TypeFilterBox from './TypeFilterBox';
 import DateFilterBox from './DateFilterBox';
 import MultiSelectionFilterBox from './MultiSelectionFilterBox';
-
-import {AiFillTag, AiOutlineUser} from 'react-icons/ai';
-import {GrTextAlignCenter} from 'react-icons/gr';
-import {HiHashtag} from 'react-icons/hi';
-import {BsLock} from 'react-icons/bs';
 
 interface IProps {
     lock: boolean,
@@ -49,6 +59,7 @@ const defaultFilters = {
 }
 
 const Filters:React.FC<IProps> = ({lock, divider = true, style, filters = defaultFilters}) => {
+    const { t } = useTranslation();
     const mediaQueryLg = useMediaQuery('(min-width: 1200px)');
     const mediaQueryMd = useMediaQuery('(min-width: 992px)');
     const maxHeight = mediaQueryLg ? 1000 : 0;
@@ -135,36 +146,36 @@ const Filters:React.FC<IProps> = ({lock, divider = true, style, filters = defaul
                         <Grid.Col span={mediaQueryMd ? 4 : 8}>
                             <MultiSelectionFilterBox
                                 propertyName={'tags'}
-                                label={'Tags'}
-                                icon={<AiFillTag/>}
-                                placeholder={'write tags'}/>
+                                label={t('tab.filters.tags')}
+                                placeholder={t('tab.filters.tagsPlaceholder')}
+                                icon={<AiFillTag/>}/>
                         </Grid.Col>}
 
                     {filters?.showProcessedText &&
                         <Grid.Col span={mediaQueryMd ? 4 : 8}>
                             <MultiSelectionFilterBox
                                 propertyName={'processedText'}
-                                label={'Processed Text'}
-                                icon={<GrTextAlignCenter/>}
-                                placeholder={'write any word'}/>
+                                label={t('tab.filters.processedText')}
+                                placeholder={t('tab.filters.processedTextPlaceholder')}
+                                icon={<GrTextAlignCenter/>}/>
                         </Grid.Col>}
 
                     {filters?.showHashTags &&
                         <Grid.Col span={mediaQueryMd ? 4 : 8}>
                             <MultiSelectionFilterBox
                                 propertyName={'hashtags'}
-                                label={'Hashtags'}
-                                icon={<HiHashtag/>}
-                                placeholder={'write hashtags'}/>
+                                label={t('tab.filters.hashtags')}
+                                placeholder={t('tab.filters.hashtagsPlaceholder')}
+                                icon={<HiHashtag/>}/>
                         </Grid.Col>}
 
                     {filters?.showUsernames &&
                         <Grid.Col span={mediaQueryMd ? 4 : 8}>
                             <MultiSelectionFilterBox
                                 propertyName={'usernames'}
-                                label={'Usernames'}
-                                icon={<AiOutlineUser/>}
-                                placeholder={'write username'}/>
+                                label={t('tab.filters.usernames')}
+                                placeholder={t('tab.filters.usernamesPlaceholder')}
+                                icon={<AiOutlineUser/>}/>
                         </Grid.Col>}
 
                 </Grid>

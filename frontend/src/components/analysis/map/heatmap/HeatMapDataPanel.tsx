@@ -1,9 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Box, Table} from '@mantine/core';
 import {HeatMapContext} from '../index';
 
 const HeatMapDataPanel = () => {
-
+    const { t } = useTranslation();
     const heatMapData = useContext(HeatMapContext);
     const [count, setCount] = useState<number | null>(null);
 
@@ -33,20 +34,20 @@ const HeatMapDataPanel = () => {
         <Table verticalSpacing={2} fontSize='xs'>
             <tbody>
             <tr>
-                <td>Many</td>
+                <td><b>{t('tab.map.heatmapPanel.total')}</b></td>
+                <td>{count ? count : '...'}</td>
+            </tr>
+            <tr>
+                <td>{t('tab.map.heatmapPanel.many')}</td>
                 <td>{createSvgBox('red')}</td>
             </tr>
             <tr>
-                <td>Some</td>
+                <td>{t('tab.map.heatmapPanel.some')}</td>
                 <td>{createSvgBox('green')}</td>
             </tr>
             <tr>
-                <td>Few</td>
+                <td>{t('tab.map.heatmapPanel.few')}</td>
                 <td>{createSvgBox('blue')}</td>
-            </tr>
-            <tr>
-                <td><b>Total tweets</b></td>
-                <td>{count ? count : '...'}</td>
             </tr>
             </tbody>
         </Table>
