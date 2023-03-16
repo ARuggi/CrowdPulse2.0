@@ -102,7 +102,7 @@ const Filters:React.FC<IProps> = ({lock, divider = true, style, filters = defaul
             <LoadingOverlay
                 loader={<Flex gap='md' justify='center' align='center' direction='row' wrap='wrap'>
                     <BsLock size={50}/>
-                    <Text>Awaiting completion...</Text>
+                    <Text>{t('tab.filters.awaitingCompletion')}</Text>
                 </Flex>}
                 style={{borderRadius: '2%', margin: '1%'}}
                 visible={lock}

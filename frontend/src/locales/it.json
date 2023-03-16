@@ -68,6 +68,7 @@
     },
     "tab": {
       "filters": {
+        "awaitingCompletion": "Attendi il completamento...",
         "algorithm": {
           "algorithm": "Algoritmo",
           "all": "Entrambi",

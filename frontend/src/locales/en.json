@@ -68,6 +68,7 @@
         },
         "tab": {
             "filters": {
+                "awaitingCompletion": "Awaiting completion...",
                 "algorithm": {
                     "algorithm": "Algorithm",
                     "all": "Both",
