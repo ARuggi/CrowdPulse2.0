@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import i18next from 'i18next';
+
 import {
     createStyles,
     Group,
@@ -8,8 +10,6 @@ import {
     UnstyledButton,
 } from '@mantine/core';
 import {AiOutlineDown} from 'react-icons/ai';
-
-import i18next from 'i18next';
 
 const useStyles = createStyles((theme, { opened }: { opened: boolean }) => ({
     control: {
@@ -51,40 +51,51 @@ async function loadFlagImage(name: string) {
     return img.default;
 }
 
+type LangType = {
+    lang: string,
+    name: string,
+    image: any
+}
+
 const FrameThemeToggle = () => {
 
     const { t, i18n } = useTranslation();
-    const languages = Object.keys(i18next.services.resourceStore.data);
 
-    const [data, setData] = useState(languages.map(lang => {
-        return {lang: lang, name: t('language', {lng: lang, defaultValue: ''})!, image: null}}
-    ));
+    const [locales, setLocales] = useState<LangType[] | null>(null);
+    const [selected, setSelected] = useState<LangType | undefined>(undefined);
+    const [opened, setOpened] = useState(false);
+    const { classes } = useStyles({ opened });
 
     useEffect(() => {
         (async () => {
+            const i18nLangArray: string[] = Object.keys(i18next.services.resourceStore.data);
+            const loadedLocales: LangType[] = [];
 
-            let loadedData = [...data];
-            loadedData = await Promise.all(
-                loadedData.map(async item => {
-                    return {
-                        lang: item.lang,
-                        name: item.name,
-                        image: await loadFlagImage(`${item.lang}`)
-                    }
-                })
-            );
+            for (const lang of i18nLangArray) {
+                const langType: LangType = {
+                    lang: lang,
+                    name: t('language', {lng: lang, defaultValue: ''})!,
+                    image: await loadFlagImage(`${lang}`)
+                }
 
-            setData(loadedData);
+                loadedLocales.push(langType);
+            }
+
+            let selectedLang = loadedLocales.find(item => item.lang === i18n.language);
+
+            if (!selectedLang) {
+                selectedLang = loadedLocales.find(item => item.lang === 'en');
+            }
+
+            setLocales(loadedLocales);
+            setSelected(selectedLang);
+
         })()
     }, []);
 
-    const getLangData = (lang: string) => {
-        return data.find(item => item.lang === lang);
+    if (!locales || !selected) {
+        return <></>;
     }
-
-    const [opened, setOpened] = useState(false);
-    const { classes } = useStyles({ opened });
-    const [selected, setSelected] = useState(getLangData(i18n.language));
 
     const triggerClick = (item: any) => {
         setSelected(item);
@@ -92,7 +103,7 @@ const FrameThemeToggle = () => {
             .then(() => console.log(`language changed to '${item?.lang}'`));
     }
 
-    const items = data.map((item) => (
+    const items = locales.map((item) => (
         <Menu.Item
             icon={<Image src={item.image} width={18} height={18}/>}
             onClick={() => triggerClick(item)}
@@ -111,7 +122,7 @@ const FrameThemeToggle = () => {
         <Menu.Target>
             <UnstyledButton className={classes.control}>
                 <Group spacing='xs'>
-                    <Image src={getLangData(i18n.language)?.image} width={22} height={22}/>
+                    <Image src={selected!.image} width={22} height={22}/>
                     <span className={classes.lang}>{selected?.name}</span>
                 </Group>
                 <AiOutlineDown size={16} className={classes.icon}/>
