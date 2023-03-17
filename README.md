@@ -1,7 +1,6 @@
 # What is CrowdPulse?
 > CrowdPulse is software designed to analyse MongoDB databases containing AI-processed data.
-
-**TODO**: continue the description...
+> Therefore, It allows you to analyse data on any brand, any name, and anything you like.
 
 ## Global requirements
 To use this software, you'll need to install the following software and components:
