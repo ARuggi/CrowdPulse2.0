@@ -2,8 +2,8 @@ import React, {useContext, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import isEqual from 'lodash.isequal';
 
-import {Flex, Table, Loader, Box, Input, Text} from '@mantine/core';
-import {getHotkeyHandler} from '@mantine/hooks';
+import {Flex, Table, Loader, Box, Input, Text, ScrollArea} from '@mantine/core';
+import {getHotkeyHandler, useMediaQuery} from '@mantine/hooks';
 
 import {BsArrowRight} from 'react-icons/bs';
 import {TbBrandPagekit} from 'react-icons/tb';
@@ -19,6 +19,9 @@ const TweetListTable = () => {
     const { t } = useTranslation();
     const tweetListData = useContext<TweetsListResponse | null>(TweetListContext);
     const {tablePreferences, setTablePreferences} = useContext(TablePreferencesContext);
+
+    const mediaQuery = useMediaQuery('(max-width: 920px)');
+
     const [pageSize, setPageSize] = useState(tablePreferences.pageSize);
     const [pageNavigation, setPageNavigation] = useState(tablePreferences.page);
     let maxPages = 1;
@@ -65,25 +68,27 @@ const TweetListTable = () => {
         {
             tweetListData
                 ? <>
-                    <Table
-                        striped
-                        withBorder
-                        withColumnBorders
-                        highlightOnHover
-                        horizontalSpacing='xl'
-                        verticalSpacing='xs'>
-                        <thead>
-                        <tr>
-                            <th>{t('tab.tweetList.index')}</th>
-                            <th>{t('tab.tweetList.author')}</th>
-                            <th>{t('tab.tweetList.text')}</th>
-                            <th>{t('tab.tweetList.tags')}</th>
-                            <th>{t('tab.tweetList.createdAt')}</th>
-                            <th>{t('tab.tweetList.lang')}</th>
-                        </tr>
-                        </thead>
-                        <tbody>{rows}</tbody>
-                    </Table>
+                    <ScrollArea>
+                        <Table
+                            striped
+                            withBorder
+                            withColumnBorders
+                            highlightOnHover
+                            horizontalSpacing='xl'
+                            verticalSpacing='xs'>
+                            <thead>
+                            <tr>
+                                <th>{t('tab.tweetList.index')}</th>
+                                <th>{t('tab.tweetList.author')}</th>
+                                <th>{t('tab.tweetList.text')}</th>
+                                <th>{t('tab.tweetList.tags')}</th>
+                                <th>{t('tab.tweetList.createdAt')}</th>
+                                <th>{t('tab.tweetList.lang')}</th>
+                            </tr>
+                            </thead>
+                            <tbody>{rows}</tbody>
+                        </Table>
+                    </ScrollArea>
                     <Box
                         sx={(theme) => ({
                             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
@@ -107,7 +112,7 @@ const TweetListTable = () => {
                                 size='xs'/>
                         </Flex>
                         <Flex
-                            style={{marginTop: '-30px'}}
+                            style={mediaQuery ? {marginTop: '10px'} : {marginTop: '-30px'}}
                             gap='xs'
                             justify='flex-end'
                             align='center'
@@ -123,7 +128,7 @@ const TweetListTable = () => {
                                                                            onClick={() => triggerChangePage(tablePreferences.page - 1)}/>}
 
                             {Array
-                                .from({length: (maxPages - tablePreferences.page > 6 ? 6 : maxPages - tablePreferences.page + 1)})
+                                .from({length: (maxPages - tablePreferences.page > 2 ? 2 : maxPages - tablePreferences.page + 1)})
                                 .map((_, i) => {
                                     const key = 'table-page-button-' + i;
                                     return <TablePageButton
