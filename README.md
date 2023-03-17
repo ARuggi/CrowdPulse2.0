@@ -107,7 +107,7 @@ Only one document is required in the following collection:
 - **releaseDate**: A release date in YYYY-MM-DD format
 - **lastUpdateDate**: The latest update date in YYYY-MM-DD format
 - **htmlDescription**: An HTML description
-- **icon**: You only have to add "iVBORw0KGgoAAAA..." to the data of the base 64 string, e.g. "data:image/png;base64,iVBORw0KGgoAAAA..."
+- **icon**: You only have to add "iVBORw0KGgoAAAA..." to the data of the base 64 string, e.g. "data:image/png;base64,iVBORw0KGgoAAAA..." and it should be **128x128**.
 ```json
 {
   "version": "1.0.0",
