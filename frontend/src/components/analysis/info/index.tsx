@@ -89,10 +89,10 @@ const InfoTab = () => {
                         fontSize='md'>
                         <thead>
                         <tr>
-                            <th>{t('releaseDate')}</th>
-                            <th>{t('lastUpdate')}</th>
-                            <th>{t('version')}</th>
-                            <th>{t('sizeOnDisk')}</th>
+                            <th style={{maxWidth: '20px', textOverflow: 'ellipsis', overflow: 'hidden'}}>{t('releaseDate')}</th>
+                            <th style={{maxWidth: '20px', textOverflow: 'ellipsis', overflow: 'hidden'}}>{t('lastUpdate')}</th>
+                            <th style={{maxWidth: '20px', textOverflow: 'ellipsis', overflow: 'hidden'}}>{t('version')}</th>
+                            <th style={{maxWidth: '20px', textOverflow: 'ellipsis', overflow: 'hidden'}}>{t('sizeOnDisk')}</th>
                         </tr>
                         </thead>
                         <tbody>
