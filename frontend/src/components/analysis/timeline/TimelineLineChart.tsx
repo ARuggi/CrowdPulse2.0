@@ -12,25 +12,6 @@ import {TimelineContext} from './index';
 import {TweetsTimelineResponse} from '../../../api/TweetsTimelineResponse';
 import TimelineInfoBox from "./TimelineInfoBox";
 
-function getWidthFromMediaQuery(mediaQueryLg:    boolean,
-                                mediaQueryMdLg:  boolean,
-                                mediaQuerySmMd:  boolean,
-                                mediaQueryXsSm:  boolean,
-                                mediaQuery2XsXs: boolean) {
-
-    let size = 20;
-
-    if (mediaQueryLg)    size = 70;
-    if (mediaQueryMdLg)  size = 60;
-    if (mediaQuerySmMd)  size = 55;
-    if (mediaQueryXsSm)  size = 55;
-    if (mediaQuery2XsXs) size = 50;
-
-    const width = window.innerWidth;
-    return width * (size / 100);
-
-}
-
 const TimelineLineChart = () => {
 
     const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -39,13 +20,9 @@ const TimelineLineChart = () => {
     const { colorScheme } = useMantineColorScheme();
     const timelineData = useContext<TweetsTimelineResponse | null>(TimelineContext);
 
-    const mediaQueryLg    = useMediaQuery('(min-width: 1200px)');
-    const mediaQueryMdLg  = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
-    const mediaQuerySmMd  = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
-    const mediaQueryXsSm  = useMediaQuery('(min-width: 576px) and (max-width: 768px)');
-    const mediaQuery2XsXs = useMediaQuery('(min-width: 300px) and (max-width: 576px)');
+    const mediaQuery = useMediaQuery('(max-width: 576px)');
 
-    let width = getWidthFromMediaQuery(mediaQueryLg, mediaQueryMdLg, mediaQuerySmMd, mediaQueryXsSm, mediaQuery2XsXs);
+    let width = window.innerWidth * 0.80;
     let height = 300;
 
     const layoutOptions = {
@@ -113,7 +90,7 @@ const TimelineLineChart = () => {
     }, [colorScheme]);
 
     return <Box
-        style={{paddingBottom: '50px'}}
+        style={mediaQuery ? {paddingBottom: '90px'} : {paddingBottom: '50px'}}
         sx={(theme) => ({
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
             textAlign: 'center',
