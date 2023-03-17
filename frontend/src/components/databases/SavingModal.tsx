@@ -10,6 +10,14 @@ import {useNavigate} from 'react-router-dom';
 
 const COOKIE_SAVING_MAX_AGE = 20 * 356 * 60 * 60 * 24 * 30;
 
+const bytesToKiloBytes = (bytes: number) => {
+    return bytes / 1024;
+}
+
+const kiloBytesToMegaBytes = (kiloBytes: number) => {
+    return kiloBytes / 1024;
+}
+
 interface IProps {
     opened: boolean,
     onClose: any,
@@ -84,6 +92,7 @@ const SavingModal:React.FC<IProps> = ({opened, onClose, selectedDatabases}) => {
                 <th>{t('releaseDate')}</th>
                 <th>{t('lastUpdate')}</th>
                 <th>{t('version')}</th>
+                <th>{t('sizeOnDisk')}</th>
             </tr>
             </thead>
             <tbody>
@@ -93,6 +102,7 @@ const SavingModal:React.FC<IProps> = ({opened, onClose, selectedDatabases}) => {
                     <td>{database.info.releaseDate ? database.info.releaseDate.toString() : t('notDefined')}</td>
                     <td>{database.info.lastUpdateDate ? database.info.lastUpdateDate.toString() : t('notDefined')}</td>
                     <td>{database.info.version ? database.info.version : t('notDefined')}</td>
+                    <td>{kiloBytesToMegaBytes(bytesToKiloBytes(database.sizeOnDisk)).toFixed(2)} MB</td>
                 </tr>
             })}
             </tbody>
@@ -102,7 +112,9 @@ const SavingModal:React.FC<IProps> = ({opened, onClose, selectedDatabases}) => {
                    color='red'
                    variant='filled'
                    icon={<AiTwotoneAlert size={16} />}
-                   title={error} radius='md' children={<></>}/>
+                   title={error}
+                   radius='md'
+                   children={<></>}/>
         </Center> : <></>}
         <TextInput
             style={{margin: '20px', marginTop: '20px', marginBottom: '50px'}}
