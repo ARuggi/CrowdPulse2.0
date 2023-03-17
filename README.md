@@ -49,3 +49,72 @@ cd backend
 sudo npm install forever -g
 forever start -c "npm start" ./
 ```
+-------------------
+### Databases
+CrowdPulse supports only MongoDB databases with these collections:
+- **Message**: contains all the processed and analyzed data
+- **Info** (optional): that contains info about the current database.
+-------------------
+#### Message collection document structure
+The following properties are required:
+```json
+{
+  "raw_text": "the raw message",
+  "author_name": "the author name",
+  "author_username": "the author username",
+  "created_at": "YYYY-MM-DDTHH:MM:SS.000Z",
+  "lang": "en",
+  "possibly_sensitive": false,
+  "twitter_entities": {
+    "hashtags": [],
+    "mentions": []
+  },
+  "geo": {
+    "user_location": "Milano, Lombardia",
+    "coordinates": {
+      "latitude": "the geojson world latitude coordinate",
+      "longitude": "the geojson world longitude coordinate"
+    }
+  },
+  "processed": true,
+  "sentiment": {
+    "sent-it": {
+      "sentiment": "positive, neutral or negative"
+    },
+    "feel-it": {
+      "sentiment": "positive, neutral or negative",
+      "emotion": "joy, sadness, anger or fear"
+    }
+  },
+  "tags": {
+    "tag_me": [
+      "a tag : 123456 : a tag!!! : https://wikipedia.org/tag/... "
+    ]
+  },
+  "spacy": {
+    "processed_text": [
+      "hello POS : ADJ",
+      "world POS : ADJ"
+    ]
+  }
+}
+```
+-------------------
+#### Info collection document structure (optional)
+Only one document is required in the following collection:
+- **version**: The current collection version
+- **targetVersion**: 0 for legacy twitter database, 1+ for newer
+- **releaseDate**: A release date in YYYY-MM-DD format
+- **lastUpdateDate**: The latest update date in YYYY-MM-DD format
+- **htmlDescription**: An HTML description
+- **icon**: You only have to add "iVBORw0KGgoAAAA..." to the data of the base 64 string, e.g. "data:image/png;base64,iVBORw0KGgoAAAA..."
+```json
+{
+  "version": "1.0.0",
+  "targetVersion": 0,
+  "releaseDate": "2023-02-02",
+  "lastUpdateDate": "2023-02-05",
+  "htmlDescription": "<h3>Test html description</h3>",
+  "icon": "base 64 icon"
+}
+```
