@@ -14,25 +14,6 @@ import {useMediaQuery} from '@mantine/hooks';
 import {SentimentTimelineContext} from './index';
 import {SentimentTimelineResponse} from '../../../api/SentimentTimelineResponse';
 
-function getWidthFromMediaQuery(mediaQueryLg:    boolean,
-                                mediaQueryMdLg:  boolean,
-                                mediaQuerySmMd:  boolean,
-                                mediaQueryXsSm:  boolean,
-                                mediaQuery2XsXs: boolean) {
-
-    let size = 20;
-
-    if (mediaQueryLg)    size = 70;
-    if (mediaQueryMdLg)  size = 60;
-    if (mediaQuerySmMd)  size = 55;
-    if (mediaQueryXsSm)  size = 55;
-    if (mediaQuery2XsXs) size = 50;
-
-    const width = window.innerWidth;
-    return width * (size / 100);
-
-}
-
 const getCurrentLocalDate = () => {
     return new Date().toISOString().slice(0, 10);
 }
@@ -53,13 +34,9 @@ const SentimentLineChart = () => {
     const sentimentTimelineData = useContext<SentimentTimelineResponse | null>(SentimentTimelineContext);
     const [visibility, setVisibility] = useState<Visibility>({showNeutralLine: true, showPositiveLine: true, showNegativeLine: true});
 
-    const mediaQueryLg    = useMediaQuery('(min-width: 1200px)');
-    const mediaQueryMdLg  = useMediaQuery('(min-width: 992px) and (max-width: 1200px)');
-    const mediaQuerySmMd  = useMediaQuery('(min-width: 768px) and (max-width: 992px)');
-    const mediaQueryXsSm  = useMediaQuery('(min-width: 576px) and (max-width: 768px)');
-    const mediaQuery2XsXs = useMediaQuery('(min-width: 300px) and (max-width: 576px)');
+    const mediaQuery = useMediaQuery('(max-width: 576px)');
 
-    let width = getWidthFromMediaQuery(mediaQueryLg, mediaQueryMdLg, mediaQuerySmMd, mediaQueryXsSm, mediaQuery2XsXs);
+    let width = window.innerWidth * 0.80;
     let height = 300;
 
     const onChangeSwitch = (event: React.ChangeEvent<HTMLInputElement>, propertyName: string) => {
@@ -160,6 +137,7 @@ const SentimentLineChart = () => {
     }, [colorScheme]);
 
     return <Box
+        style={mediaQuery ? {paddingBottom: '30px'} : {}}
         sx={(theme) => ({
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
             textAlign: 'center',
@@ -181,21 +159,21 @@ const SentimentLineChart = () => {
                             defaultChecked={true}
                             size='xs'
                             color='yellow'
-                            onChange={(event) => onChangeSwitch(event, 'showPositiveLine')}
-                            style={{zIndex: 10}}/>
+                            style={{zIndex: 10, ...(mediaQuery ? {marginBottom: '20px'} : {})}}
+                            onChange={(event) => onChangeSwitch(event, 'showPositiveLine')}/>
                     <Switch label={t('tab.sentiment.neutral')}
                             disabled={!visibility.showPositiveLine && !visibility.showNegativeLine}
                             defaultChecked={true}
                             size='xs'
                             color='blue'
-                            style={{zIndex: 10}}
+                            style={{zIndex: 10, ...(mediaQuery ? {marginBottom: '20px'} : {})}}
                             onChange={(event) => onChangeSwitch(event, 'showNeutralLine')}/>
                     <Switch label={t('tab.sentiment.negative')}
                             disabled={!visibility.showPositiveLine && !visibility.showNeutralLine}
                             defaultChecked={true}
                             size='xs'
                             color='red'
-                            style={{zIndex: 10}}
+                            style={{zIndex: 10, ...(mediaQuery ? {marginBottom: '20px'} : {})}}
                             onChange={(event) => onChangeSwitch(event, 'showNegativeLine')}/>
                     <div ref={chartContainerRef} style={{marginTop: '-30px', paddingBottom: '100px'}}/>
                 </>
