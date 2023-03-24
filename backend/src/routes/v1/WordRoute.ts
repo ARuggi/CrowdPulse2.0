@@ -22,6 +22,7 @@ interface Filters {
 
 // The word must contain at least one letter and only alphanumeric characters.
 const PATTERN = /^(?=.*[a-zA-Z])[a-zA-Z0-9]+$/;
+const LIMIT = 50;
 
 // noinspection DuplicatedCode
 export class WordRoute extends AbstractRoute {
@@ -50,7 +51,7 @@ export class WordRoute extends AbstractRoute {
 
         const emojiRegexPattern = emojiRegex();
         let filters = this.createFiltersPipeline(queryFilters);
-        let data = [];
+        let resultMap = new Map();
 
         try {
 
@@ -101,7 +102,8 @@ export class WordRoute extends AbstractRoute {
                 let result = await dbQuery.exec();
 
                 if (result && result.length > 0) {
-                    result.forEach(current => {
+                    for (const current of result) {
+
                         const obj = current as { word: string, count: number };
                         const {word} = obj;
 
@@ -109,15 +111,32 @@ export class WordRoute extends AbstractRoute {
                             const result = removeStopwords([word], ita);
 
                             if (result && result.length > 0) {
-                                data.push({text: obj.word, value: obj.count});
+                                let word = obj.word.toLowerCase();
+                                let count = obj.count;
+
+                                if (resultMap.has(word)) {
+                                    count += resultMap.get(word);
+                                }
+
+                                resultMap.set(word, count);
                             }
                         }
-                    });
+                    }
                 }
             }
 
-            data = data.sort((a, b) => b.count - a.count);
-            res.send(data);
+            let result = [];
+
+            resultMap.forEach((count, word) => {
+                result.push({text: word, value: count})
+            });
+
+            result = result
+                .sort((a, b) => b.value - a.value)
+                .slice(0, LIMIT * dbs.length);
+
+            console.log(result);
+            res.send(result);
 
         } catch (error) {
             console.log(error)
