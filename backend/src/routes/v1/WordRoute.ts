@@ -135,7 +135,6 @@ export class WordRoute extends AbstractRoute {
                 .sort((a, b) => b.value - a.value)
                 .slice(0, LIMIT * dbs.length);
 
-            console.log(result);
             res.send(result);
 
         } catch (error) {
