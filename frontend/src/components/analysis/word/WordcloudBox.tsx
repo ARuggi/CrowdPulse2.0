@@ -32,7 +32,7 @@ const WordcloudBox = () => {
             ? <ReactWordcloud
                 words={words.length > 0 ? words : [{text: 'no results :(', value: 1}]}
                 options={{
-                    fontFamily: 'monospace',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
                     rotations: 1,
                     rotationAngles: [0, 0],
                     fontSizes: [20, 60]
