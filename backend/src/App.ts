@@ -55,7 +55,7 @@ class App {
 
     express: express.Application;
     server: http.Server;
-    port: number = 4000;
+    port = 4000;
 
     constructor() {
 
@@ -99,9 +99,10 @@ class App {
         }
     }
 
+    // register all routes by using reflection.
     private registerRoutes() {
         App.ROUTES.forEach(route => {
-            const method = Reflect.get(this.express, route.getMethod()) as (path: string, perform: void) => {};
+            const method = Reflect.get(this.express, route.getMethod()) as (path: string, perform: void) => unknown;
             Reflect.apply(method, this.express, [route.getPath(), async (req, res) => route.handleRequest(req, res)]);
             console.log('Registered endpoint: [' + route.getMethod().toUpperCase() + '] ' + route.getPath());
         })

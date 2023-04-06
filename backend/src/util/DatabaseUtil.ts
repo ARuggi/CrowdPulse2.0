@@ -62,7 +62,7 @@ export async function getCrowdPulseDatabaseInfo(databaseName: string): Promise<a
         .useDb(databaseName)
         .collection("Info");
 
-    let info: CrowdPulseDatabaseInfo = {
+    const info: CrowdPulseDatabaseInfo = {
         version: "",
         targetVersion: 0,
         releaseDate: undefined,

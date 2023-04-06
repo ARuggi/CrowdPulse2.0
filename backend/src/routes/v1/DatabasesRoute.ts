@@ -9,17 +9,16 @@ import {
 } from '../../util/DatabaseUtil';
 import {getDatabasesFromQuery} from '../../util/RequestUtil';
 
-// noinspection DuplicatedCode
 export class DatabasesRoute extends AbstractRoute {
 
     async handleRouteRequest(req: Request, res: Response): Promise<void> {
-        let dbs = getDatabasesFromQuery(req);
+        const dbs = getDatabasesFromQuery(req);
 
         try {
 
-            let listDatabases = await getAdminConnection().db.admin().listDatabases();
+            const listDatabases = await getAdminConnection().db.admin().listDatabases();
             listDatabases.databases = listDatabases.databases.filter((database) => !isReservedDatabase(database.name));
-            let result = [];
+            const result = [];
 
             for (const database of listDatabases.databases) {
                 if (dbs.length > 0 && !dbs.find(name => name === database.name)) continue;
@@ -46,10 +45,10 @@ export class DatabasesRoute extends AbstractRoute {
     }
 
     protected path(): string {
-        return "/databases";
+        return '/databases';
     }
 
     getMethod(): string {
-        return "get";
+        return 'get';
     }
 }

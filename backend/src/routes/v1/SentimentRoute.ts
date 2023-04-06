@@ -3,8 +3,10 @@ import {Request, Response} from 'express';
 import {getMongoConnection, AnalyzedTweetSchema} from '../../database/database';
 import {readArrayFromQuery} from '../../util/RequestUtil';
 import {createMissingQueryParamResponse} from '../IRoute';
+import {Connection} from "mongoose";
 
-interface Filters {
+interface QueryFilters {
+    dbs: string[],
     algorithm: string,
     dateFrom: string,
     dateTo: string,
@@ -18,15 +20,9 @@ interface Filters {
 export class SentimentRoute extends AbstractRoute {
 
     async handleRouteRequest(req: Request, res: Response): Promise<void> {
-        let dbs = readArrayFromQuery(req.query?.dbs);
 
-        if (dbs.length === 0) {
-            res.status(400);
-            res.send(createMissingQueryParamResponse('dbs'));
-            return;
-        }
-
-        const queryFilters: Filters = {
+        const queryFilters: QueryFilters = {
+            dbs:           readArrayFromQuery(req.query?.dbs),
             algorithm:     req.query?.algorithm as string,
             dateFrom:      req.query?.dateFrom as string,
             dateTo:        req.query?.dateTo as string,
@@ -36,8 +32,14 @@ export class SentimentRoute extends AbstractRoute {
             usernames:     readArrayFromQuery(req.query?.usernames)
         };
 
-        let filters = this.createFiltersPipeline(queryFilters);
-        let data = {
+        // send an error if the query is missing the 'dbs' parameter.
+        if (queryFilters.dbs.length === 0) {
+            res.status(400);
+            res.send(createMissingQueryParamResponse('dbs'));
+            return;
+        }
+
+        const data = {
             algorithm: queryFilters.algorithm,
             processed: 0,
             notProcessed: 0,
@@ -56,49 +58,11 @@ export class SentimentRoute extends AbstractRoute {
 
         try {
 
-            for (const databaseName of dbs) {
+            for (const databaseName of queryFilters.dbs) {
 
-                let database = getMongoConnection().useDb(databaseName);
-                let model = database.model('Message', AnalyzedTweetSchema);
+                const database = getMongoConnection().useDb(databaseName);
+                const result = await this.getFromDatabase(database, queryFilters);
 
-                let dbQuery = model.aggregate([
-                    {
-                        $facet: {
-                            processedCount: [
-                                { $match: { processed: true } },
-                                { $count: 'processed' }
-                            ],
-                            notProcessedCount: [
-                                { $match: { processed: false } },
-                                { $count: 'processed' }
-                            ],
-                            data: [
-                                { $match: filters },
-                                {
-                                    $group: {
-                                        _id: "$sentiment.sentiment",
-                                        positive: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'positive'] }, 1, 0] } },
-                                        neutral:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'neutral']  }, 1, 0] } },
-                                        negative: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'negative'] }, 1, 0] } },
-                                        joy:      { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'joy']      }, 1, 0] } },
-                                        sadness:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'sadness']  }, 1, 0] } },
-                                        anger:    { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'anger']    }, 1, 0] } },
-                                        fear:     { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'fear']     }, 1, 0] } },
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        $project: {
-                            processedCount: 1,
-                            notProcessedCount: 1,
-                            data: 1
-                        }
-                    }
-                ]);
-
-                let result = await dbQuery.exec();
                 const [aggregationResult] = result;
 
                 if (aggregationResult) {
@@ -127,44 +91,121 @@ export class SentimentRoute extends AbstractRoute {
         }
     }
 
-    private createFiltersPipeline = (queryFilters: Filters) => {
+    /**
+     * Get data from the database using the given filters.
+     *
+     * @param database the database to query.
+     * @param queryFilters the query filters to apply.
+     */
+    private getFromDatabase(database: Connection, queryFilters: QueryFilters) {
+        const model = database.model('Message', AnalyzedTweetSchema);
+        const filters = this.createFiltersPipeline(queryFilters);
+
+        const dbQuery = model.aggregate([
+            {
+                $facet: {
+                    processedCount: [
+                        { $match: { processed: true } },
+                        { $count: 'processed' }
+                    ],
+                    notProcessedCount: [
+                        { $match: { processed: false } },
+                        { $count: 'processed' }
+                    ],
+                    data: [
+                        { $match: filters },
+                        {
+                            $group: {
+                                _id: "$sentiment.sentiment",
+                                positive: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'positive'] }, 1, 0] } },
+                                neutral:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'neutral']  }, 1, 0] } },
+                                negative: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'negative'] }, 1, 0] } },
+                                joy:      { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'joy']      }, 1, 0] } },
+                                sadness:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'sadness']  }, 1, 0] } },
+                                anger:    { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'anger']    }, 1, 0] } },
+                                fear:     { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'fear']     }, 1, 0] } },
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                $project: {
+                    processedCount: 1,
+                    notProcessedCount: 1,
+                    data: 1
+                }
+            }
+        ]);
+
+        return dbQuery.exec();
+    }
+
+    /**
+     * Creates the filters pipeline for the aggregation query.
+     * @param queryFilters the query filters to apply.
+     */
+    private createFiltersPipeline = (queryFilters: QueryFilters) => {
+
+        const {
+            dateFrom,
+            dateTo,
+            tags,
+            processedText,
+            hashtags,
+            usernames
+        } = queryFilters;
+
         let filters: any = {};
 
-        if (queryFilters.dateFrom && queryFilters.dateTo) {
-            const dateFilter = {'created_at': {
-                    $gte: new Date(queryFilters.dateFrom).toISOString(),
-                    $lte: new Date(queryFilters.dateTo).toISOString()
-                }};
-            filters = {...filters, ...dateFilter};
+        // date filter.
+        if (dateFrom && dateTo) {
+            filters = {
+                ...filters,
+                ...{
+                    'created_at': {
+                        $gte: new Date(dateFrom).toISOString(),
+                        $lte: new Date(dateTo).toISOString()
+                    }
+                }
+            };
         }
 
-        if (queryFilters.tags && queryFilters.tags.length > 0) {
-            //const tagsFilter = {'tags.tag_me': {$in: queryFilters.tags}};
-            const tagsFilters = queryFilters.tags.map(tag => {
+        // tags filter.
+        if (tags && tags.length > 0) {
+            const tagsFilters = tags.map(tag => {
                 return {'tags.tag_me': {$regex: new RegExp(tag, 'i')}};
             });
 
-            filters = {...filters, ...{$and: tagsFilters}};
+            filters = {
+                ...filters,
+                ...{
+                    $and: tagsFilters
+                }
+            };
         }
 
-        if (queryFilters.processedText && queryFilters.processedText.length > 0) {
-            const processedTextFilters = queryFilters.processedText.map(processedText => {
-                return {'spacy.processed_text': {$regex: new RegExp(processedText, 'i')}};
+        // processed text filter.
+        if (processedText && processedText.length > 0) {
+            const processedTextFilters = processedText.map(text => {
+                return {'spacy.processed_text': {$regex: new RegExp(text, 'i')}};
             });
 
             filters.$and = (filters.$and || []).concat(processedTextFilters);
         }
 
-        if (queryFilters.hashtags && queryFilters.hashtags.length > 0) {
-            const hashtagsFilters = queryFilters.hashtags.map(hashtag => {
+        // hashtags filter.
+        if (hashtags && hashtags.length > 0) {
+            const hashtagsFilters = hashtags.map(hashtag => {
                 return {'twitter_entities.hashtags': {$regex: new RegExp(hashtag, 'i')}};
             });
 
             filters.$and = (filters.$and || []).concat(hashtagsFilters);
         }
 
-        if (queryFilters.usernames && queryFilters.usernames.length > 0) {
-            const usernamesFilters = queryFilters.usernames.map(username => {
+        // usernames filter.
+        if (usernames && usernames.length > 0) {
+            const usernamesFilters = usernames.map(username => {
                 return {'author_username': {$regex: new RegExp(username, 'i')}};
             });
 

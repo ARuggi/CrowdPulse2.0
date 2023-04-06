@@ -1,10 +1,20 @@
 import {IRoute} from '../IRoute';
 import {Request, Response} from 'express';
 
+/**
+ * Abstract class that implements the {@link IRoute} interface.
+ * Use this class to implement a new route by overriding the handleRouteRequest method.
+ */
 export abstract class AbstractRoute implements IRoute {
 
+    /**
+     * Handles the request and sends the response.
+     *
+     * @param req the client request.
+     * @param res the server response.
+     */
     async handleRequest(req: Request, res: Response): Promise<void> {
-        let method = this.getMethod().toLowerCase();
+        const method = this.getMethod().toLowerCase();
 
         if (method === "get") {
             console.log(`Executing [${req.method}] '${req.url}' by '${req.ip}'`);
@@ -21,6 +31,12 @@ export abstract class AbstractRoute implements IRoute {
         }
     }
 
+    /**
+     * Implement this method to handle the request.
+     *
+     * @param req the client request.
+     * @param res the server response.
+     */
     abstract handleRouteRequest(req: Request, res: Response): Promise<void>;
 
     /**
