@@ -115,16 +115,22 @@ export class SentimentRoute extends AbstractRoute {
                     data: [
                         { $match: filters },
                         {
-                            $group: {
-                                _id: "$sentiment.sentiment",
-                                positive: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'positive'] }, 1, 0] } },
-                                neutral:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'neutral']  }, 1, 0] } },
-                                negative: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'negative'] }, 1, 0] } },
-                                joy:      { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'joy']      }, 1, 0] } },
-                                sadness:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'sadness']  }, 1, 0] } },
-                                anger:    { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'anger']    }, 1, 0] } },
-                                fear:     { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'fear']     }, 1, 0] } },
-                            }
+                            $group: queryFilters.algorithm === 'sent-it'
+                                ? {
+                                    _id: "$sentiment.sentiment",
+                                    positive: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'positive'] }, 1, 0] } },
+                                    neutral:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'neutral']  }, 1, 0] } },
+                                    negative: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'negative'] }, 1, 0] } }
+                                } : {
+                                    _id: "$sentiment.sentiment",
+                                    positive: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'positive'] }, 1, 0] } },
+                                    neutral:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'neutral']  }, 1, 0] } },
+                                    negative: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'negative'] }, 1, 0] } },
+                                    joy:      { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'joy']      }, 1, 0] } },
+                                    sadness:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'sadness']  }, 1, 0] } },
+                                    anger:    { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'anger']    }, 1, 0] } },
+                                    fear:     { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'fear']     }, 1, 0] } },
+                                }
                         }
                     ]
                 }

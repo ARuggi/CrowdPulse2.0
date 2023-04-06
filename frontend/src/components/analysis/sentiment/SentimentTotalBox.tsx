@@ -28,6 +28,14 @@ const SentimentTotalBox = () => {
             {sentimentData
                 ? <Text>{sentimentData?.notProcessed}</Text>
                 : <Loader size='sm' variant='dots'/>}
+            <Text><b>{t('tab.sentiment.total')}</b></Text>
+            {sentimentData
+                ? <Text>{
+                    sentimentData?.sentimentData.positive
+                    + sentimentData?.sentimentData.neutral
+                    + sentimentData?.sentimentData.negative
+                }</Text>
+                : <Loader size='sm' variant='dots'/>}
         </Flex>
     </Box>
 }

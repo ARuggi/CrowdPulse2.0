@@ -109,8 +109,9 @@
       "sentiment": {
         "sentiment": "Sentimenti",
         "emotion": "Emozioni",
-        "processed": "Processati",
-        "notProcessed": "Non processati",
+        "total": "Sentiment totalizzati",
+        "processed": "Tot. tweet processati",
+        "notProcessed": "Tot. tweet non processati",
         "percentage": "Percentuali",
         "positive": "Positivi",
         "neutral": "Neutrali",
