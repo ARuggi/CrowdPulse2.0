@@ -3,7 +3,7 @@ import {Request, Response} from 'express';
 import {getMongoConnection, AnalyzedTweetSchema} from '../../database/database';
 import {readArrayFromQuery} from '../../util/RequestUtil';
 import {createMissingQueryParamResponse} from '../IRoute';
-import {Connection} from "mongoose";
+import {Connection} from 'mongoose';
 
 interface QueryFilters {
     dbs: string[],
@@ -39,6 +39,15 @@ export class SentimentRoute extends AbstractRoute {
             return;
         }
 
+        // send an error if the query is missing the right 'algorithm' parameter.
+        if (queryFilters.algorithm !== 'sent-it'
+            && queryFilters.algorithm !== 'feel-it'
+            && queryFilters.algorithm !== 'hate-speech') {
+            res.status(400);
+            res.send(createMissingQueryParamResponse('algorithm'));
+            return;
+        }
+
         const data = {
             algorithm: queryFilters.algorithm,
             processed: 0,
@@ -53,6 +62,12 @@ export class SentimentRoute extends AbstractRoute {
                 sadness: 0,
                 anger: 0,
                 fear: 0
+            },
+            hateSpeechData: {
+                acceptable: 0,
+                inappropriate: 0,
+                offensive: 0,
+                violent: 0
             }
         }
 
@@ -62,7 +77,6 @@ export class SentimentRoute extends AbstractRoute {
 
                 const database = getMongoConnection().useDb(databaseName);
                 const result = await this.getFromDatabase(database, queryFilters);
-
                 const [aggregationResult] = result;
 
                 if (aggregationResult) {
@@ -79,6 +93,10 @@ export class SentimentRoute extends AbstractRoute {
                     data.emotionData.sadness += dataResult?.sadness ? dataResult?.sadness : 0;
                     data.emotionData.anger   += dataResult?.anger   ? dataResult?.anger   : 0;
                     data.emotionData.fear    += dataResult?.fear    ? dataResult?.fear    : 0;
+                    data.hateSpeechData.acceptable    += dataResult?.acceptable    ? dataResult?.acceptable    : 0;
+                    data.hateSpeechData.inappropriate += dataResult?.inappropriate ? dataResult?.inappropriate : 0;
+                    data.hateSpeechData.offensive     += dataResult?.offensive     ? dataResult?.offensive     : 0;
+                    data.hateSpeechData.violent       += dataResult?.violent       ? dataResult?.violent       : 0;
                 }
             }
 
@@ -117,20 +135,27 @@ export class SentimentRoute extends AbstractRoute {
                         {
                             $group: queryFilters.algorithm === 'sent-it'
                                 ? {
-                                    _id: "$sentiment.sentiment",
+                                    _id: '$sentiment.sentiment',
                                     positive: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'positive'] }, 1, 0] } },
                                     neutral:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'neutral']  }, 1, 0] } },
                                     negative: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'negative'] }, 1, 0] } }
-                                } : {
-                                    _id: "$sentiment.sentiment",
-                                    positive: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'positive'] }, 1, 0] } },
-                                    neutral:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'neutral']  }, 1, 0] } },
-                                    negative: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'negative'] }, 1, 0] } },
-                                    joy:      { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'joy']      }, 1, 0] } },
-                                    sadness:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'sadness']  }, 1, 0] } },
-                                    anger:    { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'anger']    }, 1, 0] } },
-                                    fear:     { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'fear']     }, 1, 0] } },
-                                }
+                                } : queryFilters.algorithm === 'feel-it' ?
+                                    {
+                                        _id: '$sentiment.sentiment',
+                                        positive: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'positive'] }, 1, 0] } },
+                                        neutral:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'neutral']  }, 1, 0] } },
+                                        negative: { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.sentiment`, 'negative'] }, 1, 0] } },
+                                        joy:      { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'joy']      }, 1, 0] } },
+                                        sadness:  { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'sadness']  }, 1, 0] } },
+                                        anger:    { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'anger']    }, 1, 0] } },
+                                        fear:     { $sum: { $cond: [{ $eq: [`$sentiment.${queryFilters.algorithm}.emotion`,   'fear']     }, 1, 0] } },
+                                    } : {
+                                        _id: '$sentiment.sentiment',
+                                        acceptable:    { $sum: { $cond: [{ $eq: [`$sentiment.hate_speech_it.hate_speech_level`, 'acceptable']    }, 1, 0] } },
+                                        inappropriate: { $sum: { $cond: [{ $eq: [`$sentiment.hate_speech_it.hate_speech_level`, 'inappropriate'] }, 1, 0] } },
+                                        offensive:     { $sum: { $cond: [{ $eq: [`$sentiment.hate_speech_it.hate_speech_level`, 'offensive']     }, 1, 0] } },
+                                        violent:       { $sum: { $cond: [{ $eq: [`$sentiment.hate_speech_it.hate_speech_level`, 'violent']       }, 1, 0] } },
+                                    }
                         }
                     ]
                 }

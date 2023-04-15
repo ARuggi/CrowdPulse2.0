@@ -31,9 +31,21 @@ const SentimentTotalBox = () => {
             <Text><b>{t('tab.sentiment.total')}</b></Text>
             {sentimentData
                 ? <Text>{
-                    sentimentData?.sentimentData.positive
-                    + sentimentData?.sentimentData.neutral
-                    + sentimentData?.sentimentData.negative
+
+                    sentimentData.algorithm === 'sent-it'
+                    || sentimentData.algorithm === 'feel-it'
+
+                        // sent-it or feel-it algorithm
+                        ? sentimentData?.sentimentData.positive
+                        + sentimentData?.sentimentData.neutral
+                        + sentimentData?.sentimentData.negative
+
+                        // hate-speech algorithm
+                        : sentimentData?.hateSpeechData.acceptable
+                        + sentimentData?.hateSpeechData.inappropriate
+                        + sentimentData?.hateSpeechData.offensive
+                        + sentimentData?.hateSpeechData.violent
+
                 }</Text>
                 : <Loader size='sm' variant='dots'/>}
         </Flex>

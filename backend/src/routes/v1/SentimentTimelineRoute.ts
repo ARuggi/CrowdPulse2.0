@@ -37,7 +37,19 @@ export class SentimentTimelineRoute extends AbstractRoute {
             return;
         }
 
-        let data = [];
+        // send an error if the query is missing the right 'algorithm' parameter.
+        if (queryFilters.algorithm !== 'sent-it'
+            && queryFilters.algorithm !== 'feel-it'
+            && queryFilters.algorithm !== 'hate-speech') {
+            res.status(400);
+            res.send(createMissingQueryParamResponse('algorithm'));
+            return;
+        }
+
+        const result = {
+            algorithm: queryFilters.algorithm,
+            data: []
+        };
 
         try {
 
@@ -46,26 +58,30 @@ export class SentimentTimelineRoute extends AbstractRoute {
                 const database = getMongoConnection().useDb(databaseName);
                 const model = database.model('Message', AnalyzedTweetSchema);
                 const dbAggregationQuery = model
-                    .aggregate(this.createAggregationPipeline(queryFilters))
+                    .aggregate(queryFilters.algorithm === 'sent-it'
+                        ? this.createSentItAggregationPipeline(queryFilters)
+                        : queryFilters.algorithm === 'feel-it'
+                            ? this.createFeelItAggregationPipeline(queryFilters)
+                            : this.createHateSpeechAggregationPipeline(queryFilters))
                     .sort('date');
 
                 (await dbAggregationQuery.exec()).forEach(current => {
 
-                    if (data.find(element => element.date === current.date)) {
-                        data.forEach(element => {
+                    if (result.data.find(element => element.date === current.date)) {
+                        result.data.forEach(element => {
                             if (element.date === current.date) {
                                 element.value += current.value;
                             }
                         });
                     } else {
-                        data.push(current);
+                        result.data.push(current);
                     }
                 });
 
             }
 
-            data = data.sort((d1, d2) => new Date(d1.date).getTime() - new Date(d2.date).getTime());
-            res.send(data);
+            result.data = result.data.sort((d1, d2) => new Date(d1.date).getTime() - new Date(d2.date).getTime());
+            res.send(result);
 
         } catch (error) {
             console.log(error)
@@ -74,79 +90,109 @@ export class SentimentTimelineRoute extends AbstractRoute {
         }
     }
 
-    private createAggregationPipeline(queryFilters: QueryFilters): any {
+    private createSentItAggregationPipeline(queryFilters: QueryFilters): any {
         const filters = this.createFiltersPipeline(queryFilters);
         const { algorithm } = queryFilters;
 
         return [
-            {
-                $match: {...filters, processed: true}
-            },
-            {
-                $addFields: {
-                    date: {
-                        $dateFromString: {
-                            dateString: '$created_at'
-                        }
-                    }
-                }
-            },
+            { $match: {...filters, processed: true} },
+            { $addFields: { date: { $dateFromString: { dateString: '$created_at' } } } },
             {
                 $group: {
                     _id: {
-                        day: { $dateToString: { format: '%d', date: '$date' } },
+                        day:   { $dateToString: { format: '%d', date: '$date' } },
                         month: { $dateToString: { format: '%m', date: '$date' } },
-                        year: { $dateToString: { format: '%Y', date: '$date' } },
+                        year:  { $dateToString: { format: '%Y', date: '$date' } },
                     },
-                    positiveCount: {
-                        $sum: {
-                            $cond: {
-                                if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'positive'] },
-                                then: 1,
-                                else: 0
-                            }
-                        }
-                    },
-                    neutralCount: {
-                        $sum: {
-                            $cond: {
-                                if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'neutral'] },
-                                then: 1,
-                                else: 0
-                            }
-                        }
-                    },
-                    negativeCount: {
-                        $sum: {
-                            $cond: {
-                                if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'negative'] },
-                                then: 1,
-                                else: 0
-                            }
-                        }
-                    }
+                    sentimentPositiveCount: { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'positive'] }, then: 1, else: 0 } } },
+                    sentimentNeutralCount:  { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'neutral']  }, then: 1, else: 0 } } },
+                    sentimentNegativeCount: { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'negative'] }, then: 1, else: 0 } } }
                 }
             },
             {
                 $project: {
                     _id: 0,
-                    date: {
-                        $concat: [
-                            '$_id.year', '-', '$_id.month', '-', '$_id.day'
-                        ]
+                    date: { $concat: ['$_id.year', '-', '$_id.month', '-', '$_id.day'] },
+                    sentimentPositiveCount: 1,
+                    sentimentNeutralCount: 1,
+                    sentimentNegativeCount: 1
+                }
+            },
+            { $sort: { '_id.year': 1, '_id.month': 1, 'id_day': 1 } }
+        ];
+    }
+
+    private createFeelItAggregationPipeline(queryFilters: QueryFilters): any {
+        const filters = this.createFiltersPipeline(queryFilters);
+        const { algorithm } = queryFilters;
+
+        return [
+            { $match: {...filters, processed: true} },
+            { $addFields: { date: { $dateFromString: { dateString: '$created_at' } } } },
+            {
+                $group: {
+                    _id: {
+                        day:   { $dateToString: { format: '%d', date: '$date' } },
+                        month: { $dateToString: { format: '%m', date: '$date' } },
+                        year:  { $dateToString: { format: '%Y', date: '$date' } },
                     },
-                    positiveCount: 1,
-                    neutralCount: 1,
-                    negativeCount: 1
+                    sentimentPositiveCount: { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'positive'] }, then: 1, else: 0 } } },
+                    sentimentNeutralCount:  { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'neutral']  }, then: 1, else: 0 } } },
+                    sentimentNegativeCount: { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.sentiment`, 'negative'] }, then: 1, else: 0 } } },
+                    emotionJoyCount:        { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.emotion`,   'joy']      }, then: 1, else: 0 } } },
+                    emotionSadnessCount:    { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.emotion`,   'sadness']  }, then: 1, else: 0 } } },
+                    emotionAngerCount:      { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.emotion`,   'anger']    }, then: 1, else: 0 } } },
+                    emotionFearCount:       { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.emotion`,   'fear']     }, then: 1, else: 0 } } },
                 }
             },
             {
-                $sort: {
-                    '_id.year': 1,
-                    '_id.month': 1,
-                    'id_day': 1
+                $project: {
+                    _id: 0,
+                    date: { $concat: ['$_id.year', '-', '$_id.month', '-', '$_id.day'] },
+                    sentimentPositiveCount: 1,
+                    sentimentNeutralCount: 1,
+                    sentimentNegativeCount: 1,
+                    emotionJoyCount: 1,
+                    emotionSadnessCount: 1,
+                    emotionAngerCount: 1,
+                    emotionFearCount: 1
                 }
-            }
+            },
+            { $sort: { '_id.year': 1, '_id.month': 1, 'id_day': 1 } }
+        ];
+    }
+
+    private createHateSpeechAggregationPipeline(queryFilters: QueryFilters): any {
+        const filters = this.createFiltersPipeline(queryFilters);
+        const { algorithm } = queryFilters;
+
+        return [
+            { $match: {...filters, processed: true} },
+            { $addFields: { date: { $dateFromString: { dateString: '$created_at' } } } },
+            {
+                $group: {
+                    _id: {
+                        day:   { $dateToString: { format: '%d', date: '$date' } },
+                        month: { $dateToString: { format: '%m', date: '$date' } },
+                        year:  { $dateToString: { format: '%Y', date: '$date' } },
+                    },
+                    hateSpeechAcceptableCount:    { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.hate_speech_it`, 'acceptable']    }, then: 1, else: 0 } } },
+                    hateSpeechInappropriateCount: { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.hate_speech_it`, 'inappropriate'] }, then: 1, else: 0 } } },
+                    hateSpeechOffensiveCount:     { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.hate_speech_it`, 'offensive']     }, then: 1, else: 0 } } },
+                    hateSpeechViolentCount:       { $sum: { $cond: { if: { $eq: [`$sentiment.${algorithm}.hate_speech_it`, 'violent']       }, then: 1, else: 0 } } },
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    date: { $concat: ['$_id.year', '-', '$_id.month', '-', '$_id.day'] },
+                    hateSpeechAcceptableCount: 1,
+                    hateSpeechInappropriateCount: 1,
+                    hateSpeechOffensiveCount: 1,
+                    hateSpeechViolentCount: 1
+                }
+            },
+            { $sort: { '_id.year': 1, '_id.month': 1, 'id_day': 1 } }
         ];
     }
 

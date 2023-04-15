@@ -14,6 +14,7 @@ interface QueryFilters {
     algorithm: string,
     sentiment: string,
     emotion: string,
+    hateSpeech: string,
     type: string,
     dateFrom: string,
     dateTo: string,
@@ -25,8 +26,8 @@ interface QueryFilters {
 
 const EMOJI_REGEX = emojiRegex();
 
-// The word must contain at least one letter and only alphanumeric characters.
-const PATTERN = /^(?=.*[a-zA-Z])[a-zA-Z0-9]+$/;
+// The word must contain at least one letter and only alphanumeric characters and spaces.
+const PATTERN = /^(?=.*[a-zA-Z])[a-zA-Z0-9\s]+$/;
 const LIMIT = 50;
 
 export class WordRoute extends AbstractRoute {
@@ -38,6 +39,7 @@ export class WordRoute extends AbstractRoute {
             algorithm:     req.query?.algorithm as string,
             sentiment:     req.query?.sentiment as string,
             emotion:       req.query?.emotion as string,
+            hateSpeech:    req.query?.hateSpeech as string,
             type:          req.query?.type as string,
             dateFrom:      req.query?.dateFrom as string,
             dateTo:        req.query?.dateTo as string,
@@ -54,6 +56,16 @@ export class WordRoute extends AbstractRoute {
             return;
         }
 
+        // send an error if the query is missing the right 'algorithm' parameter.
+        if (queryFilters.algorithm !== 'all'
+            && queryFilters.algorithm !== 'sent-it'
+            && queryFilters.algorithm !== 'feel-it'
+            && queryFilters.algorithm !== 'hate-speech') {
+            res.status(400);
+            res.send(createMissingQueryParamResponse('algorithm'));
+            return;
+        }
+
         const resultMap = new Map();
 
         try {
@@ -67,10 +79,10 @@ export class WordRoute extends AbstractRoute {
                     for (const current of result) {
 
                         const obj = current as { word: string, count: number };
-                        const {word} = obj;
+                        const { word } = obj;
 
                         //
-                        if (word.length > 1 && PATTERN.test(word) && !EMOJI_REGEX.test(obj.word)) {
+                        if (word.length > 1 && PATTERN.test(word) && !EMOJI_REGEX.test(word)) {
                             const result = removeStopwords([word], ita);
 
                             if (result && result.length > 0) {
@@ -146,7 +158,7 @@ export class WordRoute extends AbstractRoute {
                             ? {
                                 $let: {
                                     vars: {splitResult: {$split: ['$tags.tag_me', ' : ']}},
-                                    in: {$toLower: {$arrayElemAt: ['$$splitResult', 0]}}
+                                    in: {$toLower: {$arrayElemAt: ['$$splitResult', 2]}}
                                 }
                             }
                             : queryFilters.type === 'hashtags'
@@ -174,6 +186,7 @@ export class WordRoute extends AbstractRoute {
             algorithm,
             sentiment,
             emotion,
+            hateSpeech,
             dateFrom,
             dateTo,
             tags,
@@ -185,19 +198,56 @@ export class WordRoute extends AbstractRoute {
         let filters: any = {};
 
         // sentiment filter.
-        if (algorithm && algorithm !== 'all' && sentiment && sentiment !== 'all') {
-            filters = {
-                ...filters,
-                ...{[`sentiment.${algorithm}.sentiment`]: sentiment}
-            };
+        if (algorithm && algorithm !== 'all' && algorithm !== 'hate-speech') {
+            if (sentiment && sentiment !== 'all') {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.${algorithm}.sentiment`]: sentiment}
+                };
+            } else {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.${algorithm}.sentiment`]: 'positive'},
+                    ...{[`sentiment.${algorithm}.sentiment`]: 'neutral'},
+                    ...{[`sentiment.${algorithm}.sentiment`]: 'negative'},
+                };
+            }
         }
 
         // emotion filter.
-        if (algorithm && algorithm === 'feel-it' && emotion && emotion !== 'all') {
-            filters = {
-                ...filters,
-                ...{[`sentiment.${algorithm}.emotion`]: emotion}
-            };
+        if (algorithm && algorithm === 'feel-it') {
+            if (emotion && emotion !== 'all') {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.${algorithm}.emotion`]: emotion}
+                };
+            } else {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.${algorithm}.emotion`]: 'joy'},
+                    ...{[`sentiment.${algorithm}.emotion`]: 'sadness'},
+                    ...{[`sentiment.${algorithm}.emotion`]: 'anger'},
+                    ...{[`sentiment.${algorithm}.emotion`]: 'fear'},
+                };
+            }
+        }
+
+        // hate speech filter.
+        if (algorithm && algorithm === 'hate-speech') {
+            if (hateSpeech && hateSpeech !== 'all') {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.hate_speech_it.hate_speech_level`]: hateSpeech}
+                };
+            } else {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'acceptable'},
+                    ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'inappropriate'},
+                    ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'offensive'},
+                    ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'violent'}
+                };
+            }
         }
 
         // date filter.

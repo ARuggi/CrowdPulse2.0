@@ -21,7 +21,7 @@ export interface IRoute {
 }
 
 export function createMissingQueryParamResponse(paramName?: string, data?: any) {
-    return {error: `missing '${paramName}' as query param`, data};
+    return {error: `missing or incorrect '${paramName}' query param`, data};
 }
 
 export function createMissingBodyParamResponse(paramName?: string, data?: any) {

@@ -70,7 +70,7 @@ const api = {
      * Endpoint: GET - /v1/sentiment
      *
      * @param dbs Specify an array of database names.
-     * @param algorithm sent-it (default value) or feel-it.
+     * @param algorithm sent-it (default value), feel-it or hate-speech.
      * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
      * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
      * @param tags An array of tags
@@ -131,7 +131,7 @@ const api = {
      * Endpoint: GET - /v1/sentiment/timeline
      *
      * @param dbs Specify an array of database names.
-     * @param algorithm sent-it (default value) or feel-it.
+     * @param algorithm sent-it (default value), feel-it or hate-speech.
      * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
      * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
      * @param tags An array of tags
@@ -192,9 +192,10 @@ const api = {
      * Endpoint: GET - /v1/word
      *
      * @param dbs Specify an array of database names.
-     * @param algorithm all (default value), sent-it or feel-it.
+     * @param algorithm all (default value), sent-it, feel-it or hate-speech.
      * @param sentiment The sentiment: 'all', 'positive', 'neutral' or 'negative'.
      * @param emotion (Only if algorithm = 'feel-it'): 'all', 'joy', 'sadness', 'anger', 'fear'.
+     * @param hateSpeech (Only if algorithm = 'hate-speech'): 'all', 'acceptable', 'inappropriate', 'offensive', 'violent'.
      * @param type 'text', 'tags' or 'hashtags'.
      * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
      * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
@@ -207,6 +208,7 @@ const api = {
             algorithm: string = 'all',
             sentiment: string | undefined = undefined,
             emotion:   string | undefined = undefined,
+            hateSpeech: string | undefined = undefined,
             type:      string = 'text',
             dateFrom:  Date | undefined = undefined,
             dateTo:    Date | undefined = undefined,
@@ -223,8 +225,9 @@ const api = {
         body.push({key: 'algorithm', value: algorithm});
         body.push({key: 'type',      value: type});
 
-        if (sentiment) body.push({key: 'sentiment', value: sentiment});
-        if (emotion)   body.push({key: 'emotion',   value: emotion})
+        if (sentiment)  body.push({key: 'sentiment',  value: sentiment});
+        if (emotion)    body.push({key: 'emotion',    value: emotion})
+        if (hateSpeech) body.push({key: 'hateSpeech', value: hateSpeech});
 
         if (dateFrom && dateTo) {
             body.push({key: 'dateFrom', value: dateFrom.toISOString()});
@@ -263,9 +266,10 @@ const api = {
      * Endpoint: GET - /v1/tweets/timeline
      *
      * @param dbs Specify an array of database names.
-     * @param algorithm all (default value), sent-it or feel-it.
+     * @param algorithm all (default value), sent-it, feel-it or hate-speech.
      * @param sentiment The sentiment: 'all', 'positive', 'neutral' or 'negative'.
      * @param emotion (Only if algorithm = 'feel-it'): 'all', 'joy', 'sadness', 'anger', 'fear'.
+     * @param hateSpeech (Only if algorithm = 'hate-speech'): 'all', 'acceptable', 'inappropriate', 'offensive', 'violent'.
      * @param type 'text', 'tags' or 'hashtags'.
      * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
      * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
@@ -278,6 +282,7 @@ const api = {
                       algorithm: string = 'all',
                       sentiment: string | undefined = undefined,
                       emotion:   string | undefined = undefined,
+                      hateSpeech: string | undefined = undefined,
                       type:      string = 'text',
                       dateFrom:  Date | undefined = undefined,
                       dateTo:    Date | undefined = undefined,
@@ -294,8 +299,9 @@ const api = {
         body.push({key: 'algorithm', value: algorithm});
         body.push({key: 'type',      value: type});
 
-        if (sentiment) body.push({key: 'sentiment', value: sentiment});
-        if (emotion)   body.push({key: 'emotion',   value: emotion})
+        if (sentiment)  body.push({key: 'sentiment',  value: sentiment});
+        if (emotion)    body.push({key: 'emotion',    value: emotion})
+        if (hateSpeech) body.push({key: 'hateSpeech', value: hateSpeech});
 
         if (dateFrom && dateTo) {
             body.push({key: 'dateFrom', value: dateFrom.toISOString()});
@@ -334,9 +340,10 @@ const api = {
      * Endpoint: GET - /v1/tweets/list
      *
      * @param dbs Specify an array of database names.
-     * @param algorithm all (default value), sent-it or feel-it.
+     * @param algorithm all (default value), sent-it, feel-it or hate-speech.
      * @param sentiment The sentiment: 'all', 'positive', 'neutral' or 'negative'.
      * @param emotion (Only if algorithm = 'feel-it'): 'all', 'joy', 'sadness', 'anger', 'fear'.
+     * @param hateSpeech (Only if algorithm = 'hate-speech'): 'all', 'acceptable', 'inappropriate', 'offensive', 'violent'.
      * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
      * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
      * @param tags An array of tags
@@ -350,6 +357,7 @@ const api = {
                   algorithm: string = 'all',
                   sentiment: string | undefined = undefined,
                   emotion:   string | undefined = undefined,
+                  hateSpeech: string | undefined = undefined,
                   dateFrom:  Date | undefined = undefined,
                   dateTo:    Date | undefined = undefined,
                   tags:          string[] | undefined = undefined,
@@ -366,8 +374,9 @@ const api = {
 
         body.push({key: 'algorithm', value: algorithm});
 
-        if (sentiment) body.push({key: 'sentiment', value: sentiment});
-        if (emotion)   body.push({key: 'emotion',   value: emotion})
+        if (sentiment)  body.push({key: 'sentiment',  value: sentiment});
+        if (emotion)    body.push({key: 'emotion',    value: emotion});
+        if (hateSpeech) body.push({key: 'hateSpeech', value: hateSpeech});
 
         if (dateFrom && dateTo) {
             body.push({key: 'dateFrom', value: dateFrom.toISOString()});
@@ -409,9 +418,7 @@ const api = {
      * Endpoint: GET - /v1/map
      *
      * @param dbs Specify an array of database names.
-     * @param algorithm sent-it or feel-it.
-     * @param sentiment The sentiment: 'all', 'positive', 'neutral' or 'negative'.
-     * @param emotion (Only if algorithm = 'feel-it'): 'all', 'joy', 'sadness', 'anger', 'fear'.
+     * @param algorithm sent-it (default value), feel-it or hate-speech.
      * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
      * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
      * @param tags An array of tags
@@ -419,16 +426,14 @@ const api = {
      * @param hashtags An array of hashtags (without #)
      * @param usernames An array of usernames.
      */
-    GetMap(dbs: string[],
-           algorithm: string = 'sent-it',
-           sentiment: string | undefined = undefined,
-           emotion:   string | undefined = undefined,
-           dateFrom:  Date | undefined = undefined,
-           dateTo:    Date | undefined = undefined,
-           tags:          string[] | undefined = undefined,
-           processedText: string[] | undefined = undefined,
-           hashtags:      string[] | undefined = undefined,
-           usernames:     string[] | undefined = undefined): Promise<MapResponse | null> {
+    GetRegionMap(dbs: string[],
+                 algorithm: string = 'sent-it',
+                 dateFrom:  Date | undefined = undefined,
+                 dateTo:    Date | undefined = undefined,
+                 tags:          string[] | undefined = undefined,
+                 processedText: string[] | undefined = undefined,
+                 hashtags:      string[] | undefined = undefined,
+                 usernames:     string[] | undefined = undefined): Promise<MapResponse | null> {
         let body: Array<BodyGet> = [];
 
         dbs.forEach((database) => {
@@ -436,9 +441,6 @@ const api = {
         });
 
         body.push({key: 'algorithm', value: algorithm});
-
-        if (sentiment) body.push({key: 'sentiment', value: sentiment});
-        if (emotion)   body.push({key: 'emotion',   value: emotion})
 
         if (dateFrom && dateTo) {
             body.push({key: 'dateFrom', value: dateFrom.toISOString()});
@@ -478,8 +480,6 @@ const api = {
      *
      * @param dbs Specify an array of database names.
      * @param algorithm sent-it or feel-it.
-     * @param sentiment The sentiment: 'all', 'positive', 'neutral' or 'negative'.
-     * @param emotion (Only if algorithm = 'feel-it'): 'all', 'joy', 'sadness', 'anger', 'fear'.
      * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
      * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
      * @param tags An array of tags
@@ -489,8 +489,6 @@ const api = {
      */
     GetHeatMap(dbs: string[],
                algorithm: string = 'sent-it',
-               sentiment: string | undefined = undefined,
-               emotion:   string | undefined = undefined,
                dateFrom:  Date | undefined = undefined,
                dateTo:    Date | undefined = undefined,
                tags:          string[] | undefined = undefined,
@@ -504,9 +502,6 @@ const api = {
         });
 
         body.push({key: 'algorithm', value: algorithm});
-
-        if (sentiment) body.push({key: 'sentiment', value: sentiment});
-        if (emotion)   body.push({key: 'emotion',   value: emotion})
 
         if (dateFrom && dateTo) {
             body.push({key: 'dateFrom', value: dateFrom.toISOString()});

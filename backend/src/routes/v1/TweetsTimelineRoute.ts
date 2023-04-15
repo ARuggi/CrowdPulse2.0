@@ -9,6 +9,7 @@ interface QueryFilters {
     algorithm: string,
     sentiment: string,
     emotion: string,
+    hateSpeech: string,
     dateFrom: string,
     dateTo: string,
     tags: string[],
@@ -27,6 +28,7 @@ export class TweetsTimelineRoute extends AbstractRoute {
             algorithm:     req.query?.algorithm as string,
             sentiment:     req.query?.sentiment as string,
             emotion:       req.query?.emotion as string,
+            hateSpeech:    req.query?.hateSpeech as string,
             dateFrom:      req.query?.dateFrom as string,
             dateTo:        req.query?.dateTo as string,
             tags:          readArrayFromQuery(req.query?.tags),
@@ -39,6 +41,16 @@ export class TweetsTimelineRoute extends AbstractRoute {
         if (queryFilters.dbs.length === 0) {
             res.status(400);
             res.send(createMissingQueryParamResponse('dbs'));
+            return;
+        }
+
+        // send an error if the query is missing the right 'algorithm' parameter.
+        if (queryFilters.algorithm !== 'all'
+            && queryFilters.algorithm !== 'sent-it'
+            && queryFilters.algorithm !== 'feel-it'
+            && queryFilters.algorithm !== 'hate-speech') {
+            res.status(400);
+            res.send(createMissingQueryParamResponse('algorithm'));
             return;
         }
 
@@ -116,6 +128,7 @@ export class TweetsTimelineRoute extends AbstractRoute {
             algorithm,
             sentiment,
             emotion,
+            hateSpeech,
             dateFrom,
             dateTo,
             tags,
@@ -127,19 +140,56 @@ export class TweetsTimelineRoute extends AbstractRoute {
         let filters: any = {};
 
         // sentiment filter.
-        if (algorithm && algorithm !== 'all' && sentiment && sentiment !== 'all') {
-            filters = {
-                ...filters,
-                ...{[`sentiment.${algorithm}.sentiment`]: sentiment}
-            };
+        if (algorithm && algorithm !== 'all' && algorithm !== 'hate-speech') {
+            if (sentiment && sentiment !== 'all') {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.${algorithm}.sentiment`]: sentiment}
+                };
+            } else {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.${algorithm}.sentiment`]: 'positive'},
+                    ...{[`sentiment.${algorithm}.sentiment`]: 'neutral'},
+                    ...{[`sentiment.${algorithm}.sentiment`]: 'negative'},
+                };
+            }
         }
 
         // emotion filter.
-        if (algorithm && algorithm === 'feel-it' && emotion && emotion !== 'all') {
-            filters = {
-                ...filters,
-                ...{[`sentiment.${queryFilters.algorithm}.emotion`]: queryFilters.emotion}
-            };
+        if (algorithm && algorithm === 'feel-it') {
+            if (emotion && emotion !== 'all') {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.${algorithm}.emotion`]: emotion}
+                };
+            } else {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.${algorithm}.emotion`]: 'joy'},
+                    ...{[`sentiment.${algorithm}.emotion`]: 'sadness'},
+                    ...{[`sentiment.${algorithm}.emotion`]: 'anger'},
+                    ...{[`sentiment.${algorithm}.emotion`]: 'fear'},
+                };
+            }
+        }
+
+        // hate speech filter.
+        if (algorithm && algorithm === 'hate-speech') {
+            if (hateSpeech && hateSpeech !== 'all') {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.hate_speech_it.hate_speech_level`]: hateSpeech}
+                };
+            } else {
+                filters = {
+                    ...filters,
+                    ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'acceptable'},
+                    ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'inappropriate'},
+                    ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'offensive'},
+                    ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'violent'}
+                };
+            }
         }
 
         // date filter.

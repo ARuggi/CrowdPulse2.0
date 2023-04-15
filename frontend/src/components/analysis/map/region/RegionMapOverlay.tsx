@@ -5,7 +5,10 @@ import {FiltersContext} from '../../index';
 import {useMap, GeoJSON} from 'react-leaflet';
 import {Tooltip as LeafletTooltip} from 'leaflet'
 
-import RegionMapTooltip from './RegionMapTooltip';
+import RegionMapEmotionTooltip from './RegionMapEmotionTooltip';
+import RegionMapSentimentTooltip from './RegionMapSentimentTooltip';
+import RegionMapHateSpeechTooltip from './RegionMapHateSpeechTooltip';
+
 import {MapResponse} from '../../../../api/MapResponse';
 
 type Region = {
@@ -106,15 +109,50 @@ const RegionMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
                     region.options.color = '#8000808E';
                 }
             }
+
+            if (filters.algorithm === 'hate-speech') {
+                if (regionData.hateSpeechAcceptable === regionData.hateSpeechInappropriate
+                    && regionData.hateSpeechAcceptable === regionData.hateSpeechOffensive
+                    && regionData.hateSpeechAcceptable === regionData.hateSpeechViolent) {
+                    region.options.color = '#6B6B6B';
+                } else if (regionData.hateSpeechAcceptable >= regionData.hateSpeechInappropriate
+                    && regionData.hateSpeechAcceptable >= regionData.hateSpeechOffensive
+                    && regionData.hateSpeechAcceptable >= regionData.hateSpeechViolent) {
+                    region.options.color = '#FFA50082';
+                } else if (regionData.hateSpeechInappropriate >= regionData.hateSpeechAcceptable
+                    && regionData.hateSpeechInappropriate >= regionData.hateSpeechOffensive
+                    && regionData.hateSpeechInappropriate >= regionData.hateSpeechViolent) {
+                    region.options.color = '#0000FF7C';
+                } else if (regionData.hateSpeechOffensive >= regionData.hateSpeechAcceptable
+                    && regionData.hateSpeechOffensive >= regionData.hateSpeechInappropriate
+                    && regionData.hateSpeechOffensive >= regionData.hateSpeechViolent) {
+                    region.options.color = '#FF00008C';
+                } else if (regionData.hateSpeechViolent >= regionData.hateSpeechAcceptable
+                    && regionData.hateSpeechViolent >= regionData.hateSpeechInappropriate
+                    && regionData.hateSpeechViolent >= regionData.hateSpeechOffensive) {
+                    region.options.color = '#8000808E';
+                }
+            }
         }
 
         const contentLayer = (): HTMLElement => {
             const tooltipContent = document.createElement('div');
             const root = createRoot(tooltipContent);
-            root.render(<RegionMapTooltip
-                regionName={regionName}
-                regionData={regionData}
-                includeEmotion={filters.algorithm === 'feel-it'}/>);
+
+            if (filters.algorithm === 'sent-it') {
+                root.render(<RegionMapSentimentTooltip
+                    regionName={regionName}
+                    regionData={regionData}/>);
+            } else if (filters.algorithm === 'feel-it') {
+                root.render(<RegionMapEmotionTooltip
+                    regionName={regionName}
+                    regionData={regionData}/>);
+            } else if (filters.algorithm === 'hate-speech') {
+                root.render(<RegionMapHateSpeechTooltip
+                    regionName={regionName}
+                    regionData={regionData}/>);
+            }
+
             return tooltipContent;
         }
 

@@ -7,5 +7,9 @@ export type MapResponse = {
         emotionSadness: number,    // Number of feel-it sadness emotions.
         emotionAnger:   number,    // Number of feel-it anger emotions.
         emotionFear:    number,    // Number of feel-it fear emotions.
+        hateSpeechAcceptable:    number, // Number of hate-speech acceptable sentiments.
+        hateSpeechInappropriate: number, // Number of hate-speech inappropriate sentiments.
+        hateSpeechOffensive:     number, // Number of hate-speech offensive sentiments.
+        hateSpeechViolent:       number, // Number of hate-speech violent sentiments.
     }
 }

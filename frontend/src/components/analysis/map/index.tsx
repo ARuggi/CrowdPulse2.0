@@ -39,11 +39,9 @@ const MapTab = () => {
             try {
 
                 const regionMDataResult =
-                    await api.GetMap(
+                    await api.GetRegionMap(
                         dbs,
                         filters.algorithm,
-                        filters.sentiment,
-                        filters.emotion,
                         filters.dateFrom,
                         filters.dateTo,
                         filters.tags,
@@ -56,8 +54,6 @@ const MapTab = () => {
                     await api.GetHeatMap(
                         dbs,
                         filters.algorithm,
-                        filters.sentiment,
-                        filters.emotion,
                         filters.dateFrom,
                         filters.dateTo,
                         filters.tags,
@@ -86,8 +82,9 @@ const MapTab = () => {
                 algorithm: {
                     disableAllLabel: true
                 },
-                showSentiment: false, // TODO: Check if this property is needed.
-                showEmotion: false,   // TODO: Check if this property is needed.
+                showSentiment: false,  // TODO: Check if this property is needed.
+                showEmotion: false,    // TODO: Check if this property is needed.
+                showHateSpeech: false, // TODO: Check if this property is needed.
                 showType: false,
                 showDataRangePicker: true,
                 showTags: true,

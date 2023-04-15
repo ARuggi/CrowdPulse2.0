@@ -4,11 +4,10 @@ import {Box, Center, Table, Text} from '@mantine/core';
 
 interface IProps {
     regionName: string,
-    regionData: any,
-    includeEmotion: boolean,
+    regionData: any
 }
 
-const RegionMapTooltip:React.FC<IProps> = ({regionName, regionData, includeEmotion}) => {
+const RegionMapSentimentTooltip:React.FC<IProps> = ({regionName, regionData}) => {
     const { t } = useTranslation();
     
     const createSvgBox = (color: string) => {
@@ -43,33 +42,10 @@ const RegionMapTooltip:React.FC<IProps> = ({regionName, regionData, includeEmoti
                     <td>{regionData.sentimentNegative}</td>
                     <td>{createSvgBox('#FF5C7F')}</td>
                 </tr>
-                {includeEmotion
-                    && <>
-                        <tr>
-                            <td>{t('tab.map.regionsTooltip.joy')}</td>
-                            <td>{regionData.emotionJoy}</td>
-                            <td>{createSvgBox('#FFA50082')}</td>
-                        </tr>
-                        <tr>
-                            <td>{t('tab.map.regionsTooltip.sadness')}</td>
-                            <td>{regionData.emotionSadness}</td>
-                            <td>{createSvgBox('#0000FF7C')}</td>
-                        </tr>
-                        <tr>
-                            <td>{t('tab.map.regionsTooltip.anger')}</td>
-                            <td>{regionData.emotionAnger}</td>
-                            <td>{createSvgBox('#FF00008C')}</td>
-                        </tr>
-                        <tr>
-                            <td>{t('tab.map.regionsTooltip.fear')}</td>
-                            <td>{regionData.emotionFear}</td>
-                            <td>{createSvgBox('#8000808E')}</td>
-                        </tr>
-                    </>}
                 </tbody>
             </Table>
             : <Text>{t('tab.map.regionsTooltip.noData')}</Text>}
     </Box>;
 }
 
-export default RegionMapTooltip;
+export default RegionMapSentimentTooltip;

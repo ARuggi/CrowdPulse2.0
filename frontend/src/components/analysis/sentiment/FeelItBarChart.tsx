@@ -8,7 +8,6 @@ import {useMediaQuery} from '@mantine/hooks';
 
 import SentimentTotalBox from './SentimentTotalBox';
 import {SentimentContext} from './index';
-import {FiltersContext} from '../index';
 
 enum SentimentType {
     POSITIVE = 'positive',
@@ -24,7 +23,7 @@ enum EmotionType {
 }
 
 type DataType = {
-    type: SentimentType | EmotionType,
+    type: EmotionType | SentimentType,
     value: number,
     color: string
 }
@@ -43,11 +42,10 @@ function getWidthFromMediaQuery(mediaQueryLg:    boolean,
     return 20;
 }
 
-const SentimentBarChart = () => {
+const FeelItBarChart = () => {
 
     const { t } = useTranslation();
     const { colorScheme } = useMantineColorScheme();
-    const { filters } = useContext(FiltersContext);
     const sentimentData = useContext(SentimentContext);
 
     const mediaQueryLg    = useMediaQuery('(min-width: 1200px)');
@@ -57,7 +55,7 @@ const SentimentBarChart = () => {
     const mediaQuery2XsXs = useMediaQuery('(min-width: 300px) and (max-width: 576px)');
 
     let width = getWidthFromMediaQuery(mediaQueryLg, mediaQueryMdLg, mediaQuerySmMd, mediaQueryXsSm, mediaQuery2XsXs);
-    let height = filters.algorithm === 'sent-it' ? 300 : 150;
+    let height = 150;
 
     const sentimentChartData = [
         {
@@ -79,7 +77,7 @@ const SentimentBarChart = () => {
                 {type: EmotionType.JOY,     value: sentimentData ? sentimentData.emotionData.joy     : 0, color: 'rgba(255,165,0,0.51)'},
                 {type: EmotionType.SADNESS, value: sentimentData ? sentimentData.emotionData.sadness : 0, color: 'rgba(0,0,255,0.49)'},
                 {type: EmotionType.ANGER,   value: sentimentData ? sentimentData.emotionData.anger   : 0, color: 'rgba(255,0,0,0.55)'},
-                {type: EmotionType.FEAR,    value: sentimentData ? sentimentData.emotionData.fear    : 0, color: 'rgba(128,0,128,0.56)'}
+                {type: EmotionType.FEAR,    value: sentimentData ? sentimentData.emotionData.fear    : 0, color: 'rgba(204,0,204,0.56)'}
             ],
         }
     ];
@@ -158,40 +156,38 @@ const SentimentBarChart = () => {
             </div>
             <div
                 style={{
-                    display: filters.algorithm === 'feel-it' ? '' : 'none',
+                    display: '',
                     width: `${width}vh`,
                     height: `${height}px`
                 }}>
-                {filters.algorithm === 'feel-it'
-                    ? sentimentData
-                        ? <Chart
-                            options={{
-                                // the tooltip works fine on react-charts 3.0.0-beta.38
-                                // issue: https://github.com/TanStack/react-charts/issues/301
-                                tooltip: {show: true},
-                                dark: colorScheme === 'dark',
-                                data: emotionChartData,
-                                primaryAxis: xAxis,
-                                secondaryAxes: yAxis,
-                                secondaryCursor: {show: false},
-                                primaryCursor: {showLabel: false},
-                                interactionMode: 'primary',
-                                getDatumStyle: datumStyle
-                            }}/>
-                        : <Flex
-                            bg='rgba(0, 0, 0, .3)'
-                            gap='md'
-                            justify='center'
-                            align='center'
-                            direction='row'
-                            wrap='wrap'>
-                            <Loader variant='bars' style={{height: `${height}px`}}/>
-                        </Flex>
-                    : <></>}
+                {sentimentData
+                    ? <Chart
+                        options={{
+                            // the tooltip works fine on react-charts 3.0.0-beta.38
+                            // issue: https://github.com/TanStack/react-charts/issues/301
+                            tooltip: {show: true},
+                            dark: colorScheme === 'dark',
+                            data: emotionChartData,
+                            primaryAxis: xAxis,
+                            secondaryAxes: yAxis,
+                            secondaryCursor: {show: false},
+                            primaryCursor: {showLabel: false},
+                            interactionMode: 'primary',
+                            getDatumStyle: datumStyle
+                        }}/>
+                    : <Flex
+                        bg='rgba(0, 0, 0, .3)'
+                        gap='md'
+                        justify='center'
+                        align='center'
+                        direction='row'
+                        wrap='wrap'>
+                        <Loader variant='bars' style={{height: `${height}px`}}/>
+                    </Flex>}
             </div>
             <SentimentTotalBox/>
         </div>
     </>
 }
 
-export default SentimentBarChart;
+export default FeelItBarChart;

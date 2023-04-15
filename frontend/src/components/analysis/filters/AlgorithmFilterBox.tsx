@@ -37,12 +37,14 @@ const AlgorithmFilterBox:React.FC<IProps> = ({disableAllLabel = false}) => {
                 style={{flex: 'fit-content'}}
                 onChange={onChange}
                 data={disableAllLabel ? [
-                    {label: t('tab.filters.algorithm.sentIt'), value: 'sent-it'},
-                    {label: t('tab.filters.algorithm.feelIt'), value: 'feel-it'}
+                    {label: t('tab.filters.algorithm.sentIt'),     value: 'sent-it'},
+                    {label: t('tab.filters.algorithm.feelIt'),     value: 'feel-it'},
+                    {label: t('tab.filters.algorithm.hateSpeech'), value: 'hate-speech'}
                 ] : [
                     {label: t('tab.filters.algorithm.all'),    value: 'all'},
                     {label: t('tab.filters.algorithm.sentIt'), value: 'sent-it'},
-                    {label: t('tab.filters.algorithm.feelIt'), value: 'feel-it'}
+                    {label: t('tab.filters.algorithm.feelIt'), value: 'feel-it'},
+                    {label: t('tab.filters.algorithm.hateSpeech'), value: 'hate-speech'}
                 ]}
                 defaultValue={filters ? filters.algorithm : undefined}/>
         </Flex>

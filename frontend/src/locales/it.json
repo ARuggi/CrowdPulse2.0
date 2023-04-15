@@ -71,9 +71,10 @@
         "awaitingCompletion": "Attendi il completamento...",
         "algorithm": {
           "algorithm": "Algoritmo",
-          "all": "Entrambi",
+          "all": "Tutti",
           "sentIt": "sent it",
-          "feelIt": "feel it"
+          "feelIt": "feel it",
+          "hateSpeech": "hate speech"
         },
         "sentiment": {
           "sentiment": "Sentimenti",
@@ -89,6 +90,14 @@
           "sadness": "Tristezza",
           "anger": "Rabbia",
           "fear": "Paura"
+        },
+        "hateSpeech": {
+          "hateSpeech": "Odio",
+          "all": "Tutti",
+          "acceptable": "Accettabile",
+          "inappropriate": "Inappropriato",
+          "offensive": "Offensivo",
+          "violent": "Violento"
         },
         "date": "Date",
         "tags": "Tag",
@@ -109,13 +118,22 @@
       "sentiment": {
         "sentiment": "Sentimenti",
         "emotion": "Emozioni",
+        "hateSpeech": "Hate speech",
         "total": "Sentiment totalizzati",
         "processed": "Tot. tweet processati",
         "notProcessed": "Tot. tweet non processati",
         "percentage": "Percentuali",
         "positive": "Positivi",
         "neutral": "Neutrali",
-        "negative": "Negativi"
+        "negative": "Negativi",
+        "joy": "Gioia",
+        "sadness": "Tristezza",
+        "anger": "Rabbia",
+        "fear": "Paura",
+        "acceptable": "Accettabile",
+        "inappropriate": "Inappropriato",
+        "offensive": "Offensivo",
+        "violent": "Violento"
       },
       "timeline": {
         "tweets": "Numero di tweet totali",
@@ -142,7 +160,11 @@
           "joy": "Gioia",
           "sadness": "Tristezza",
           "anger": "Rabbia",
-          "fear": "Paura"
+          "fear": "Paura",
+          "acceptable": "Accettabile",
+          "inappropriate": "Inappropriato",
+          "offensive": "Offensivo",
+          "violent": "Violento"
         },
         "regionsTooltip": {
           "positive": "S. Positivi",
@@ -152,6 +174,10 @@
           "sadness": "E. Tristezza",
           "anger": "E. Rabbia",
           "fear": "E. Paura",
+          "acceptable": "Accettabile",
+          "inappropriate": "Inappropriato",
+          "offensive": "Offensivo",
+          "violent": "Violento",
           "noData": "Nessun dato disponibile"
         },
         "heatmapPanel": {

@@ -85,7 +85,7 @@ paths:
             type: array
         - name: algorithm
           in: query
-          description: sent-it or feel-it
+          description: sent-it, feel-it or hate-speech
           required: true
           schema:
             type: string
@@ -150,7 +150,7 @@ paths:
             type: array
         - name: algorithm
           in: query
-          description: sent-it or feel-it
+          description: sent-it, feel-it or hate-speech
           required: true
           schema:
             type: string
@@ -215,7 +215,7 @@ paths:
             type: array
         - name: algorithm
           in: query
-          description: all, sent-it or feel-it
+          description: all, sent-it, feel-it or hate-speech
           required: false
           schema:
             type: string
@@ -228,6 +228,12 @@ paths:
         - name: emotion
           in: query
           description: (only if algorithm = 'feel-it'), all, joy, sadness anger or fear
+          required: false
+          schema:
+            type: string
+        - name: hateSpeech
+          in: query
+          description: (only if algorithm = 'hate-speech'), all, acceptable, inappropriate, offensive or violent
           required: false
           schema:
             type: string
@@ -298,7 +304,7 @@ paths:
             type: array
         - name: algorithm
           in: query
-          description: all, sent-it or feel-it
+          description: all, sent-it, feel-it or hate-speech
           required: false
           schema:
             type: string
@@ -311,6 +317,12 @@ paths:
         - name: emotion
           in: query
           description: (only if algorithm = 'feel-it'), all, joy, sadness anger or fear
+          required: false
+          schema:
+            type: string
+        - name: hateSpeech
+          in: query
+          description: (only if algorithm = 'hate-speech'), all, acceptable, inappropriate, offensive or violent
           required: false
           schema:
             type: string
@@ -375,7 +387,7 @@ paths:
             type: array
         - name: algorithm
           in: query
-          description: all, sent-it or feel-it
+          description: all, sent-it, feel-it or hate-speech
           required: false
           schema:
             type: string
@@ -388,6 +400,12 @@ paths:
         - name: emotion
           in: query
           description: (only if algorithm = 'feel-it'), all, joy, sadness anger or fear
+          required: false
+          schema:
+            type: string
+        - name: hateSpeech
+          in: query
+          description: (only if algorithm = 'hate-speech'), all, acceptable, inappropriate, offensive or violent
           required: false
           schema:
             type: string
@@ -466,7 +484,7 @@ paths:
             type: array
         - name: algorithm
           in: query
-          description: sent-it or feel-it
+          description: sent-it, feel-it or hate-speech
           required: true
           schema:
             type: string
@@ -479,6 +497,12 @@ paths:
         - name: emotion
           in: query
           description: (only if algorithm = 'feel-it'), all, joy, sadness anger or fear
+          required: false
+          schema:
+            type: string
+        - name: hateSpeech
+          in: query
+          description: (only if algorithm = 'hate-speech'), all, acceptable, inappropriate, offensive or violent
           required: false
           schema:
             type: string
@@ -543,7 +567,7 @@ paths:
             type: array
         - name: algorithm
           in: query
-          description: sent-it or feel-it
+          description: sent-it, feel-it or hate-speech
           required: true
           schema:
             type: string
@@ -556,6 +580,12 @@ paths:
         - name: emotion
           in: query
           description: (only if algorithm = 'feel-it'), all, joy, sadness anger or fear
+          required: false
+          schema:
+            type: string
+        - name: hateSpeech
+          in: query
+          description: (only if algorithm = 'hate-speech'), all, acceptable, inappropriate, offensive or violent
           required: false
           schema:
             type: string
@@ -664,16 +694,37 @@ components:
             "anger": number,
             "fear": number
           }
+        hateSpeechData:
+          type: object
+          example: {
+            "acceptable": number,
+            "inappropriate": number,
+            "offensive": number,
+            "violent": number
+          }
     v1_sentiment_timeline:
-      type: array
-      example: [
-        {
-          "positiveCount": number,
-          "neutralCount": number,
-          "negativeCount": number,
-          "date": '2023-02-21'
-        }
-      ]
+      type: object
+      properties:
+        algorithm:
+          type: string
+        data:
+          type: object
+          example: [
+            {
+              "sentimentPositiveCount": number,
+              "sentimentNeutralCount": number,
+              "sentimentNegativeCount": number,
+              "emotionJoyCount": number,
+              "emotionSadnessCount": number,
+              "emotionAngerCount": number,
+              "emotionFearCount": number,
+              "hateSpeechAcceptableCount": number,
+              "hateSpeechInappropriateCount": number,
+              "hateSpeechOffensiveCount": number,
+              "hateSpeechViolentCount": number,
+              "date": '2023-02-21'
+            }
+          ]
     v1_word:
       type: array
       example: [
@@ -715,7 +766,11 @@ components:
           "emotionJoy": number,
           "emotionSadness": number,
           "emotionAnger": number,
-          "emotionFear": number
+          "emotionFear": number,
+          "hateSpeechAcceptable": number,
+          "hateSpeechInappropriate": number,
+          "hateSpeechOffensive": number,
+          "hateSpeechViolent": number
         }
       }
     v1_heatmap:

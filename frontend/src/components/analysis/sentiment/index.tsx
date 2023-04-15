@@ -8,10 +8,17 @@ import {SentimentResponse} from '../../../api/SentimentResponse';
 import {SentimentTimelineResponse} from '../../../api/SentimentTimelineResponse';
 import {DatabasesContext, FiltersContext} from '../index';
 import Filters from '../filters';
-import SentimentBarChart from './SentimentBarChart';
+import SentItBarChart from './SentItBarChart';
+import FeelItBarChart from './FeelItBarChart';
+import HateSpeechBarChart from './HateSpeechBarChart';
 
-import SentimentCakeChart from './SentimentCakeChart';
-import SentimentLineChart from './SentimentLineChart';
+import SentItCakeChart from './SentItCakeChart';
+import FeelItCakeChart from './FeelItCakeChart';
+import HateSpeechCakeChart from './HateSpeechCakeChart';
+
+import SentItLineChart from './SentItLineChart';
+import FeelItLineChart from './FeelItLineChart';
+import HateSpeechLineChart from './HateSpeechLineChart';
 import Error from '../../error';
 
 export const SentimentContext = createContext<SentimentResponse | null>(null);
@@ -98,11 +105,36 @@ const SentimentTab = () => {
             direction='row'
             wrap='wrap'>
             <SentimentContext.Provider value={sentimentData}>
-                <SentimentBarChart/>
-                <SentimentCakeChart/>
+
+                {
+                    filters.algorithm === 'sent-it' &&
+                    <>
+                        <SentItBarChart/>
+                        <SentItCakeChart/>
+                    </>
+                }
+
+                {
+                    filters.algorithm === 'feel-it' &&
+                    <>
+                        <FeelItBarChart/>
+                        <FeelItCakeChart/>
+                    </>
+                }
+
+                {
+                    filters.algorithm === 'hate-speech' &&
+                    <>
+                        <HateSpeechBarChart/>
+                        <HateSpeechCakeChart/>
+                    </>
+                }
+
             </SentimentContext.Provider>
             <SentimentTimelineContext.Provider value={sentimentTimelineData}>
-                <SentimentLineChart/>
+                {filters.algorithm === 'sent-it' && <SentItLineChart/>}
+                {filters.algorithm === 'feel-it' && <FeelItLineChart/>}
+                {filters.algorithm === 'hate-speech' && <HateSpeechLineChart/>}
             </SentimentTimelineContext.Provider>
         </Flex>
     </>

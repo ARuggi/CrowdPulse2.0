@@ -5,12 +5,12 @@ import isEqual from 'lodash.isequal';
 import {Box, Flex, SegmentedControl, Text} from '@mantine/core';
 import {FiltersContext} from '../index';
 
-const SentimentFilterBox = () => {
+const HateSpeechFilterBox = () => {
     const { t } = useTranslation();
     const {filters, setFilters} = useContext(FiltersContext);
 
     const onChange = (value: string) => {
-        const newFilters = {...filters, sentiment: value};
+        const newFilters = {...filters, hateSpeech: value};
         setFilters(isEqual(filters, newFilters) ? filters : newFilters);
     }
 
@@ -28,20 +28,21 @@ const SentimentFilterBox = () => {
             align='center'
             direction='row'
             wrap='wrap'>
-            <Text><b>{t('tab.filters.sentiment.sentiment')}</b></Text>
+            <Text><b>{t('tab.filters.hateSpeech.hateSpeech')}</b></Text>
             <SegmentedControl
-                disabled={filters.algorithm === 'all' || filters.algorithm === 'hate-speech'}
+                disabled={filters.algorithm !== 'hate-speech'}
                 style={{flex: 'fit-content'}}
                 onChange={onChange}
                 data={[
-                    {label: t('tab.filters.sentiment.all'),      value: 'all'},
-                    {label: t('tab.filters.sentiment.positive'), value: 'positive'},
-                    {label: t('tab.filters.sentiment.neutral'),  value: 'neutral'},
-                    {label: t('tab.filters.sentiment.negative'), value: 'negative'}
+                    {label: t('tab.filters.hateSpeech.all'),           value: 'all'},
+                    {label: t('tab.filters.hateSpeech.acceptable'),    value: 'acceptable'},
+                    {label: t('tab.filters.hateSpeech.inappropriate'), value: 'inappropriate'},
+                    {label: t('tab.filters.hateSpeech.offensive'),     value: 'offensive'},
+                    {label: t('tab.filters.hateSpeech.violent'),       value: 'violent'}
                 ]}
-                defaultValue={filters ? filters.sentiment : undefined}/>
+                defaultValue={filters ? filters.hateSpeech : undefined}/>
         </Flex>
     </Box>
 }
 
-export default SentimentFilterBox;
+export default HateSpeechFilterBox;

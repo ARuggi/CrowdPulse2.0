@@ -71,9 +71,10 @@
                 "awaitingCompletion": "Awaiting completion...",
                 "algorithm": {
                     "algorithm": "Algorithm",
-                    "all": "Both",
+                    "all": "All",
                     "sentIt": "sent it",
-                    "feelIt": "feel it"
+                    "feelIt": "feel it",
+                    "hateSpeech": "hate speech"
                 },
                 "sentiment": {
                     "sentiment": "Sentiment",
@@ -89,6 +90,14 @@
                     "sadness": "Sadness",
                     "anger": "Anger",
                     "fear": "Fear"
+                },
+                "hateSpeech": {
+                    "hateSpeech": "Hatred type",
+                    "all": "All",
+                    "acceptable": "Acceptable",
+                    "inappropriate": "Inappropriate",
+                    "offensive": "Offensive",
+                    "violent": "Violent"
                 },
                 "date": "Date",
                 "tags": "Tags",
@@ -109,13 +118,22 @@
             "sentiment": {
                 "sentiment": "Sentiment",
                 "emotion": "Emotion",
+                "hateSpeech": "Hate speech",
                 "total": "Counted sentiments",
                 "processed": "Tot. processed tweets",
                 "notProcessed": "Tot. not processed tweets",
                 "percentage": "Percentage",
                 "positive": "Positive",
                 "neutral": "Neutral",
-                "negative": "Negative"
+                "negative": "Negative",
+                "joy": "Joy",
+                "sadness": "Sadness",
+                "anger": "Anger",
+                "fear": "Fear",
+                "acceptable": "Acceptable",
+                "inappropriate": "Inappropriate",
+                "offensive": "Offensive",
+                "violent": "Violent"
             },
             "timeline": {
                 "tweets": "Tweets",
@@ -142,7 +160,11 @@
                     "joy": "Joy",
                     "sadness": "Sadness",
                     "anger": "Anger",
-                    "fear": "Fear"
+                    "fear": "Fear",
+                    "acceptable": "Acceptable",
+                    "inappropriate": "Inappropriate",
+                    "offensive": "Offensive",
+                    "violent": "Violent"
                 },
                 "regionsTooltip": {
                     "positive": "S. Positive",
@@ -152,6 +174,10 @@
                     "sadness": "E. Sadness",
                     "anger": "E. Anger",
                     "fear": "E. Fear",
+                    "acceptable": "Acceptable",
+                    "inappropriate": "Inappropriate",
+                    "offensive": "Offensive",
+                    "violent": "Violent",
                     "noData": "No data available"
                 },
                 "heatmapPanel": {

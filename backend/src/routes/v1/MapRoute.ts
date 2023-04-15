@@ -11,6 +11,7 @@ interface QueryFilters {
     algorithm: string,
     sentiment: string,
     emotion: string,
+    hateSpeech: string,
     type: string,
     dateFrom: string,
     dateTo: string,
@@ -55,6 +56,7 @@ export class MapRoute extends AbstractRoute {
             algorithm:     req.query?.algorithm as string,
             sentiment:     req.query?.sentiment as string,
             emotion:       req.query?.emotion as string,
+            hateSpeech:    req.query?.hateSpeech as string,
             type:          req.query?.type as string,
             dateFrom:      req.query?.dateFrom as string,
             dateTo:        req.query?.dateTo as string,
@@ -71,8 +73,10 @@ export class MapRoute extends AbstractRoute {
             return;
         }
 
-        // send an error if the query is missing the 'algorithm' parameter.
-        if (!queryFilters.algorithm || queryFilters.algorithm.length === 0) {
+        // send an error if the query is missing the right 'algorithm' parameter.
+        if (queryFilters.algorithm !== 'sent-it'
+            && queryFilters.algorithm !== 'feel-it'
+            && queryFilters.algorithm !== 'hate-speech') {
             res.status(400);
             res.send(createMissingQueryParamResponse('algorithm'));
             return;
@@ -87,6 +91,10 @@ export class MapRoute extends AbstractRoute {
                 emotionSadness: 0,
                 emotionAnger:   0,
                 emotionFear:    0,
+                hateSpeechAcceptable:    0,
+                hateSpeechInappropriate: 0,
+                hateSpeechOffensive:     0,
+                hateSpeechViolent:       0
             };
             return result;
         }, {});
@@ -107,13 +115,17 @@ export class MapRoute extends AbstractRoute {
 
                             const regionName = city.region.join(' ');
 
-                            data[regionName].sentimentPositive += entry.sentimentPositive ? 1 : 0;
-                            data[regionName].sentimentNeutral  += entry.sentimentNeutral  ? 1 : 0;
-                            data[regionName].sentimentNegative += entry.sentimentNegative ? 1 : 0;
-                            data[regionName].emotionJoy     += entry.emotionJoy     ? 1 : 0;
-                            data[regionName].emotionSadness += entry.emotionSadness ? 1 : 0;
-                            data[regionName].emotionAnger   += entry.emotionAnger   ? 1 : 0;
-                            data[regionName].emotionFear    += entry.emotionFear    ? 1 : 0;
+                            data[regionName].sentimentPositive += entry?.sentimentPositive ? 1 : 0;
+                            data[regionName].sentimentNeutral  += entry?.sentimentNeutral  ? 1 : 0;
+                            data[regionName].sentimentNegative += entry?.sentimentNegative ? 1 : 0;
+                            data[regionName].emotionJoy     += entry?.emotionJoy     ? 1 : 0;
+                            data[regionName].emotionSadness += entry?.emotionSadness ? 1 : 0;
+                            data[regionName].emotionAnger   += entry?.emotionAnger   ? 1 : 0;
+                            data[regionName].emotionFear    += entry?.emotionFear    ? 1 : 0;
+                            data[regionName].hateSpeechAcceptable    += entry?.hateSpeechAcceptable ? 1 : 0;
+                            data[regionName].hateSpeechInappropriate += entry?.hateSpeechInappropriate ? 1 : 0;
+                            data[regionName].hateSpeechOffensive     += entry?.hateSpeechOffensive ? 1 : 0;
+                            data[regionName].hateSpeechViolent       += entry?.hateSpeechViolent ? 1 : 0;
                             break;
                         }
                     }
@@ -153,12 +165,16 @@ export class MapRoute extends AbstractRoute {
                         _id: 0,
                         'sentiment.sent-it.sentiment': 1,
                         'geo.user_location': 1,
-                    } : {
-                        _id: 0,
-                        'sentiment.feel-it.sentiment': 1,
-                        'sentiment.feel-it.emotion' : 1,
-                        'geo.user_location': 1,
-                    }
+                    } : queryFilters.algorithm === 'feel-it'
+                        ? {
+                            _id: 0,
+                            'sentiment.feel-it.sentiment': 1,
+                            'sentiment.feel-it.emotion' : 1,
+                            'geo.user_location': 1,
+                        } : {
+                            'sentiment.hate_speech_it.hate_speech_level': 1,
+                            'geo.user_location': 1,
+                        }
             },
             {
                 $group: queryFilters.algorithm === 'sent-it'
@@ -167,16 +183,23 @@ export class MapRoute extends AbstractRoute {
                         sentimentPositive: { $sum: { $cond: [{ $eq: ['$sentiment.sent-it.sentiment', 'positive'] }, 1, 0 ] } },
                         sentimentNeutral:  { $sum: { $cond: [{ $eq: ['$sentiment.sent-it.sentiment', 'neutral']  }, 1, 0 ] } },
                         sentimentNegative: { $sum: { $cond: [{ $eq: ['$sentiment.sent-it.sentiment', 'negative'] }, 1, 0 ] } },
-                    } : {
-                        _id: '$geo.user_location',
-                        sentimentPositive: { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.sentiment', 'positive'] }, 1, 0 ] } },
-                        sentimentNeutral:  { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.sentiment', 'neutral']  }, 1, 0 ] } },
-                        sentimentNegative: { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.sentiment', 'negative'] }, 1, 0 ] } },
-                        emotionJoy:        { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.emotion', 'joy']     }, 1, 0 ] } },
-                        emotionSadness:    { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.emotion', 'sadness'] }, 1, 0 ] } },
-                        emotionAnger:      { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.emotion', 'anger']   }, 1, 0 ] } },
-                        emotionFear:       { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.emotion', 'fear']    }, 1, 0 ] } },
-                    }
+                    } : queryFilters.algorithm === 'feel-it'
+                        ? {
+                            _id: '$geo.user_location',
+                            sentimentPositive: { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.sentiment', 'positive'] }, 1, 0 ] } },
+                            sentimentNeutral:  { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.sentiment', 'neutral']  }, 1, 0 ] } },
+                            sentimentNegative: { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.sentiment', 'negative'] }, 1, 0 ] } },
+                            emotionJoy:        { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.emotion', 'joy']     }, 1, 0 ] } },
+                            emotionSadness:    { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.emotion', 'sadness'] }, 1, 0 ] } },
+                            emotionAnger:      { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.emotion', 'anger']   }, 1, 0 ] } },
+                            emotionFear:       { $sum: { $cond: [{ $eq: ['$sentiment.feel-it.emotion', 'fear']    }, 1, 0 ] } },
+                        } : {
+                            _id: '$geo.user_location',
+                            hateSpeechAcceptable:    { $sum: { $cond: [{ $eq: ['$sentiment.hate_speech_it.hate_speech_level', 'acceptable']    }, 1, 0 ] } },
+                            hateSpeechInappropriate: { $sum: { $cond: [{ $eq: ['$sentiment.hate_speech_it.hate_speech_level', 'inappropriate'] }, 1, 0 ] } },
+                            hateSpeechOffensive:     { $sum: { $cond: [{ $eq: ['$sentiment.hate_speech_it.hate_speech_level', 'offensive']     }, 1, 0 ] } },
+                            hateSpeechViolent:       { $sum: { $cond: [{ $eq: ['$sentiment.hate_speech_it.hate_speech_level', 'violent']       }, 1, 0 ] } },
+                        }
             },
             {
                 $project: queryFilters.algorithm === 'sent-it'
@@ -186,17 +209,25 @@ export class MapRoute extends AbstractRoute {
                         sentimentNeutral: 1,
                         sentimentNegative: 1,
                         _id: 0,
-                    } : {
-                        location: '$_id',
-                        sentimentPositive: 1,
-                        sentimentNeutral: 1,
-                        sentimentNegative: 1,
-                        emotionJoy: 1,
-                        emotionSadness: 1,
-                        emotionAnger: 1,
-                        emotionFear: 1,
-                        _id: 0,
-                    }
+                    } : queryFilters.algorithm === 'feel-it'
+                        ? {
+                            location: '$_id',
+                            sentimentPositive: 1,
+                            sentimentNeutral: 1,
+                            sentimentNegative: 1,
+                            emotionJoy: 1,
+                            emotionSadness: 1,
+                            emotionAnger: 1,
+                            emotionFear: 1,
+                            _id: 0,
+                        } : {
+                            location: '$_id',
+                            hateSpeechAcceptable: 1,
+                            hateSpeechInappropriate: 1,
+                            hateSpeechOffensive: 1,
+                            hateSpeechViolent: 1,
+                            _id: 0,
+                        }
             },
         ]);
 

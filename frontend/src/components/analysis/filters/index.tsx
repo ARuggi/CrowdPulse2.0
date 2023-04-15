@@ -21,6 +21,7 @@ import {BsLock} from 'react-icons/bs';
 import AlgorithmFilterBox from './AlgorithmFilterBox';
 import SentimentFilterBox from './SentimentFilterBox';
 import EmotionFilterBox from './EmotionFilterBox';
+import HateSpeechFilterBox from './HateSpeechFilterBox';
 import TypeFilterBox from './TypeFilterBox';
 import DateFilterBox from './DateFilterBox';
 import MultiSelectionFilterBox from './MultiSelectionFilterBox';
@@ -36,6 +37,7 @@ interface IProps {
         }
         showSentiment?: boolean,
         showEmotion?: boolean,
+        showHateSpeech?: boolean,
         showType?: boolean,
         showDataRangePicker?: boolean,
         showTags?: boolean,
@@ -50,6 +52,7 @@ const defaultFilters = {
     algorithm: {disableAllLabel: false},
     showSentiment: true,
     showEmotion: false,
+    showHateSpeech: false,
     showType: true,
     showDataRangePicker: true,
     showTags: true,
@@ -130,6 +133,11 @@ const Filters:React.FC<IProps> = ({lock, divider = true, style, filters = defaul
                     {filters?.showEmotion &&
                         <Grid.Col span={mediaQueryMd ? 4 : 8}>
                             <EmotionFilterBox/>
+                        </Grid.Col>}
+
+                    {filters?.showHateSpeech &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <HateSpeechFilterBox/>
                         </Grid.Col>}
 
                     {filters?.showType &&

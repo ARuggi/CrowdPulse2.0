@@ -9,9 +9,7 @@ import {Connection} from "mongoose";
 // available query filters.
 interface QueryFilters {
     dbs: string[],
-    algorithm: string,
-    sentiment: string,
-    emotion: string,
+    algorithm: string
     type: string,
     dateFrom: string,
     dateTo: string,
@@ -53,8 +51,6 @@ export class HeatMapRoute extends AbstractRoute {
         const queryFilters: QueryFilters = {
             dbs:           readArrayFromQuery(req.query?.dbs),
             algorithm:     req.query?.algorithm as string,
-            sentiment:     req.query?.sentiment as string,
-            emotion:       req.query?.emotion as string,
             type:          req.query?.type as string,
             dateFrom:      req.query?.dateFrom as string,
             dateTo:        req.query?.dateTo as string,
@@ -64,19 +60,22 @@ export class HeatMapRoute extends AbstractRoute {
             usernames:     readArrayFromQuery(req.query?.usernames)
         };
 
+        // send an error if the query is missing the 'dbs' parameter.
         if (queryFilters.dbs.length === 0) {
             res.status(400);
             res.send(createMissingQueryParamResponse('dbs'));
             return;
         }
 
-        if (!queryFilters.algorithm || queryFilters.algorithm.length === 0) {
+        // send an error if the query is missing the right 'algorithm' parameter.
+        if (queryFilters.algorithm !== 'sent-it'
+            && queryFilters.algorithm !== 'feel-it'
+            && queryFilters.algorithm !== 'hate-speech') {
             res.status(400);
             res.send(createMissingQueryParamResponse('algorithm'));
             return;
         }
 
-        const filters = this.createFiltersPipeline(queryFilters);
         const data: HeatMap[] = [];
 
         try {
@@ -84,7 +83,7 @@ export class HeatMapRoute extends AbstractRoute {
             for (const databaseName of queryFilters.dbs) {
 
                 const database = getMongoConnection().useDb(databaseName);
-                const result = await this.getFromDatabase(database, filters);
+                const result = await this.getFromDatabase(database, queryFilters);
 
                 result.forEach(entry => {
 
@@ -133,12 +132,8 @@ export class HeatMapRoute extends AbstractRoute {
         const dbQuery = model.aggregate([
             {
                 $match: {
-                    $or: [
-                        { 'geo.user_location': { $ne: null } },
-                        { 'geo.coordinates': { $ne: null } },
-                        { $and: [{ 'geo.user_location': { $ne: null } }, { 'geo.coordinates': { $ne: null } }] },
-                    ],
-                    $and: [ { ...filters } ]
+                    processed: true,
+                    ...filters
                 },
             },
             {
@@ -173,6 +168,7 @@ export class HeatMapRoute extends AbstractRoute {
     private createFiltersPipeline = (queryFilters: QueryFilters) => {
 
         const {
+            algorithm,
             dateFrom,
             dateTo,
             tags,
@@ -182,6 +178,33 @@ export class HeatMapRoute extends AbstractRoute {
         } = queryFilters;
 
         let filters: any = {};
+
+        if (algorithm === 'sent-it') {
+            filters = {
+                ...filters,
+                ...{[`sentiment.sent-it.sentiment`]: 'positive'},
+                ...{[`sentiment.sent-it.sentiment`]: 'neutral'},
+                ...{[`sentiment.sent-it.sentiment`]: 'negative'},
+            };
+        } else if (algorithm === 'feel-it') {
+            filters = {
+                ...filters,
+                ...{[`sentiment.feel-it.sentiment`]: 'positive'},
+                ...{[`sentiment.feel-it.sentiment`]: 'neutral'},
+                ...{[`sentiment.feel-it.sentiment`]: 'negative'},
+                ...{[`sentiment.feel-it.sentiment`]: 'positive'},
+                ...{[`sentiment.feel-it.sentiment`]: 'neutral'},
+                ...{[`sentiment.feel-it.sentiment`]: 'negative'},
+            };
+        } else if (algorithm === 'hate-speech') {
+            filters = {
+                ...filters,
+                ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'acceptable'},
+                ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'inappropriate'},
+                ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'offensive'},
+                ...{[`sentiment.hate_speech_it.hate_speech_level`]: 'violent'}
+            };
+        }
 
         // date filters.
         if (dateFrom && dateTo) {
