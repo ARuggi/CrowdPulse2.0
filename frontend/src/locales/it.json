@@ -99,6 +99,11 @@
           "offensive": "Offensivo",
           "violent": "Violento"
         },
+        "map": {
+          "map": "Mappa",
+          "region": "Regioni",
+          "province": "Province"
+        },
         "date": "Date",
         "tags": "Tag",
         "tagsPlaceholder": "Scrivi qualunque tag",

@@ -44,6 +44,7 @@ const MapTab = () => {
                         filters.algorithm,
                         filters.dateFrom,
                         filters.dateTo,
+                        filters.mapType,
                         filters.tags,
                         filters.processedText,
                         filters.hashtags,
@@ -82,10 +83,11 @@ const MapTab = () => {
                 algorithm: {
                     disableAllLabel: true
                 },
-                showSentiment: false,  // TODO: Check if this property is needed.
-                showEmotion: false,    // TODO: Check if this property is needed.
-                showHateSpeech: false, // TODO: Check if this property is needed.
+                showSentiment: false,
+                showEmotion: false,
+                showHateSpeech: false,
                 showType: false,
+                showMapType: true,
                 showDataRangePicker: true,
                 showTags: true,
                 showProcessedText: true,

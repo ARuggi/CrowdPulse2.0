@@ -25,6 +25,7 @@ export type FiltersContextType = {
     emotion:   string | undefined,
     hateSpeech: string | undefined,
     type:      string | undefined,
+    mapType:   string | undefined,
     dateFrom: Date | undefined,
     dateTo:   Date | undefined,
     tags:          string[] | undefined,
@@ -39,6 +40,7 @@ const defaultFilters: FiltersContextType = {
     emotion: undefined,
     hateSpeech: undefined,
     type: undefined,
+    mapType: undefined,
     dateFrom: undefined,
     dateTo: undefined,
     tags: undefined,
@@ -68,7 +70,7 @@ const Analysis = () => {
     const [wordFilters, setWordFilters]           = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
     const [timelineFilters, setTimelineFilters]   = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
     const [tweetListFilters, setTweetListFilters] = useState<FiltersContextType>({...defaultFilters, ...{algorithm: 'all'}});
-    const [mapFilters, setMapFilters]             = useState<FiltersContextType>({...defaultFilters});
+    const [mapFilters, setMapFilters]             = useState<FiltersContextType>({...defaultFilters, ...{mapType: 'region'}});
 
     useEffect(() => {
         if (!reload) setReload(true);

@@ -484,23 +484,11 @@ paths:
             type: array
         - name: algorithm
           in: query
-          description: sent-it, feel-it or hate-speech
+          description: region or province
           required: true
           schema:
             type: string
-        - name: sentiment
-          in: query
-          description: all, positive, neutral or negative
-          required: false
-          schema:
-            type: string
-        - name: emotion
-          in: query
-          description: (only if algorithm = 'feel-it'), all, joy, sadness anger or fear
-          required: false
-          schema:
-            type: string
-        - name: hateSpeech
+        - name: mapType
           in: query
           description: (only if algorithm = 'hate-speech'), all, acceptable, inappropriate, offensive or violent
           required: false

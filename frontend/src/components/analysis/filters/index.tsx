@@ -23,6 +23,7 @@ import SentimentFilterBox from './SentimentFilterBox';
 import EmotionFilterBox from './EmotionFilterBox';
 import HateSpeechFilterBox from './HateSpeechFilterBox';
 import TypeFilterBox from './TypeFilterBox';
+import MapTypeFilterBox from './MapTypeFilterBox';
 import DateFilterBox from './DateFilterBox';
 import MultiSelectionFilterBox from './MultiSelectionFilterBox';
 
@@ -39,6 +40,7 @@ interface IProps {
         showEmotion?: boolean,
         showHateSpeech?: boolean,
         showType?: boolean,
+        showMapType?: boolean,
         showDataRangePicker?: boolean,
         showTags?: boolean,
         showProcessedText?: boolean,
@@ -54,6 +56,7 @@ const defaultFilters = {
     showEmotion: false,
     showHateSpeech: false,
     showType: true,
+    showMapType: false,
     showDataRangePicker: true,
     showTags: true,
     showProcessedText: true,
@@ -145,6 +148,11 @@ const Filters:React.FC<IProps> = ({lock, divider = true, style, filters = defaul
                             <TypeFilterBox/>
                         </Grid.Col>}
 
+                    {filters?.showMapType &&
+                        <Grid.Col span={mediaQueryMd ? 4 : 8}>
+                            <MapTypeFilterBox/>
+                        </Grid.Col>}
+                    
                     {filters?.showDataRangePicker &&
                         <Grid.Col span={mediaQueryMd ? 4 : 8}>
                             <DateFilterBox/>

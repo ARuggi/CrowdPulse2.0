@@ -7,6 +7,7 @@ import RegionMapOverlay from './RegionMapOverlay';
 import MapPanel, {Position} from '../MapPanel';
 import RegionMapPanel from './RegionMapPanel';
 import {RegionMapContext} from '../index';
+import {FiltersContext} from "../../index";
 
 const DARK_MAP_URL  = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 const LIGHT_MAP_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
@@ -24,21 +25,25 @@ const changeMapBackgroundColor = (colorScheme: ColorScheme) => {
 }
 
 const RegionMapBox = () => {
-    
+
     const { colorScheme } = useMantineColorScheme();
+    const { filters } = useContext(FiltersContext);
+
     const [geoJsonData, setGeoJsonData] = useState<GeoJsonObject | null>(null);
     const mapData = useContext(RegionMapContext);
-    
+
     useEffect(() => {
         changeMapBackgroundColor(colorScheme);
     }, [colorScheme]);
 
     useEffect(() => {
         (async () => {
-            const response = await fetch('/map/limits_IT_regions.geojson');
+            const response = filters.mapType === 'region'
+                ? await fetch('/map/limits_IT_regions.geojson')
+                : await fetch('/map/limits_IT_provinces.geojson');
             setGeoJsonData(await response.json());
         })();
-    }, []);
+    }, [filters]);
 
     return geoJsonData && mapData
         ? <MapContainer

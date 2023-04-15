@@ -421,7 +421,8 @@ const api = {
      * @param algorithm sent-it (default value), feel-it or hate-speech.
      * @param dateFrom ISO date like 2022-01-09T00:00:00.000Z (dateTo required).
      * @param dateTo ISO date like 2022-01-09T00:00:00.000Z (dateFrom required).
-     * @param tags An array of tags
+     * @param mapType The type of map: 'region', 'province'.
+     * @param tags An array of tags.
      * @param processedText An array processed words
      * @param hashtags An array of hashtags (without #)
      * @param usernames An array of usernames.
@@ -430,6 +431,7 @@ const api = {
                  algorithm: string = 'sent-it',
                  dateFrom:  Date | undefined = undefined,
                  dateTo:    Date | undefined = undefined,
+                 mapType:       string | undefined = undefined,
                  tags:          string[] | undefined = undefined,
                  processedText: string[] | undefined = undefined,
                  hashtags:      string[] | undefined = undefined,
@@ -446,6 +448,8 @@ const api = {
             body.push({key: 'dateFrom', value: dateFrom.toISOString()});
             body.push({key: 'dateTo', value: dateTo.toISOString()});
         }
+
+        if (mapType) body.push({key: 'mapType', value: mapType});
 
         if (tags && tags.length > 0) {
             tags.forEach((tag) => {
