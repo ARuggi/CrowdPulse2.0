@@ -3,11 +3,11 @@ import {useTranslation} from 'react-i18next';
 import {Box, Center, Table, Text} from '@mantine/core';
 
 interface IProps {
-    regionName: string,
-    regionData: any
+    name: string, // the region of city name.
+    data: any     // the data of the region or city.
 }
 
-const RegionMapSentimentTooltip:React.FC<IProps> = ({regionName, regionData}) => {
+const RegionMapSentimentTooltip:React.FC<IProps> = ({name, data}) => {
     const { t } = useTranslation();
     
     const createSvgBox = (color: string) => {
@@ -22,24 +22,24 @@ const RegionMapSentimentTooltip:React.FC<IProps> = ({regionName, regionData}) =>
             textAlign: 'left'
         })}>
         <Center>
-            <Text size={16}>{regionName}</Text>
+            <Text size={16}>{name}</Text>
         </Center>
-        {regionData
+        {data
             ? <Table verticalSpacing={2} fontSize='xs'>
                 <tbody>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.positive')}</td>
-                    <td>{regionData.sentimentPositive}</td>
+                    <td>{data.sentimentPositive}</td>
                     <td>{createSvgBox('#FFCB52')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.neutral')}</td>
-                    <td>{regionData.sentimentNeutral}</td>
+                    <td>{data.sentimentNeutral}</td>
                     <td>{createSvgBox('#2AAAFF')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.negative')}</td>
-                    <td>{regionData.sentimentNegative}</td>
+                    <td>{data.sentimentNegative}</td>
                     <td>{createSvgBox('#FF5C7F')}</td>
                 </tr>
                 </tbody>

@@ -11,20 +11,27 @@ import RegionMapHateSpeechTooltip from './RegionMapHateSpeechTooltip';
 
 import {MapResponse} from '../../../../api/MapResponse';
 
-type Region = {
+/*
+ * The limits_IT_provinces.geojson file contains a list of entities that describe
+ * the map of Italy. Each entity has a property called "feature.properties"
+ * that contains the region name and the city name (if the entity is a city).
+ */
+type MapChunkContent = {
     feature: {
         properties: {
-            reg_name: string
+            prov_name?: string, // the city name, can be undefined (e.g. "Milano")
+            reg_name: string    // the region name (e.g. "Lombardia")
         }
     }
+    // not contained in the original entity, but added to add color to the painted region
     options: {
         color: string
     }
 }
 
 interface IProps {
-    geoJsonData: any,
-    mapData: MapResponse
+    geoJsonData: any,          // The GeoJsonFile
+    mapData: MapResponse // The region map data received from the backend
 }
 
 /*
@@ -49,11 +56,105 @@ const hideBrowserOutlineFromLayers = (map: any) => {
     }
 }
 
+/*
+ * The GeoJson file contains a little differences in the region names.
+ * This function provides to fix them.
+ */
 const fromGeoRegionNameToResponseRegionName = (reg_name: string) => {
-    switch (reg_name.toLowerCase()) {
+    switch (reg_name?.toLowerCase()) {
         case 'valle d\'aosta': return 'valle aosta';
         case 'friuli venezia giulia': return 'friuli giulia';
-        default: return reg_name.toLowerCase();
+        default: return reg_name?.toLowerCase();
+    }
+}
+
+const getColorFromSentimentData = (data: any, mapChunkContent: MapChunkContent)  => {
+
+    // use default color if there is no data
+    if (data.sentimentPositive === 0
+        && data.sentimentNeutral === 0
+        && data.sentimentNegative === 0) {
+        return;
+    }
+
+    if (data.sentimentPositive === data.sentimentNeutral
+        && data.sentimentPositive === data.sentimentNegative) {
+        mapChunkContent.options.color = '#6B6B6B';
+    } else if (data.sentimentPositive >= data.sentimentNeutral
+        && data.sentimentPositive >= data.sentimentNegative) {
+        mapChunkContent.options.color = '#FFCB52';
+    } else if (data.sentimentNegative >= data.sentimentPositive
+        && data.sentimentNegative >= data.sentimentNeutral) {
+        mapChunkContent.options.color = '#FF5C7F';
+    } else if (data.sentimentNeutral >= data.sentimentPositive
+        && data.sentimentNeutral >= data.sentimentNegative) {
+        mapChunkContent.options.color = '#2AAAFF';
+    }
+}
+
+const getColorFromEmotionData = (data: any, mapChunkContent: MapChunkContent) => {
+
+    // use default color if there is no data
+    if (data.emotionJoy === 0
+        && data.emotionSadness === 0
+        && data.emotionAnger === 0
+        && data.emotionFear === 0) {
+        return;
+    }
+
+    if (data.emotionJoy === data.emotionSadness
+        && data.emotionJoy === data.emotionAnger
+        && data.emotionJoy === data.emotionFear) {
+        mapChunkContent.options.color = '#6B6B6B';
+    } else if (data.emotionJoy >= data.emotionSadness
+        && data.emotionJoy >= data.emotionAnger
+        && data.emotionJoy >= data.emotionFear) {
+        mapChunkContent.options.color = '#FFA50082';
+    } else if (data.emotionSadness >= data.emotionJoy
+        && data.emotionSadness >= data.emotionAnger
+        && data.emotionSadness >= data.emotionFear) {
+        mapChunkContent.options.color = '#0000FF7C';
+    } else if (data.emotionAnger >= data.emotionJoy
+        && data.emotionAnger >= data.emotionSadness
+        && data.emotionAnger >= data.emotionFear) {
+        mapChunkContent.options.color = '#FF00008C';
+    } else if (data.emotionFear >= data.emotionJoy
+        && data.emotionFear >= data.emotionSadness
+        && data.emotionFear >= data.emotionAnger) {
+        mapChunkContent.options.color = '#8000808E';
+    }
+}
+
+const getColorFromHateSpeechData = (data: any, mapChunkContent: MapChunkContent) => {
+
+    // use default color if there is no data
+    if (data.hateSpeechAcceptable === 0
+        && data.hateSpeechInappropriate === 0
+        && data.hateSpeechOffensive === 0
+        && data.hateSpeechViolent === 0) {
+        return;
+    }
+
+    if (data.hateSpeechAcceptable === data.hateSpeechInappropriate
+        && data.hateSpeechAcceptable === data.hateSpeechOffensive
+        && data.hateSpeechAcceptable === data.hateSpeechViolent) {
+        mapChunkContent.options.color = '#6B6B6B';
+    } else if (data.hateSpeechAcceptable >= data.hateSpeechInappropriate
+        && data.hateSpeechAcceptable >= data.hateSpeechOffensive
+        && data.hateSpeechAcceptable >= data.hateSpeechViolent) {
+        mapChunkContent.options.color = '#FFA50082';
+    } else if (data.hateSpeechInappropriate >= data.hateSpeechAcceptable
+        && data.hateSpeechInappropriate >= data.hateSpeechOffensive
+        && data.hateSpeechInappropriate >= data.hateSpeechViolent) {
+        mapChunkContent.options.color = '#0000FF7C';
+    } else if (data.hateSpeechOffensive >= data.hateSpeechAcceptable
+        && data.hateSpeechOffensive >= data.hateSpeechInappropriate
+        && data.hateSpeechOffensive >= data.hateSpeechViolent) {
+        mapChunkContent.options.color = '#FF00008C';
+    } else if (data.hateSpeechViolent >= data.hateSpeechAcceptable
+        && data.hateSpeechViolent >= data.hateSpeechInappropriate
+        && data.hateSpeechViolent >= data.hateSpeechOffensive) {
+        mapChunkContent.options.color = '#8000808E';
     }
 }
 
@@ -65,73 +166,48 @@ const RegionMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
         hideBrowserOutlineFromLayers(map);
     }, [map]);
 
+    // draw each region or city boundary on the map
     const onEachFeature = (feature: any, layer: LeafletTooltip) => {
-        const region = layer as unknown as Region;
+        const mapChunkContent = layer as unknown as MapChunkContent;
+        mapChunkContent.options.color = '#000'; // default region color
 
-        const regionName = feature.properties.reg_name;
-        const regionData = mapData[fromGeoRegionNameToResponseRegionName(regionName)];
+        let chunkName: string;
+        let chunkData: any;
 
-        if (regionData) {
-            if (regionData.sentimentPositive === regionData.sentimentNeutral
-                && regionData.sentimentPositive === regionData.sentimentNegative) {
-                region.options.color = '#6B6B6B';
-            } else if (regionData.sentimentPositive >= regionData.sentimentNeutral
-                && regionData.sentimentPositive >= regionData.sentimentNegative) {
-                region.options.color = '#FFCB52';
-            } else if (regionData.sentimentNegative >= regionData.sentimentPositive
-                && regionData.sentimentNegative >= regionData.sentimentNeutral) {
-                region.options.color = '#FF5C7F';
-            } else if (regionData.sentimentNeutral >= regionData.sentimentPositive
-                && regionData.sentimentNeutral >= regionData.sentimentNegative) {
-                region.options.color = '#2AAAFF';
+        if (filters.mapType === 'region') {
+            chunkName = feature.properties.reg_name;
+            chunkData = mapData[fromGeoRegionNameToResponseRegionName(chunkName)];
+        } else {
+            chunkName = feature.properties.prov_name;
+            chunkData = mapData[chunkName?.toLowerCase()];
+
+            if (chunkName.includes('-')) {
+                const chunkNameArray = chunkName.toLowerCase().split('-');
+
+                for (const name in chunkNameArray) {
+                    const temp = mapData[name];
+
+                    if (temp) {
+                        chunkName = name;
+                        chunkData = temp;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (chunkData) {
+
+            if (filters.algorithm === 'sent-it') {
+                getColorFromSentimentData(chunkData, mapChunkContent);
             }
 
             if (filters.algorithm === 'feel-it') {
-                if (regionData.emotionJoy === regionData.emotionSadness
-                    && regionData.emotionJoy === regionData.emotionAnger
-                    && regionData.emotionJoy === regionData.emotionFear) {
-                    region.options.color = '#6B6B6B';
-                } else if (regionData.emotionJoy >= regionData.emotionSadness
-                    && regionData.emotionJoy >= regionData.emotionAnger
-                    && regionData.emotionJoy >= regionData.emotionFear) {
-                    region.options.color = '#FFA50082';
-                } else if (regionData.emotionSadness >= regionData.emotionJoy
-                    && regionData.emotionSadness >= regionData.emotionAnger
-                    && regionData.emotionSadness >= regionData.emotionFear) {
-                    region.options.color = '#0000FF7C';
-                } else if (regionData.emotionAnger >= regionData.emotionJoy
-                    && regionData.emotionAnger >= regionData.emotionSadness
-                    && regionData.emotionAnger >= regionData.emotionFear) {
-                    region.options.color = '#FF00008C';
-                } else if (regionData.emotionFear >= regionData.emotionJoy
-                    && regionData.emotionFear >= regionData.emotionSadness
-                    && regionData.emotionFear >= regionData.emotionAnger) {
-                    region.options.color = '#8000808E';
-                }
+                getColorFromEmotionData(chunkData, mapChunkContent);
             }
 
             if (filters.algorithm === 'hate-speech') {
-                if (regionData.hateSpeechAcceptable === regionData.hateSpeechInappropriate
-                    && regionData.hateSpeechAcceptable === regionData.hateSpeechOffensive
-                    && regionData.hateSpeechAcceptable === regionData.hateSpeechViolent) {
-                    region.options.color = '#6B6B6B';
-                } else if (regionData.hateSpeechAcceptable >= regionData.hateSpeechInappropriate
-                    && regionData.hateSpeechAcceptable >= regionData.hateSpeechOffensive
-                    && regionData.hateSpeechAcceptable >= regionData.hateSpeechViolent) {
-                    region.options.color = '#FFA50082';
-                } else if (regionData.hateSpeechInappropriate >= regionData.hateSpeechAcceptable
-                    && regionData.hateSpeechInappropriate >= regionData.hateSpeechOffensive
-                    && regionData.hateSpeechInappropriate >= regionData.hateSpeechViolent) {
-                    region.options.color = '#0000FF7C';
-                } else if (regionData.hateSpeechOffensive >= regionData.hateSpeechAcceptable
-                    && regionData.hateSpeechOffensive >= regionData.hateSpeechInappropriate
-                    && regionData.hateSpeechOffensive >= regionData.hateSpeechViolent) {
-                    region.options.color = '#FF00008C';
-                } else if (regionData.hateSpeechViolent >= regionData.hateSpeechAcceptable
-                    && regionData.hateSpeechViolent >= regionData.hateSpeechInappropriate
-                    && regionData.hateSpeechViolent >= regionData.hateSpeechOffensive) {
-                    region.options.color = '#8000808E';
-                }
+                getColorFromHateSpeechData(chunkData, mapChunkContent);
             }
         }
 
@@ -141,16 +217,39 @@ const RegionMapOverlay:React.FC<IProps> = ({geoJsonData, mapData}) => {
 
             if (filters.algorithm === 'sent-it') {
                 root.render(<RegionMapSentimentTooltip
-                    regionName={regionName}
-                    regionData={regionData}/>);
+                    name={chunkName}
+                    data={
+                        chunkData
+                        && chunkData.sentimentPositive === 0
+                        && chunkData.sentimentNeutral === 0
+                        && chunkData.sentimentNegative === 0
+                            ? undefined
+                            : chunkData
+                    }/>);
             } else if (filters.algorithm === 'feel-it') {
                 root.render(<RegionMapEmotionTooltip
-                    regionName={regionName}
-                    regionData={regionData}/>);
+                    name={chunkName}
+                    data={
+                        chunkData
+                        && chunkData.emotionJoy === 0
+                        && chunkData.emotionSadness === 0
+                        && chunkData.emotionAnger === 0
+                        && chunkData.emotionFear === 0
+                            ? undefined
+                            : chunkData
+                    }/>);
             } else if (filters.algorithm === 'hate-speech') {
                 root.render(<RegionMapHateSpeechTooltip
-                    regionName={regionName}
-                    regionData={regionData}/>);
+                    name={chunkName}
+                    data={
+                        chunkData
+                        && chunkData.hateSpeechAcceptable === 0
+                        && chunkData.hateSpeechInappropriate === 0
+                        && chunkData.hateSpeechOffensive === 0
+                        && chunkData.hateSpeechViolent === 0
+                            ? undefined
+                            : chunkData
+                    }/>);
             }
 
             return tooltipContent;

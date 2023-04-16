@@ -156,6 +156,7 @@
             },
             "map": {
                 "noData": "No data",
+                "sameData": "Same data",
                 "regions": "Regions",
                 "heatmap": "Heatmap",
                 "regionsPanel": {

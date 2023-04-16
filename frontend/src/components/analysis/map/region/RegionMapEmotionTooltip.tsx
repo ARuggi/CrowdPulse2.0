@@ -3,11 +3,11 @@ import {useTranslation} from 'react-i18next';
 import {Box, Center, Table, Text} from '@mantine/core';
 
 interface IProps {
-    regionName: string,
-    regionData: any
+    name: string,         // the region of city name.
+    data: any | undefined // the data of the region or city.
 }
 
-const RegionMapEmotionTooltip:React.FC<IProps> = ({regionName, regionData}) => {
+const RegionMapEmotionTooltip:React.FC<IProps> = ({name, data}) => {
     const { t } = useTranslation();
 
     const createSvgBox = (color: string) => {
@@ -22,44 +22,44 @@ const RegionMapEmotionTooltip:React.FC<IProps> = ({regionName, regionData}) => {
             textAlign: 'left'
         })}>
         <Center>
-            <Text size={16}>{regionName}</Text>
+            <Text size={16}>{name}</Text>
         </Center>
-        {regionData
+        {data
             ? <Table verticalSpacing={2} fontSize='xs'>
                 <tbody>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.positive')}</td>
-                    <td>{regionData.sentimentPositive}</td>
+                    <td>{data.sentimentPositive}</td>
                     <td>{createSvgBox('#FFCB52')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.neutral')}</td>
-                    <td>{regionData.sentimentNeutral}</td>
+                    <td>{data.sentimentNeutral}</td>
                     <td>{createSvgBox('#2AAAFF')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.negative')}</td>
-                    <td>{regionData.sentimentNegative}</td>
+                    <td>{data.sentimentNegative}</td>
                     <td>{createSvgBox('#FF5C7F')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.joy')}</td>
-                    <td>{regionData.emotionJoy}</td>
+                    <td>{data.emotionJoy}</td>
                     <td>{createSvgBox('#FFA50082')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.sadness')}</td>
-                    <td>{regionData.emotionSadness}</td>
+                    <td>{data.emotionSadness}</td>
                     <td>{createSvgBox('#0000FF7C')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.anger')}</td>
-                    <td>{regionData.emotionAnger}</td>
+                    <td>{data.emotionAnger}</td>
                     <td>{createSvgBox('#FF00008C')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.fear')}</td>
-                    <td>{regionData.emotionFear}</td>
+                    <td>{data.emotionFear}</td>
                     <td>{createSvgBox('#8000808E')}</td>
                 </tr>
                 </tbody>

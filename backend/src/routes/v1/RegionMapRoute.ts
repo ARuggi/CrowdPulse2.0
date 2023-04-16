@@ -22,28 +22,36 @@ interface QueryFilters {
     usernames: string[]
 }
 
-const cities = loadCities(Country.ITALY)
-    .map(current => {
-        return {
-            name: current.name.toLowerCase(),
-            region: current.region.map(r => r.toLowerCase())}
-    });
+//const cities = loadCities(Country.ITALY)
+//    .map(current => {
+//        return {
+//            name: current.name.toLowerCase(),
+//            region: current.region.map(r => r.toLowerCase())}
+//    });
 
-const province = loadCities(Country.ITALY).filter(current => {
-    switch (current.type) {
-        case 'primary':
-        case 'admin':
-        case 'minor': return true;
-        default: return false;
-    }
-}).map(current => {
-        return {
-            name: current.name.toLowerCase(),
-            region: current.region.map(r => r.toLowerCase())}
-    }
-);
+/*
+ * The cities are loaded and filtered to get only the provinces.
+ */
+const provinces = loadCities(Country.ITALY)
+    .filter(current => {
+        switch (current.type) {
+            case 'primary': // the main city of the country, for Italy it's Rome.
+            case 'admin':   // the main city of the region, for Italy it's the capital of each region.
+            case 'minor': return true; // a province of the region.
+            default: return false;
+        }
+    }).map(current => {
+            return {
+                name: current.name.toLowerCase(),
+                region: current.region.map(r => r.toLowerCase())}
+        }
+    );
 
-const regions = province
+/*
+ * The region names are extracted from the provinces and
+ * filtered to get only the unique ones.
+ */
+const regions = provinces
     .map(city => city.region)
     .filter((item, index, array) => array.indexOf(item) === index);
 
@@ -84,25 +92,43 @@ export class RegionMapRoute extends AbstractRoute {
             return;
         }
 
-        const data = regions.reduce((result, region) => {
-            result[region.join(' ')] = {
-                sentimentPositive: 0,
-                sentimentNeutral:  0,
-                sentimentNegative: 0,
-                emotionJoy:     0,
-                emotionSadness: 0,
-                emotionAnger:   0,
-                emotionFear:    0,
-                hateSpeechAcceptable:    0,
-                hateSpeechInappropriate: 0,
-                hateSpeechOffensive:     0,
-                hateSpeechViolent:       0
-            };
-            return result;
-        }, {});
+        const data = queryFilters.mapType === 'region'
+            ? regions
+                .reduce((result, regionNames) => {
+                    result[regionNames.join(' ')] = {
+                        sentimentPositive: 0,
+                        sentimentNeutral:  0,
+                        sentimentNegative: 0,
+                        emotionJoy:     0,
+                        emotionSadness: 0,
+                        emotionAnger:   0,
+                        emotionFear:    0,
+                        hateSpeechAcceptable:    0,
+                        hateSpeechInappropriate: 0,
+                        hateSpeechOffensive:     0,
+                        hateSpeechViolent:       0
+                    };
+                    return result;
+                }, {})
+            : provinces
+                .reduce((result, province) => {
+                    result[province.name] = {
+                        sentimentPositive: 0,
+                        sentimentNeutral:  0,
+                        sentimentNegative: 0,
+                        emotionJoy:     0,
+                        emotionSadness: 0,
+                        emotionAnger:   0,
+                        emotionFear:    0,
+                        hateSpeechAcceptable:    0,
+                        hateSpeechInappropriate: 0,
+                        hateSpeechOffensive:     0,
+                        hateSpeechViolent:       0
+                    };
+                    return result;
+                }, {});
 
         try {
-
             for (const databaseName of queryFilters.dbs) {
 
                 const database = getMongoConnection().useDb(databaseName);
@@ -112,24 +138,35 @@ export class RegionMapRoute extends AbstractRoute {
                     let { location } = entry;
                     location = location.toLowerCase();
 
-                    for (const city of province) {
-                        if (location.includes(city.name) || city.region.some(r => location.includes(r))) {
+                    for (const city of provinces) {
+                        let entryName: string;
 
-                            const regionName = city.region.join(' ');
+                        if (queryFilters.mapType === 'region') {
+                            if (!location.includes(city.name) && !city.region.some(r => location.includes(r))) {
+                                continue;
+                            }
 
-                            data[regionName].sentimentPositive += entry?.sentimentPositive ? 1 : 0;
-                            data[regionName].sentimentNeutral  += entry?.sentimentNeutral  ? 1 : 0;
-                            data[regionName].sentimentNegative += entry?.sentimentNegative ? 1 : 0;
-                            data[regionName].emotionJoy     += entry?.emotionJoy     ? 1 : 0;
-                            data[regionName].emotionSadness += entry?.emotionSadness ? 1 : 0;
-                            data[regionName].emotionAnger   += entry?.emotionAnger   ? 1 : 0;
-                            data[regionName].emotionFear    += entry?.emotionFear    ? 1 : 0;
-                            data[regionName].hateSpeechAcceptable    += entry?.hateSpeechAcceptable ? 1 : 0;
-                            data[regionName].hateSpeechInappropriate += entry?.hateSpeechInappropriate ? 1 : 0;
-                            data[regionName].hateSpeechOffensive     += entry?.hateSpeechOffensive ? 1 : 0;
-                            data[regionName].hateSpeechViolent       += entry?.hateSpeechViolent ? 1 : 0;
-                            break;
+                            entryName = city.region.join(' ');
+                        } else {
+                            if (!location.includes(city.name)) {
+                                continue;
+                            }
+
+                            entryName = city.name;
                         }
+
+                        data[entryName].sentimentPositive += entry?.sentimentPositive ? 1 : 0;
+                        data[entryName].sentimentNeutral  += entry?.sentimentNeutral  ? 1 : 0;
+                        data[entryName].sentimentNegative += entry?.sentimentNegative ? 1 : 0;
+                        data[entryName].emotionJoy     += entry?.emotionJoy     ? 1 : 0;
+                        data[entryName].emotionSadness += entry?.emotionSadness ? 1 : 0;
+                        data[entryName].emotionAnger   += entry?.emotionAnger   ? 1 : 0;
+                        data[entryName].emotionFear    += entry?.emotionFear    ? 1 : 0;
+                        data[entryName].hateSpeechAcceptable    += entry?.hateSpeechAcceptable ? 1 : 0;
+                        data[entryName].hateSpeechInappropriate += entry?.hateSpeechInappropriate ? 1 : 0;
+                        data[entryName].hateSpeechOffensive     += entry?.hateSpeechOffensive ? 1 : 0;
+                        data[entryName].hateSpeechViolent       += entry?.hateSpeechViolent ? 1 : 0;
+                        break;
                     }
                 });
 

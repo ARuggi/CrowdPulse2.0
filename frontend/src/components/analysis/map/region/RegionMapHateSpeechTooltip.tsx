@@ -3,11 +3,11 @@ import {useTranslation} from 'react-i18next';
 import {Box, Center, Table, Text} from '@mantine/core';
 
 interface IProps {
-    regionName: string,
-    regionData: any
+    name: string, // the region of city name.
+    data: any     // the data of the region or city.
 }
 
-const RegionMapHateSpeechTooltip:React.FC<IProps> = ({regionName, regionData}) => {
+const RegionMapHateSpeechTooltip:React.FC<IProps> = ({name, data}) => {
     const { t } = useTranslation();
 
     const createSvgBox = (color: string) => {
@@ -22,29 +22,29 @@ const RegionMapHateSpeechTooltip:React.FC<IProps> = ({regionName, regionData}) =
             textAlign: 'left'
         })}>
         <Center>
-            <Text size={16}>{regionName}</Text>
+            <Text size={16}>{name}</Text>
         </Center>
-        {regionData
+        {data
             ? <Table verticalSpacing={2} fontSize='xs'>
                 <tbody>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.acceptable')}</td>
-                    <td>{regionData.hateSpeechAcceptable}</td>
+                    <td>{data.hateSpeechAcceptable}</td>
                     <td>{createSvgBox('#FFA50082')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.inappropriate')}</td>
-                    <td>{regionData.hateSpeechInappropriate}</td>
+                    <td>{data.hateSpeechInappropriate}</td>
                     <td>{createSvgBox('#0000FF7C')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.offensive')}</td>
-                    <td>{regionData.hateSpeechOffensive}</td>
+                    <td>{data.hateSpeechOffensive}</td>
                     <td>{createSvgBox('#FF00008C')}</td>
                 </tr>
                 <tr>
                     <td>{t('tab.map.regionsTooltip.violent')}</td>
-                    <td>{regionData.hateSpeechViolent}</td>
+                    <td>{data.hateSpeechViolent}</td>
                     <td>{createSvgBox('#8000808E')}</td>
                 </tr>
                 </tbody>

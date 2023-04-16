@@ -1,4 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {MapContainer, TileLayer} from 'react-leaflet'
 import {ColorScheme, Loader, useMantineColorScheme} from '@mantine/core';
 import {GeoJsonObject} from 'geojson';
@@ -7,7 +8,7 @@ import RegionMapOverlay from './RegionMapOverlay';
 import MapPanel, {Position} from '../MapPanel';
 import RegionMapPanel from './RegionMapPanel';
 import {RegionMapContext} from '../index';
-import {FiltersContext} from "../../index";
+import {FiltersContext} from '../../index';
 
 const DARK_MAP_URL  = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 const LIGHT_MAP_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
@@ -26,6 +27,7 @@ const changeMapBackgroundColor = (colorScheme: ColorScheme) => {
 
 const RegionMapBox = () => {
 
+    const { t } = useTranslation();
     const { colorScheme } = useMantineColorScheme();
     const { filters } = useContext(FiltersContext);
 
@@ -37,13 +39,16 @@ const RegionMapBox = () => {
     }, [colorScheme]);
 
     useEffect(() => {
+        setGeoJsonData(null);
+
         (async () => {
-            const response = filters.mapType === 'region'
-                ? await fetch('/map/limits_IT_regions.geojson')
-                : await fetch('/map/limits_IT_provinces.geojson');
+            const response =
+                filters.mapType === 'region'
+                    ? await fetch('/map/limits_IT_regions.geojson')
+                    : await fetch('/map/limits_IT_provinces.geojson');
             setGeoJsonData(await response.json());
         })();
-    }, [filters]);
+    }, [t, filters, colorScheme]);
 
     return geoJsonData && mapData
         ? <MapContainer

@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Flex, Tabs} from '@mantine/core';
+import {Flex, Tabs, useMantineColorScheme} from '@mantine/core';
 import {useMediaQuery} from '@mantine/hooks';
 import isEqual from 'lodash.isequal';
 
@@ -23,11 +23,14 @@ export const HeatMapContext = createContext<HeatMapResponse | null>(null);
 const MapTab = () => {
 
     const { t } = useTranslation();
+    const { colorScheme } = useMantineColorScheme();
+    const { filters } = useContext(FiltersContext);
+
     const dbs = useContext(DatabasesContext);
     const [isError, setError] = useState(false);
     const [regionMapData, setRegionMapData] = useState<MapResponse | null>(null);
     const [heatMapData, setHeatMapData] = useState<HeatMapResponse | null>(null);
-    const {filters} = useContext(FiltersContext);
+
     const mediaQueryMd = useMediaQuery('(min-width: 992px)');
 
     useEffect(() => {
@@ -38,7 +41,7 @@ const MapTab = () => {
         (async () => {
             try {
 
-                const regionMDataResult =
+                const regionMapDataResult =
                     await api.GetRegionMap(
                         dbs,
                         filters.algorithm,
@@ -49,7 +52,7 @@ const MapTab = () => {
                         filters.processedText,
                         filters.hashtags,
                         filters.usernames);
-                setRegionMapData(isEqual(regionMapData, regionMDataResult) ? regionMapData : regionMDataResult);
+                setRegionMapData(isEqual(regionMapData, regionMapDataResult) ? regionMapData : regionMapDataResult);
 
                 const heatMapDataResult =
                     await api.GetHeatMap(
@@ -69,7 +72,7 @@ const MapTab = () => {
             }
         })();
 
-    }, [filters]);
+    }, [t, filters, colorScheme]);
 
     if (isError) {
         return <Error message={t('serverNotRespondingError')!}/>

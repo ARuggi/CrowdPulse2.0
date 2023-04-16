@@ -80,8 +80,12 @@ const RegionMapPanel = () => {
                 </>}
 
             <tr>
-                <td>{t('tab.map.noData')}</td>
+                <td>{t('tab.map.sameData')}</td>
                 <td>{createSvgBox('#6B6B6B')}</td>
+            </tr>
+            <tr>
+                <td>{t('tab.map.noData')}</td>
+                <td>{createSvgBox('#000')}</td>
             </tr>
             </tbody>
         </Table>
